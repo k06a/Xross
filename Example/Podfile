@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+#use_frameworks!
+
+target 'KYXrossViewController_Example', :exclusive => true do
+  pod "KYXrossViewController", :path => "../"
+end
+
+target 'KYXrossViewController_Tests', :exclusive => true do
+  pod "KYXrossViewController", :path => "../"
+
+  
+end
