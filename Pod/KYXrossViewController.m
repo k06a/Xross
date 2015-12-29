@@ -48,7 +48,6 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 @property (strong, nonatomic) UIViewController *viewController;
 @property (strong, nonatomic) UIViewController *nextViewController;
 @property (assign, nonatomic) KYXrossViewControllerDirection nextViewControllerDirection;
-@property (readonly, nonatomic) UIScrollView *scrollView;
 @property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
 @property (strong, nonatomic) NSDate *allowMoveToNextAfter;
 @property (assign, nonatomic) UIEdgeInsets needEdgeInsets;
