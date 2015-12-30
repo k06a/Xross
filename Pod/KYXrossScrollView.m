@@ -50,17 +50,18 @@ static __weak id currentFirstResponder_private;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
-    id responder = [UIResponder currentFirstResponder];
+    UIView *responder = [UIResponder currentFirstResponder];
     if ([responder isKindOfClass:[UIView class]]) {
-        UIView *view = ((UIView *)responder).inputAccessoryView;
-        
         CGPoint p = [self convertPoint:CGPointZero fromView:responder];
         CGFloat k = CGPointEqualToPoint(self.contentOffset, CGPointZero) ? 0.0 : 1.0;
-        view.transform = CGAffineTransformMakeTranslation(-self.contentOffset.x*k + floor(p.x/self.frame.size.width)*self.frame.size.width, 0);
+        CGAffineTransform transform = CGAffineTransformMakeTranslation(-self.contentOffset.x*k + floor(p.x/self.frame.size.width)*self.frame.size.width, -self.contentOffset.y*k + floor(p.y/self.frame.size.height)*self.frame.size.height);
         
         for (UIWindow *window in [UIApplication sharedApplication].windows) {
-            if ([NSStringFromClass(window.class) isEqualToString:@"UIRemoteKeyboardWindow"]) {
-                window.transform = view.transform;
+            if ([NSStringFromClass(window.class) isEqualToString:@"UIRemoteKeyboardWindow"] ||
+                [NSStringFromClass(window.class) isEqualToString:@"UITextEffectsWindow"])
+            {
+                window.clipsToBounds = YES;
+                window.transform = transform;
             }
         }
     }
