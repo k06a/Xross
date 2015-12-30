@@ -47,6 +47,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
 @property (strong, nonatomic) UIViewController *viewController;
 @property (strong, nonatomic) UIViewController *nextViewController;
+@property (strong, nonatomic) UIViewController *nextViewControllerToBe;
 @property (assign, nonatomic) KYXrossViewControllerDirection nextViewControllerDirection;
 @property (readonly, nonatomic) KYXrossScrollView *kyScrollView;
 @property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
@@ -238,11 +239,15 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 }
 
 
-- (void)moveToDirection:(KYXrossViewControllerDirection)direction animated:(BOOL)animated {
-    self.scrollView.contentOffset = CGPointMake(direction.width, direction.height);
-    [self.kyScrollView setContentOffsetTo:CGPointMake(direction.width * self.scrollView.frame.size.width, direction.height * self.scrollView.frame.size.height) animated:animated];
+- (void)moveToDirection:(KYXrossViewControllerDirection)direction {
+    [self moveToDirection:direction controller:nil];
 }
 
+- (void)moveToDirection:(KYXrossViewControllerDirection)direction controller:(UIViewController *)controller {
+    self.nextViewControllerToBe = controller;
+    self.scrollView.contentOffset = CGPointMake(direction.width, direction.height);
+    [self.kyScrollView setContentOffsetTo:CGPointMake(direction.width * self.scrollView.frame.size.width, direction.height * self.scrollView.frame.size.height) animated:YES];
+}
 
 #pragma mark - Scroll View
 
@@ -328,7 +333,8 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
     // Add nextViewController if possible for known direction
     if (self.nextViewController == nil && !KYXrossViewControllerDirectionEquals(direction, KYXrossViewControllerDirectionNone)) {
         if ([[NSDate date] compare:self.allowMoveToNextAfter] == NSOrderedDescending) {
-            self.nextViewController = [self.dataSource xross:self viewControllerForDirection:direction];
+            self.nextViewController = self.nextViewControllerToBe ?: [self.dataSource xross:self viewControllerForDirection:direction];
+            self.nextViewControllerToBe = nil;
             if (self.nextViewController) {
                 self.nextViewControllerDirection = direction;
             }

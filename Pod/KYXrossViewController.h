@@ -67,7 +67,8 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 @property (assign, nonatomic) BOOL denyRightMovement;
 
 - (void)reloadData;
-- (void)moveToDirection:(KYXrossViewControllerDirection)direction animated:(BOOL)animated;
+- (void)moveToDirection:(KYXrossViewControllerDirection)direction;
+- (void)moveToDirection:(KYXrossViewControllerDirection)direction controller:(nullable UIViewController *)controller;
 
 @end
 
