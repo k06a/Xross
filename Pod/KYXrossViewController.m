@@ -48,6 +48,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 @property (strong, nonatomic) UIViewController *viewController;
 @property (strong, nonatomic) UIViewController *nextViewController;
 @property (assign, nonatomic) KYXrossViewControllerDirection nextViewControllerDirection;
+@property (readonly, nonatomic) KYXrossScrollView *kyScrollView;
 @property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
 @property (strong, nonatomic) NSDate *allowMoveToNextAfter;
 @property (assign, nonatomic) UIEdgeInsets needEdgeInsets;
@@ -138,6 +139,11 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
 - (UIScrollView *)scrollView {
     return (UIScrollView *)self.view;
+}
+
+
+- (KYXrossScrollView *)kyScrollView {
+    return (KYXrossScrollView *)self.view;
 }
 
 
@@ -234,7 +240,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
 - (void)moveToDirection:(KYXrossViewControllerDirection)direction animated:(BOOL)animated {
     self.scrollView.contentOffset = CGPointMake(direction.width, direction.height);
-    [self.scrollView setContentOffset:CGPointMake(direction.width * self.scrollView.frame.size.width, direction.height * self.scrollView.frame.size.height) animated:animated];
+    [self.kyScrollView setContentOffsetTo:CGPointMake(direction.width * self.scrollView.frame.size.width, direction.height * self.scrollView.frame.size.height) animated:animated];
 }
 
 
@@ -334,7 +340,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
             }
             if (!bounces) {
                 self.allowMoveToNextAfter = [NSDate dateWithTimeIntervalSinceNow:0.2];
-                [scrollView setContentOffset:CGPointZero animated:NO];
+                [self.kyScrollView setContentOffsetTo:CGPointZero animated:NO];
             }
             return;
         }

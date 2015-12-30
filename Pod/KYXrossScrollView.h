@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface KYXrossScrollView : UIScrollView
 
+- (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated;
+
 @end
 
 NS_ASSUME_NONNULL_END

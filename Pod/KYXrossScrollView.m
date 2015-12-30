@@ -20,6 +20,15 @@
 
 @implementation KYXrossScrollView
 
+// Avoid UITextField to scroll superview to become visible on becoming first responder
+- (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated {
+    // Do nothing
+}
+
+- (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated {
+    [super setContentOffset:contentOffset animated:animated];
+}
+
 // Allows inner UITableView swipe-to-delete gesture
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRequireFailureOfGestureRecognizer:(nonnull UIGestureRecognizer *)otherGestureRecognizer {
     if ([otherGestureRecognizer.view.superview isKindOfClass:[UITableView class]]) {
