@@ -41,12 +41,14 @@ static __weak id currentFirstResponder_private;
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self addObserver:self forKeyPath:@"contentOffset" options:(NSKeyValueObservingOptionNew) context:NULL];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
     }
     return self;
 }
 
 - (void)dealloc {
     [self removeObserver:self forKeyPath:@"contentOffset"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
@@ -63,6 +65,17 @@ static __weak id currentFirstResponder_private;
                 window.clipsToBounds = YES;
                 window.transform = transform;
             }
+        }
+    }
+}
+
+- (void)keyboardDidHide:(NSNotification *)note {
+    for (UIWindow *window in [UIApplication sharedApplication].windows) {
+        if ([NSStringFromClass(window.class) isEqualToString:@"UIRemoteKeyboardWindow"] ||
+            [NSStringFromClass(window.class) isEqualToString:@"UITextEffectsWindow"])
+        {
+            window.clipsToBounds = YES;
+            window.transform = CGAffineTransformIdentity;
         }
     }
 }
