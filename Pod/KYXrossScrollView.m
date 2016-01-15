@@ -53,6 +53,9 @@ static __weak id currentFirstResponder_private;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     UIView *responder = [UIResponder currentFirstResponder];
+    while (responder && responder.window != self.window) {
+        responder = [responder nextResponder];
+    }
     if ([responder isKindOfClass:[UIView class]]) {
         CGPoint p = [self convertPoint:CGPointZero fromView:responder];
         CGFloat k = CGPointEqualToPoint(self.contentOffset, CGPointZero) ? 0.0 : 1.0;
