@@ -11,15 +11,15 @@
 #import "KYXrossScrollView.h"
 #import "KYXrossViewController.h"
 
-KYXrossViewControllerDirection KYXrossViewControllerDirectionNone = (CGSize){0, 0};
-KYXrossViewControllerDirection KYXrossViewControllerDirectionTop = (CGSize){0, -1};
-KYXrossViewControllerDirection KYXrossViewControllerDirectionBottom = (CGSize){0, 1};
-KYXrossViewControllerDirection KYXrossViewControllerDirectionLeft = (CGSize){-1, 0};
-KYXrossViewControllerDirection KYXrossViewControllerDirectionRight = (CGSize){1, 0};
+KYXrossViewControllerDirection KYXrossViewControllerDirectionNone   = (CGSize){0,0};
+KYXrossViewControllerDirection KYXrossViewControllerDirectionTop    = (CGSize){0,-1};
+KYXrossViewControllerDirection KYXrossViewControllerDirectionBottom = (CGSize){0,1};
+KYXrossViewControllerDirection KYXrossViewControllerDirectionLeft   = (CGSize){-1,0};
+KYXrossViewControllerDirection KYXrossViewControllerDirectionRight  = (CGSize){1,0};
 
 
 KYXrossViewControllerDirection KYXrossViewControllerDirectionMake(NSInteger dx, NSInteger dy) {
-    return CGSizeMake(dx ? dx / ABS(dx) : 0, dy ? dy / ABS(dy) : 0);
+    return CGSizeMake(dx ? dx/ABS(dx) : 0, dy ? dy/ABS(dy) : 0);
 }
 
 KYXrossViewControllerDirection KYXrossViewControllerDirectionFromOffset(CGPoint offset) {
@@ -64,110 +64,104 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
     return [[super keyPathsForValuesAffectingValueForKey:key] setByAddingObjectsFromArray:@{
         NSStringFromSelector(@selector(isMoving)) : @[ NSStringFromSelector(@selector(nextViewController)) ],
         NSStringFromSelector(@selector(isMovingDisabled)) : @[ @"scrollView.scrollEnabled" ],
-    }[key]
-                                                                                              ?: @[]];
+    }[key] ?: @[]];
 }
 
 - (BOOL)isMoving {
     return (self.nextViewController != nil);
 }
 
-
 - (BOOL)isMovingDisabled {
     return !self.scrollView.scrollEnabled;
 }
-
 
 - (void)setMovingDisabled:(BOOL)movingDisabled {
     self.scrollView.scrollEnabled = !movingDisabled;
 }
 
-
 - (BOOL)denyHorizontalMovement {
     return self.denyLeftMovement && self.denyRightMovement;
 }
-
 
 - (void)setDenyHorizontalMovement:(BOOL)denyHorizontalMovement {
     self.denyLeftMovement = denyHorizontalMovement;
     self.denyRightMovement = denyHorizontalMovement;
 }
 
-
 - (BOOL)denyVerticalMovement {
     return self.denyTopMovement && self.denyBottomMovement;
 }
-
 
 - (void)setDenyVerticalMovement:(BOOL)denyVerticalMovement {
     self.denyTopMovement = denyVerticalMovement;
     self.denyBottomMovement = denyVerticalMovement;
 }
 
-
 - (void)setDenyTopMovement:(BOOL)denyTopMovement {
     _denyTopMovement = denyTopMovement;
     [self updateInsets];
 }
-
 
 - (void)setDenyBottomMovement:(BOOL)denyBottomMovement {
     _denyBottomMovement = denyBottomMovement;
     [self updateInsets];
 }
 
-
 - (void)setDenyLeftMovement:(BOOL)denyLeftMovement {
     _denyLeftMovement = denyLeftMovement;
     [self updateInsets];
 }
-
 
 - (void)setDenyRightMovement:(BOOL)denyRightMovement {
     _denyRightMovement = denyRightMovement;
     [self updateInsets];
 }
 
-
 - (void)updateInsets {
     self.scrollView.contentInset = UIEdgeInsetsMake(
-        self.denyTopMovement ? 0 : self.needEdgeInsets.top,
-        self.denyLeftMovement ? 0 : self.needEdgeInsets.left,
+        self.denyTopMovement    ? 0 : self.needEdgeInsets.top,
+        self.denyLeftMovement   ? 0 : self.needEdgeInsets.left,
         self.denyBottomMovement ? 0 : self.needEdgeInsets.bottom,
-        self.denyRightMovement ? 0 : self.needEdgeInsets.right);
+        self.denyRightMovement  ? 0 : self.needEdgeInsets.right
+    );
 }
-
 
 - (UIScrollView *)scrollView {
     return (UIScrollView *)self.view;
 }
 
-
 - (KYXrossScrollView *)kyScrollView {
     return (KYXrossScrollView *)self.view;
 }
 
-
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return [self.viewController preferredStatusBarStyle];
+- (BOOL)prefersStatusBarHidden {
+    return self.viewController
+         ? [self.viewController prefersStatusBarHidden]
+         : [super prefersStatusBarHidden];
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return self.viewController
+         ? [self.viewController preferredStatusBarStyle]
+         : [super preferredStatusBarStyle];
+}
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
     return self.viewController
-               ? [self.childViewControllers.firstObject supportedInterfaceOrientations]
-               : [super supportedInterfaceOrientations];
+         ? [self.viewController supportedInterfaceOrientations]
+         : [super supportedInterfaceOrientations];
 }
-
 
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
+    
     self.scrollView.contentOffset = CGPointZero;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
         self.scrollView.contentOffset = CGPointZero;
-    });
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        self.scrollView.contentOffset = CGPointZero;
+    }];
 }
-
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
@@ -181,12 +175,11 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
     self.scrollView.contentSize = self.scrollView.frame.size;
     self.needEdgeInsets = UIEdgeInsetsMake(
         (self.nextViewControllerDirection.height < 0) ? self.scrollView.frame.size.height : 1,
-        (self.nextViewControllerDirection.width < 0) ? self.scrollView.frame.size.width : 1,
+        (self.nextViewControllerDirection.width < 0)  ? self.scrollView.frame.size.width  : 1,
         (self.nextViewControllerDirection.height > 0) ? self.scrollView.frame.size.height : 1,
-        (self.nextViewControllerDirection.width > 0) ? self.scrollView.frame.size.width : 1);
+        (self.nextViewControllerDirection.width > 0)  ? self.scrollView.frame.size.width  : 1);
     [self updateInsets];
 }
-
 
 - (void)loadView {
     self.view = [[KYXrossScrollView alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -202,18 +195,15 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
     [self updateInsets];
 }
 
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self reloadData];
 }
 
-
 - (void)setDataSource:(id<KYXrossViewControllerDataSource>)dataSource {
     _dataSource = dataSource;
     [self reloadData];
 }
-
 
 - (void)reloadData {
     if (self.viewController) {
@@ -238,7 +228,6 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
     }
 }
 
-
 - (void)moveToDirection:(KYXrossViewControllerDirection)direction {
     [self moveToDirection:direction controller:nil];
 }
@@ -260,7 +249,6 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
     }
 }
 
-
 // Avoid diagonal scrolling
 - (void)scrollViewDidScrollNotRecursive:(UIScrollView *)scrollView {
     scrollView.contentOffset = CGPointMake(
@@ -269,7 +257,6 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
     [self scrollViewDidScrollNotRecursiveNotDiagonal:scrollView];
 }
-
 
 - (void)scrollViewDidScrollNotRecursiveNotDiagonal:(UIScrollView *)scrollView {
     KYXrossViewControllerDirection direction = KYXrossViewControllerDirectionMake(
@@ -284,7 +271,9 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
             UIViewController *tmpView = self.viewController;
             self.viewController = self.nextViewController;
             self.nextViewController = tmpView;
-            [self setNeedsStatusBarAppearanceUpdate];
+            [UIView animateWithDuration:0.25 animations:^{
+                [self setNeedsStatusBarAppearanceUpdate];
+            }];
         }
         else {
             direction = KYXrossViewControllerDirectionNone;
