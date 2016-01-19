@@ -53,10 +53,11 @@ static __weak id currentFirstResponder_private;
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     UIView *responder = [UIResponder currentFirstResponder];
-    while (responder && responder.window != self.window) {
-        responder = [responder nextResponder];
-    }
     if ([responder isKindOfClass:[UIView class]]) {
+        while (responder && responder.window != self.window) {
+            responder = [responder nextResponder];
+        }
+        
         CGPoint p = [self convertPoint:CGPointZero fromView:responder];
         CGFloat k = CGPointEqualToPoint(self.contentOffset, CGPointZero) ? 0.0 : 1.0;
         CGAffineTransform transform = CGAffineTransformMakeTranslation(-self.contentOffset.x*k + floor(p.x/self.frame.size.width)*self.frame.size.width, -self.contentOffset.y*k + floor(p.y/self.frame.size.height)*self.frame.size.height);
