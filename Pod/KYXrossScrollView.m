@@ -54,7 +54,7 @@ static __weak id currentFirstResponder_private;
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     UIView *responder = [UIResponder currentFirstResponder];
     while (responder && [responder isKindOfClass:[UIView class]] && responder.window != self.window) {
-        responder = [responder nextResponder];
+        responder = (id)[responder nextResponder];
     }
     
     if ([responder isKindOfClass:[UIView class]]) {

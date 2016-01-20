@@ -262,7 +262,12 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
     KYXrossViewControllerDirection direction = KYXrossViewControllerDirectionMake(
         (ABS(scrollView.contentOffset.x) < FLT_EPSILON) ? 0 : scrollView.contentOffset.x / ABS(scrollView.contentOffset.x),
         (ABS(scrollView.contentOffset.y) < FLT_EPSILON) ? 0 : scrollView.contentOffset.y / ABS(scrollView.contentOffset.y));
-
+    
+    if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
+        CGFloat progress = KYXrossViewControllerDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x)/self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y)/self.scrollView.frame.size.height;
+        [self.delegate xross:self didScrollToDirection:direction progress:progress];
+    }
+    
     // Remove viewController or nextViewController not visible by current scrolling
     if (!CGRectIntersectsRect(self.viewController.view.frame, self.scrollView.bounds) ||
         (self.nextViewController && !CGRectIntersectsRect(self.nextViewController.view.frame, self.scrollView.bounds))) {

@@ -43,6 +43,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 - (void)xross:(KYXrossViewController *)xrossViewController didMoveToDirection:(KYXrossViewControllerDirection)direction;
 - (BOOL)xross:(KYXrossViewController *)xrossViewController allowBounceToDirection:(KYXrossViewControllerDirection)direction;
 - (void)xross:(KYXrossViewController *)xrossViewController removedViewController:(UIViewController *)viewController;
+- (void)xross:(KYXrossViewController *)xrossViewController didScrollToDirection:(KYXrossViewControllerDirection)direction progress:(CGFloat)progress;
 
 @end
 
