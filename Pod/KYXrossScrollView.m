@@ -6,6 +6,7 @@
 //  Copyright © 2015 KupitYandex. All rights reserved.
 //
 
+#import <JRSwizzle/JRSwizzle.h>
 #import "KYXrossScrollView.h"
 
 static __weak id currentFirstResponder_private;
@@ -26,7 +27,25 @@ static __weak id currentFirstResponder_private;
 
 //
 
-@interface UIScrollView () <UIGestureRecognizerDelegate>
+@interface UIScrollView (KY_FixScrollViews) <UIGestureRecognizerDelegate>
+
+- (void)_attemptToDragParent:(id)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3;
+
+@end
+
+@implementation UIScrollView (KY_FixScrollViews)
+
++ (void)load {
+    [[self class] jr_swizzleMethod:@selector(_attemptToDragParent:forNewBounds:oldBounds:)
+                        withMethod:@selector(xxx_attemptToDragParent:forNewBounds:oldBounds:)
+                             error:NULL];
+}
+
+- (void)xxx_attemptToDragParent:(id)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3 {
+    if (![arg1 isKindOfClass:[KYXrossScrollView class]]) {
+        [self xxx_attemptToDragParent:arg1 forNewBounds:arg2 oldBounds:arg3];
+    }
+}
 
 @end
 
@@ -90,12 +109,7 @@ static __weak id currentFirstResponder_private;
 }
 
 - (void)setContentOffset:(CGPoint)contentOffset {
-    if (self.panGestureRecognizer.state == UIGestureRecognizerStatePossible ||
-        self.panGestureRecognizer.state == UIGestureRecognizerStateBegan ||
-        self.panGestureRecognizer.state == UIGestureRecognizerStateChanged)
-    {
-        [super setContentOffset:contentOffset];
-    }
+    [super setContentOffset:contentOffset];
 }
 
 - (CGPoint)contentOffsetTo {
