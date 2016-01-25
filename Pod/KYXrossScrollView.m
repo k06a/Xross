@@ -36,9 +36,9 @@ static __weak id currentFirstResponder_private;
 @implementation UIScrollView (KY_FixScrollViews)
 
 + (void)load {
-    [[self class] jr_swizzleMethod:@selector(_attemptToDragParent:forNewBounds:oldBounds:)
-                        withMethod:@selector(xxx_attemptToDragParent:forNewBounds:oldBounds:)
-                             error:NULL];
+    [self jr_swizzleMethod:@selector(_attemptToDragParent:forNewBounds:oldBounds:)
+                withMethod:@selector(xxx_attemptToDragParent:forNewBounds:oldBounds:)
+                     error:NULL];
 }
 
 - (void)xxx_attemptToDragParent:(id)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3 {
