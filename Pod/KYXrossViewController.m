@@ -155,11 +155,11 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
     
-    self.kyScrollView.contentOffsetTo = CGPointZero;
+    self.scrollView.contentOffset = CGPointZero;
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-        self.kyScrollView.contentOffsetTo = CGPointZero;
+        self.scrollView.contentOffset = CGPointZero;
     } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-        self.kyScrollView.contentOffsetTo = CGPointZero;
+        self.scrollView.contentOffset = CGPointZero;
     }];
 }
 
@@ -234,7 +234,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
 - (void)moveToDirection:(KYXrossViewControllerDirection)direction controller:(UIViewController *)controller {
     self.nextViewControllerToBe = controller;
-    self.kyScrollView.contentOffsetTo = CGPointMake(direction.width, direction.height);
+    self.scrollView.contentOffset = CGPointMake(direction.width, direction.height);
     [self.kyScrollView setContentOffsetTo:CGPointMake(direction.width * self.scrollView.frame.size.width, direction.height * self.scrollView.frame.size.height) animated:YES];
 }
 
@@ -251,7 +251,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
 // Avoid diagonal scrolling
 - (void)scrollViewDidScrollNotRecursive:(UIScrollView *)scrollView {
-    self.kyScrollView.contentOffsetTo = CGPointMake(
+    scrollView.contentOffset = CGPointMake(
         (ABS(scrollView.contentOffset.y) > ABS(scrollView.contentOffset.x)) ? 0 : scrollView.contentOffset.x,
         (ABS(scrollView.contentOffset.x) > ABS(scrollView.contentOffset.y)) ? 0 : scrollView.contentOffset.y);
 
@@ -291,7 +291,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
         [self.nextViewController resignFirstResponder];
 
         // Center VC
-        self.kyScrollView.contentOffsetTo = CGPointZero;
+        self.scrollView.contentOffset = CGPointZero;
         self.needEdgeInsets = UIEdgeInsetsMake(1, 1, 1, 1);
         [self updateInsets];
         self.viewController.view.frame = self.scrollView.bounds;

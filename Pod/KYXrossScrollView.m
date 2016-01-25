@@ -108,18 +108,6 @@ static __weak id currentFirstResponder_private;
     // Do nothing
 }
 
-- (void)setContentOffset:(CGPoint)contentOffset {
-    [super setContentOffset:contentOffset];
-}
-
-- (CGPoint)contentOffsetTo {
-    return self.contentOffset;
-}
-
-- (void)setContentOffsetTo:(CGPoint)contentOffset {
-    [super setContentOffset:contentOffset];
-}
-
 - (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated {
     [super setContentOffset:contentOffset animated:animated];
 }
