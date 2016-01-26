@@ -18,10 +18,39 @@
 
 //
 
+@interface UIScrollView (KYNotScrollSuperview_Private)
+
+@property (strong, nonatomic) NSNumber *ky_notScrollSuperview_obj;
+@property (strong, nonatomic) NSNumber *ky_notScrollableBySubviews_obj;
+
+@end
+
+@implementation UIScrollView (KYNotScrollSuperview_Private)
+
+@synthesizeAssociation(UIScrollView, ky_notScrollSuperview_obj);
+@synthesizeAssociation(UIScrollView, ky_notScrollableBySubviews_obj);
+
+@end
+
+//
+
 @implementation UIScrollView (KYNotScrollSuperview)
 
-@synthesizeAssociation(UIScrollView, ky_notScrollSuperview);
-@synthesizeAssociation(UIScrollView, ky_notScrollableBySubviews);
+- (BOOL)ky_notScrollSuperview {
+    return self.ky_notScrollSuperview_obj.boolValue;
+}
+
+- (void)setKy_notScrollSuperview:(BOOL)ky_notScrollSuperview {
+    self.ky_notScrollSuperview_obj = @(ky_notScrollSuperview);
+}
+
+- (BOOL)ky_notScrollableBySubviews {
+    return self.ky_notScrollableBySubviews_obj.boolValue;
+}
+
+- (void)setKy_notScrollableBySubviews:(BOOL)ky_notScrollableBySubviews {
+    self.ky_notScrollableBySubviews_obj = @(ky_notScrollableBySubviews);
+}
 
 + (void)load {
     [self jr_swizzleMethod:@selector(_attemptToDragParent:forNewBounds:oldBounds:)
