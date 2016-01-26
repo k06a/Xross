@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "KYXrossViewController"
-  s.version          = "0.3.1"
+  s.version          = "0.3.2"
   s.summary          = "All-directions-enabled UIPageViewController"
 
   s.homepage         = "https://github.com/Searchie/frontend"
@@ -16,4 +16,6 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Pod/**/*.h'
   s.frameworks = 'UIKit'
   s.dependency 'JRSwizzle'
+  s.dependency 'libextobjc'
+  s.dependency 'FBKVOController'
 end
