@@ -54,6 +54,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 @property (nullable, weak, nonatomic) id<KYXrossViewControllerDataSource> dataSource;
 @property (nullable, weak, nonatomic) id<KYXrossViewControllerDelegate> delegate;
 @property (nullable, readonly, nonatomic) UIViewController *viewController;
+@property (nullable, readonly, nonatomic) UIViewController *nextViewController;
 @property (readonly, nonatomic) UIScrollView *scrollView;
 @property (assign, nonatomic) BOOL bounces;
 @property (assign, nonatomic, getter=isMovingDisabled) BOOL movingDisabled;
