@@ -8,10 +8,13 @@
 
 #import <JRSwizzle/JRSwizzle.h>
 #import "UIScrollView+KYStickyKeyboard.h"
+#import "UIScrollView+KYNotScrollSuperview.h"
 #import "UIResponder+KYCurrentFirstResponder.h"
 #import "KYXrossScrollView.h"
 
 @interface UIScrollView () <UIGestureRecognizerDelegate>
+
+- (void)_attemptToDragParent:(id)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3;
 
 @end
 
@@ -22,6 +25,14 @@
 @end
 
 @implementation KYXrossScrollView
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        self.ky_stickyKeyboard = YES;
+        self.ky_notScrollableBySubviews = YES;
+    }
+    return self;
+}
 
 // Avoid UITextField to scroll superview to become visible on becoming first responder
 - (void)setContentOffset:(CGPoint)contentOffset animated:(BOOL)animated {

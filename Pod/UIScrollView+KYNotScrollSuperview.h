@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UIScrollView (KYNotScrollSuperview)
 
 @property (assign, nonatomic) BOOL ky_notScrollSuperview;
+@property (assign, nonatomic) BOOL ky_notScrollableBySubviews;
 
 @end
 

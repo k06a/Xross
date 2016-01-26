@@ -21,6 +21,7 @@
 @implementation UIScrollView (KYNotScrollSuperview)
 
 @synthesizeAssociation(UIScrollView, ky_notScrollSuperview);
+@synthesizeAssociation(UIScrollView, ky_notScrollableBySubviews);
 
 + (void)load {
     [self jr_swizzleMethod:@selector(_attemptToDragParent:forNewBounds:oldBounds:)
@@ -28,8 +29,8 @@
                      error:NULL];
 }
 
-- (void)xxx_attemptToDragParent:(id)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3 {
-    if (!self.ky_notScrollSuperview) {
+- (void)xxx_attemptToDragParent:(UIScrollView *)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3 {
+    if (!self.ky_notScrollSuperview && !arg1.ky_notScrollableBySubviews) {
         [self xxx_attemptToDragParent:arg1 forNewBounds:arg2 oldBounds:arg3];
     }
 }
