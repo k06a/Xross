@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "KYXrossViewController"
-  s.version          = "0.3.2"
+  s.version          = "0.3.3"
   s.summary          = "All-directions-enabled UIPageViewController"
 
   s.homepage         = "https://github.com/Searchie/frontend"
