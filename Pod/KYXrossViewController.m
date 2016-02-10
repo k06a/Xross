@@ -51,7 +51,6 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 @property (assign, nonatomic) KYXrossViewControllerDirection nextViewControllerDirection;
 @property (readonly, nonatomic) KYXrossScrollView *kyScrollView;
 @property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
-@property (strong, nonatomic) NSDate *allowMoveToNextAfter;
 @property (assign, nonatomic) UIEdgeInsets needEdgeInsets;
 
 @end
@@ -328,12 +327,10 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
     // Add nextViewController if possible for known direction
     if (self.nextViewController == nil && !KYXrossViewControllerDirectionEquals(direction, KYXrossViewControllerDirectionNone)) {
-        if ([[NSDate date] compare:self.allowMoveToNextAfter] == NSOrderedDescending) {
-            self.nextViewController = self.nextViewControllerToBe ?: [self.dataSource xross:self viewControllerForDirection:direction];
-            self.nextViewControllerToBe = nil;
-            if (self.nextViewController) {
-                self.nextViewControllerDirection = direction;
-            }
+        self.nextViewController = self.nextViewControllerToBe ?: [self.dataSource xross:self viewControllerForDirection:direction];
+        self.nextViewControllerToBe = nil;
+        if (self.nextViewController) {
+            self.nextViewControllerDirection = direction;
         }
         if (self.nextViewController == nil) {
             BOOL bounces = self.bounces;
@@ -341,8 +338,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
                 bounces = [self.delegate xross:self allowBounceToDirection:direction];
             }
             if (!bounces) {
-                self.allowMoveToNextAfter = [NSDate dateWithTimeIntervalSinceNow:0.2];
-                [self.kyScrollView setContentOffsetTo:CGPointZero animated:NO];
+                self.kyScrollView.contentOffset = CGPointZero;
             }
             return;
         }
@@ -356,6 +352,10 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
         [self.scrollView layoutIfNeeded];
     }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    self.kyScrollView.contentOffset = CGPointZero;
 }
 
 @end
