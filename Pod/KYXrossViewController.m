@@ -207,9 +207,9 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 
 - (void)reloadData {
     if (self.viewController) {
+        [self.viewController willMoveToParentViewController:nil];
         [self.viewController.view removeFromSuperview];
         [self.viewController removeFromParentViewController];
-        [self.viewController didMoveToParentViewController:nil];
         self.viewController = nil;
     }
 
@@ -225,6 +225,9 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
         [self.viewController didMoveToParentViewController:self];
         self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width,
                                                  self.scrollView.frame.size.height);
+        if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
+            [self.delegate xross:self didMoveToDirection:KYXrossViewControllerDirectionNone];
+        }
     }
 }
 
@@ -287,9 +290,9 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
         }
 
         // Remove VC
+        [self.nextViewController willMoveToParentViewController:nil];
         [self.nextViewController.view removeFromSuperview];
         [self.nextViewController removeFromParentViewController];
-        [self.nextViewController didMoveToParentViewController:nil];
         [self.nextViewController resignFirstResponder];
 
         // Center VC
@@ -354,6 +357,12 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
         self.nextViewController.view.clipsToBounds = YES;
         [self.nextViewController didMoveToParentViewController:self];
 
+        if (self.viewController == nil && KYXrossViewControllerDirectionIsNone(direction)) {
+            if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
+                [self.delegate xross:self didMoveToDirection:direction];
+            }
+        }
+        
         [self.scrollView layoutIfNeeded];
     }
 }
