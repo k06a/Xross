@@ -25,15 +25,27 @@
 }
 
 - (void)dealloc {
-    for (id observer in self.observers) {
-        [[NSNotificationCenter defaultCenter] removeObserver:observer];
-    }
-    self.observers = nil;
+    [self removeAllObservers];
 }
 
 - (void)addObserverForName:(nullable NSString *)name object:(nullable id)object queue:(NSOperationQueue *)queue usingBlock:(void (^)(NSNotification *note))block {
     id observer = [[NSNotificationCenter defaultCenter] addObserverForName:name object:object queue:queue usingBlock:block];
     [self.observers addObject:observer];
 }
+
+- (void)removeAllObservers {
+    for (id observer in self.observers) {
+        [[NSNotificationCenter defaultCenter] removeObserver:observer];
+    }
+    self.observers = nil;
+}
+
+@end
+
+//
+
+@implementation NSObject (KYNCController)
+
+@synthesizeAssociation(NSObject, NCController)
 
 @end

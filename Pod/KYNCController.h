@@ -12,7 +12,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface KYNCController : NSObject
 
-- (void)addObserverForName:(nullable NSString *)name object:(nullable id)object queue:(NSOperationQueue *)queue usingBlock:(void (^)(NSNotification *note))block;
+- (void)addObserverForName:(nullable NSString *)name
+                    object:(nullable id)object
+                     queue:(NSOperationQueue *)queue
+                usingBlock:(void (^)(NSNotification *note))block;
+
+- (void)removeAllObservers;
+
+@end
+
+//
+
+@interface NSObject (KYNCController)
+
+@property (nullable, strong, nonatomic) KYNCController *NCController;
 
 @end
 
