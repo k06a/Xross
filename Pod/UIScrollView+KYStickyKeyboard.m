@@ -8,13 +8,13 @@
 
 #import <libextobjc/extobjc.h>
 #import <KVOController/FBKVOController.h>
-#import "KYNCController.h"
+#import <NCController/MLWNCController.h>
 #import "UIResponder+KYCurrentFirstResponder.h"
 #import "UIScrollView+KYStickyKeyboard.h"
 
 @interface UIScrollView (KYStickyKeyboard_Private)
 
-@property (strong, nonatomic) KYNCController *ky_ncController;
+@property (strong, nonatomic) MLWNCController *ky_ncController;
 @property (strong, nonatomic) FBKVOController *ky_kvoController;
 
 @end
@@ -41,7 +41,7 @@
         return;
     }
     
-    self.ky_ncController = [[KYNCController alloc] init];
+    self.ky_ncController = [[MLWNCController alloc] init];
     [self.ky_ncController addObserverForName:UIKeyboardDidHideNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
         for (UIWindow *window in [UIApplication sharedApplication].windows) {
             if ([NSStringFromClass(window.class) isEqualToString:@"UIRemoteKeyboardWindow"] ||
