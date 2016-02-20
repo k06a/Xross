@@ -11,35 +11,35 @@
 #import "KYXrossScrollView.h"
 #import "KYXrossViewController.h"
 
-KYXrossViewControllerDirection KYXrossViewControllerDirectionNone   = (CGSize){0,0};
-KYXrossViewControllerDirection KYXrossViewControllerDirectionTop    = (CGSize){0,-1};
-KYXrossViewControllerDirection KYXrossViewControllerDirectionBottom = (CGSize){0,1};
-KYXrossViewControllerDirection KYXrossViewControllerDirectionLeft   = (CGSize){-1,0};
-KYXrossViewControllerDirection KYXrossViewControllerDirectionRight  = (CGSize){1,0};
+KYXrossDirection KYXrossDirectionNone   = (KYXrossDirection){0,0};
+KYXrossDirection KYXrossDirectionTop    = (KYXrossDirection){0,-1};
+KYXrossDirection KYXrossDirectionBottom = (KYXrossDirection){0,1};
+KYXrossDirection KYXrossDirectionLeft   = (KYXrossDirection){-1,0};
+KYXrossDirection KYXrossDirectionRight  = (KYXrossDirection){1,0};
 
 
-KYXrossViewControllerDirection KYXrossViewControllerDirectionMake(NSInteger dx, NSInteger dy) {
-    return CGSizeMake(dx ? dx/ABS(dx) : 0, dy ? dy/ABS(dy) : 0);
+KYXrossDirection KYXrossDirectionMake(NSInteger x, NSInteger y) {
+    return (KYXrossDirection){x ? x/ABS(x) : 0, y ? y/ABS(y) : 0};
 }
 
-KYXrossViewControllerDirection KYXrossViewControllerDirectionFromOffset(CGPoint offset) {
-    return KYXrossViewControllerDirectionMake(offset.x, offset.y);
+KYXrossDirection KYXrossDirectionFromOffset(CGPoint offset) {
+    return KYXrossDirectionMake(offset.x, offset.y);
 }
 
-BOOL KYXrossViewControllerDirectionIsNone(KYXrossViewControllerDirection direction) {
-    return direction.width == 0 && direction.height == 0;
+BOOL KYXrossDirectionIsNone(KYXrossDirection direction) {
+    return direction.x == 0 && direction.y == 0;
 }
 
-BOOL KYXrossViewControllerDirectionIsHorizontal(KYXrossViewControllerDirection direction) {
-    return direction.width != 0 && direction.height == 0;
+BOOL KYXrossDirectionIsHorizontal(KYXrossDirection direction) {
+    return direction.x != 0 && direction.y == 0;
 }
 
-BOOL KYXrossViewControllerDirectionIsVertical(KYXrossViewControllerDirection direction) {
-    return direction.width == 0 && direction.height != 0;
+BOOL KYXrossDirectionIsVertical(KYXrossDirection direction) {
+    return direction.x == 0 && direction.y != 0;
 }
 
-BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection direction, KYXrossViewControllerDirection direction2) {
-    return CGSizeEqualToSize(direction, direction2);
+BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection direction2) {
+    return direction.x == direction2.x && direction.y == direction2.y;
 }
 
 
@@ -48,7 +48,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 @property (strong, nonatomic) UIViewController *viewController;
 @property (strong, nonatomic) UIViewController *nextViewController;
 @property (strong, nonatomic) UIViewController *nextViewControllerToBe;
-@property (assign, nonatomic) KYXrossViewControllerDirection nextViewControllerDirection;
+@property (assign, nonatomic) KYXrossDirection nextViewControllerDirection;
 @property (readonly, nonatomic) KYXrossScrollView *kyScrollView;
 @property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
 @property (strong, nonatomic) NSDate *allowMoveToNextAfter;
@@ -155,6 +155,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
     
+    self.allowMoveToNextAfter = [NSDate dateWithTimeIntervalSinceNow:0.3];
     self.scrollView.contentOffset = CGPointZero;
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
         self.scrollView.contentOffset = CGPointZero;
@@ -169,15 +170,15 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
     self.viewController.view.frame = (CGRect){CGPointZero, self.scrollView.frame.size};
     self.nextViewController.view.frame = CGRectOffset(
         self.viewController.view.frame,
-        self.nextViewControllerDirection.width * self.scrollView.frame.size.width,
-        self.nextViewControllerDirection.height * self.scrollView.frame.size.height);
+        self.nextViewControllerDirection.x * self.scrollView.frame.size.width,
+        self.nextViewControllerDirection.y * self.scrollView.frame.size.height);
 
     self.scrollView.contentSize = self.scrollView.frame.size;
     self.needEdgeInsets = UIEdgeInsetsMake(
-        (self.nextViewControllerDirection.height < 0) ? self.scrollView.frame.size.height : 1,
-        (self.nextViewControllerDirection.width < 0)  ? self.scrollView.frame.size.width  : 1,
-        (self.nextViewControllerDirection.height > 0) ? self.scrollView.frame.size.height : 1,
-        (self.nextViewControllerDirection.width > 0)  ? self.scrollView.frame.size.width  : 1);
+        (self.nextViewControllerDirection.y < 0) ? self.scrollView.frame.size.height : 1,
+        (self.nextViewControllerDirection.x < 0)  ? self.scrollView.frame.size.width  : 1,
+        (self.nextViewControllerDirection.y > 0) ? self.scrollView.frame.size.height : 1,
+        (self.nextViewControllerDirection.x > 0)  ? self.scrollView.frame.size.width  : 1);
     [self updateInsets];
 }
 
@@ -213,7 +214,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
         self.viewController = nil;
     }
 
-    self.viewController = [self.dataSource xross:self viewControllerForDirection:KYXrossViewControllerDirectionNone];
+    self.viewController = [self.dataSource xross:self viewControllerForDirection:KYXrossDirectionNone];
     if (self.viewController) {
         [self addChildViewController:self.viewController];
         if (self.viewController.view.backgroundColor == nil) { // Fixed bug with broken scrolling
@@ -226,19 +227,19 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
         self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width,
                                                  self.scrollView.frame.size.height);
         if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
-            [self.delegate xross:self didMoveToDirection:KYXrossViewControllerDirectionNone];
+            [self.delegate xross:self didMoveToDirection:KYXrossDirectionNone];
         }
     }
 }
 
-- (void)moveToDirection:(KYXrossViewControllerDirection)direction {
+- (void)moveToDirection:(KYXrossDirection)direction {
     [self moveToDirection:direction controller:nil];
 }
 
-- (void)moveToDirection:(KYXrossViewControllerDirection)direction controller:(UIViewController *)controller {
+- (void)moveToDirection:(KYXrossDirection)direction controller:(UIViewController *)controller {
     self.nextViewControllerToBe = controller;
-    self.scrollView.contentOffset = CGPointMake(direction.width, direction.height);
-    [self.kyScrollView setContentOffsetTo:CGPointMake(direction.width * self.scrollView.frame.size.width, direction.height * self.scrollView.frame.size.height) animated:YES];
+    self.scrollView.contentOffset = CGPointMake(direction.x, direction.y);
+    [self.kyScrollView setContentOffsetTo:CGPointMake(direction.x * self.scrollView.frame.size.width, direction.y * self.scrollView.frame.size.height) animated:YES];
 }
 
 #pragma mark - Scroll View
@@ -262,14 +263,14 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 }
 
 - (void)scrollViewDidScrollNotRecursiveNotDiagonal:(UIScrollView *)scrollView {
-    KYXrossViewControllerDirection direction = KYXrossViewControllerDirectionMake(
+    KYXrossDirection direction = KYXrossDirectionMake(
         (ABS(scrollView.contentOffset.x) < FLT_EPSILON) ? 0 : scrollView.contentOffset.x / ABS(scrollView.contentOffset.x),
         (ABS(scrollView.contentOffset.y) < FLT_EPSILON) ? 0 : scrollView.contentOffset.y / ABS(scrollView.contentOffset.y));
     
     if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)] &&
         (self.nextViewController || self.nextViewControllerToBe))
     {
-        CGFloat progress = KYXrossViewControllerDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x)/self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y)/self.scrollView.frame.size.height;
+        CGFloat progress = KYXrossDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x)/self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y)/self.scrollView.frame.size.height;
         [self.delegate xross:self didScrollToDirection:direction progress:progress];
     }
     
@@ -286,7 +287,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
             }];
         }
         else {
-            direction = KYXrossViewControllerDirectionNone;
+            direction = KYXrossDirectionNone;
         }
 
         // Remove VC
@@ -325,12 +326,12 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
         }
 
         self.nextViewController = nil;
-        self.nextViewControllerDirection = KYXrossViewControllerDirectionNone;
+        self.nextViewControllerDirection = KYXrossDirectionNone;
         return;
     }
 
     // Add nextViewController if possible for known direction
-    if (self.nextViewController == nil && !KYXrossViewControllerDirectionEquals(direction, KYXrossViewControllerDirectionNone)) {
+    if (self.nextViewController == nil && !KYXrossDirectionEquals(direction, KYXrossDirectionNone)) {
         if ([[NSDate date] compare:self.allowMoveToNextAfter] == NSOrderedDescending) {
             self.nextViewController = self.nextViewControllerToBe ?: [self.dataSource xross:self viewControllerForDirection:direction];
             self.nextViewControllerToBe = nil;
@@ -357,7 +358,7 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
         self.nextViewController.view.clipsToBounds = YES;
         [self.nextViewController didMoveToParentViewController:self];
 
-        if (self.viewController == nil && KYXrossViewControllerDirectionIsNone(direction)) {
+        if (self.viewController == nil && KYXrossDirectionIsNone(direction)) {
             if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
                 [self.delegate xross:self didMoveToDirection:direction];
             }

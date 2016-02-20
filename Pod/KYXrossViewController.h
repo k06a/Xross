@@ -12,26 +12,31 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class KYXrossViewController;
 
-typedef CGSize KYXrossViewControllerDirection;
+typedef struct {
+    NSInteger x;
+    NSInteger y;
+} KYXrossDirection;
 
-extern KYXrossViewControllerDirection KYXrossViewControllerDirectionNone;
-extern KYXrossViewControllerDirection KYXrossViewControllerDirectionTop;
-extern KYXrossViewControllerDirection KYXrossViewControllerDirectionBottom;
-extern KYXrossViewControllerDirection KYXrossViewControllerDirectionLeft;
-extern KYXrossViewControllerDirection KYXrossViewControllerDirectionRight;
+typedef KYXrossDirection KYXrossPosition;
 
-KYXrossViewControllerDirection KYXrossViewControllerDirectionMake(NSInteger dx, NSInteger dy);
-KYXrossViewControllerDirection KYXrossViewControllerDirectionFromOffset(CGPoint offset);
-BOOL KYXrossViewControllerDirectionIsNone(KYXrossViewControllerDirection direction);
-BOOL KYXrossViewControllerDirectionIsHorizontal(KYXrossViewControllerDirection direction);
-BOOL KYXrossViewControllerDirectionIsVertical(KYXrossViewControllerDirection direction);
-BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection direction, KYXrossViewControllerDirection direction2);
+extern KYXrossDirection KYXrossDirectionNone;
+extern KYXrossDirection KYXrossDirectionTop;
+extern KYXrossDirection KYXrossDirectionBottom;
+extern KYXrossDirection KYXrossDirectionLeft;
+extern KYXrossDirection KYXrossDirectionRight;
+
+KYXrossDirection KYXrossDirectionMake(NSInteger x, NSInteger y);
+KYXrossDirection KYXrossDirectionFromOffset(CGPoint offset);
+BOOL KYXrossDirectionIsNone(KYXrossDirection direction);
+BOOL KYXrossDirectionIsHorizontal(KYXrossDirection direction);
+BOOL KYXrossDirectionIsVertical(KYXrossDirection direction);
+BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection direction2);
 
 // Data Source
 
 @protocol KYXrossViewControllerDataSource <NSObject>
 
-- (nullable UIViewController *)xross:(KYXrossViewController *)xrossViewController viewControllerForDirection:(KYXrossViewControllerDirection)direction;
+- (nullable UIViewController *)xross:(KYXrossViewController *)xrossViewController viewControllerForDirection:(KYXrossDirection)direction;
 
 @end
 
@@ -40,10 +45,10 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 @protocol KYXrossViewControllerDelegate <NSObject>
 
 @optional
-- (void)xross:(KYXrossViewController *)xrossViewController didMoveToDirection:(KYXrossViewControllerDirection)direction;
-- (BOOL)xross:(KYXrossViewController *)xrossViewController allowBounceToDirection:(KYXrossViewControllerDirection)direction;
+- (void)xross:(KYXrossViewController *)xrossViewController didMoveToDirection:(KYXrossDirection)direction;
+- (BOOL)xross:(KYXrossViewController *)xrossViewController allowBounceToDirection:(KYXrossDirection)direction;
 - (void)xross:(KYXrossViewController *)xrossViewController removedViewController:(UIViewController *)viewController;
-- (void)xross:(KYXrossViewController *)xrossViewController didScrollToDirection:(KYXrossViewControllerDirection)direction progress:(CGFloat)progress;
+- (void)xross:(KYXrossViewController *)xrossViewController didScrollToDirection:(KYXrossDirection)direction progress:(CGFloat)progress;
 
 @end
 
@@ -69,8 +74,8 @@ BOOL KYXrossViewControllerDirectionEquals(KYXrossViewControllerDirection directi
 @property (assign, nonatomic) BOOL denyRightMovement;
 
 - (void)reloadData;
-- (void)moveToDirection:(KYXrossViewControllerDirection)direction;
-- (void)moveToDirection:(KYXrossViewControllerDirection)direction controller:(nullable UIViewController *)controller;
+- (void)moveToDirection:(KYXrossDirection)direction;
+- (void)moveToDirection:(KYXrossDirection)direction controller:(nullable UIViewController *)controller;
 
 @end
 
