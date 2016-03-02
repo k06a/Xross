@@ -3,10 +3,10 @@ Pod::Spec.new do |s|
   s.version          = "0.4.0"
   s.summary          = "All-directions-enabled UIPageViewController"
 
-  s.homepage         = "https://github.com/Searchie/frontend"
+  s.homepage         = "https://github.com/ML-Works/frontend"
   s.license          = 'MIT'
   s.author           = { "Anton Bukov" => "k06aaa@gmail.com" }
-  s.source           = { :svn => "https://github.com/Searchie/frontend/tags/KYXrossViewController/#{s.version}/libraries/KYXrossViewController" }
+  s.source           = { :svn => "https://github.com/ML-Works/frontend/tags/KYXrossViewController/#{s.version}/libraries/KYXrossViewController" }
   
   s.platform     = :ios, '8.0'
   s.requires_arc = true
