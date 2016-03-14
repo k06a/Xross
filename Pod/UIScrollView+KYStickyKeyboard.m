@@ -7,8 +7,10 @@
 //
 
 #import <libextobjc/extobjc.h>
+
 #import <KVOController/FBKVOController.h>
 #import <NCController/MLWNCController.h>
+
 #import "UIResponder+KYCurrentFirstResponder.h"
 #import "UIScrollView+KYStickyKeyboard.h"
 
@@ -40,43 +42,51 @@
         self.ky_kvoController = nil;
         return;
     }
-    
-    self.ky_ncController = [[MLWNCController alloc] init];
-    [self.ky_ncController addObserverForName:UIKeyboardDidHideNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
-        for (UIWindow *window in [UIApplication sharedApplication].windows) {
-            if ([NSStringFromClass(window.class) isEqualToString:@"UIRemoteKeyboardWindow"] ||
-                [NSStringFromClass(window.class) isEqualToString:@"UITextEffectsWindow"])
-            {
-                window.clipsToBounds = YES;
-                window.transform = CGAffineTransformIdentity;
-            }
-        }
-    }];
-    
+
     @weakify(self);
+    self.ky_ncController = [[MLWNCController alloc] init];
+    [self.ky_ncController addObserverForName:UIKeyboardDidHideNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *_Nonnull note) {
+        @strongify(self);
+        if (!self) {
+            return;
+        }
+
+        [self applyTransformToKeyboardWindows:CGAffineTransformIdentity];
+    }];
+
     self.ky_kvoController = [FBKVOController controllerWithObserver:self];
     [self.ky_kvoController observe:self keyPath:@keypath(self.contentOffset) options:NSKeyValueObservingOptionNew block:^(id observer, id object, NSDictionary *change) {
         @strongify(self);
+        if (!self) {
+            return;
+        }
+
         UIView *responder = [UIResponder ky_currentFirstResponder];
         while (responder && [responder isKindOfClass:[UIView class]] && responder.window != self.window) {
             responder = (id)[responder nextResponder];
         }
-        
+
         if ([responder isKindOfClass:[UIView class]]) {
             CGPoint p = [self convertPoint:CGPointZero fromView:responder];
             CGFloat k = CGPointEqualToPoint(self.contentOffset, CGPointZero) ? 0.0 : 1.0;
-            CGAffineTransform transform = CGAffineTransformMakeTranslation(-self.contentOffset.x*k + floor(p.x/self.frame.size.width)*self.frame.size.width, -self.contentOffset.y*k + floor(p.y/self.frame.size.height)*self.frame.size.height);
-            
-            for (UIWindow *window in [UIApplication sharedApplication].windows) {
-                if ([NSStringFromClass(window.class) isEqualToString:@"UIRemoteKeyboardWindow"] ||
-                    [NSStringFromClass(window.class) isEqualToString:@"UITextEffectsWindow"])
-                {
-                    window.clipsToBounds = YES;
-                    window.transform = transform;
-                }
-            }
+            CGAffineTransform transform = CGAffineTransformMakeTranslation(-self.contentOffset.x * k + floor(p.x / self.frame.size.width) * self.frame.size.width, -self.contentOffset.y * k + floor(p.y / self.frame.size.height) * self.frame.size.height);
+
+            [self applyTransformToKeyboardWindows:transform];
+        }
+        else {
+            [self applyTransformToKeyboardWindows:CGAffineTransformIdentity];
         }
     }];
+}
+
+- (void)applyTransformToKeyboardWindows:(CGAffineTransform)transform {
+    for (UIWindow *window in [UIApplication sharedApplication].windows) {
+        if ([NSStringFromClass(window.class) isEqualToString:@"UIRemoteKeyboardWindow"] ||
+            [NSStringFromClass(window.class) isEqualToString:@"UITextEffectsWindow"]) {
+            window.clipsToBounds = YES;
+            window.transform = transform;
+        }
+    }
 }
 
 @end
