@@ -63,6 +63,10 @@
 
         UIView *viewResponder = nil;
         UIResponder *responder = [UIResponder ky_currentFirstResponder];
+        if (responder == nil) {
+            [self applyTransformToKeyboardWindows:CGAffineTransformIdentity];
+            return;
+        }
         while (responder) {
             if ([responder isKindOfClass:[UIView class]] && [(UIView *)responder window] == self.window) {
                 viewResponder = responder;
