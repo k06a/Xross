@@ -61,20 +61,22 @@
             return;
         }
 
-        UIView *responder = [UIResponder ky_currentFirstResponder];
-        while (responder && [responder isKindOfClass:[UIView class]] && responder.window != self.window) {
-            responder = (id)[responder nextResponder];
+        UIView *viewResponder = nil;
+        UIResponder *responder = [UIResponder ky_currentFirstResponder];
+        while (responder) {
+            if ([responder isKindOfClass:[UIView class]] && [(UIView *)responder window] == self.window) {
+                viewResponder = responder;
+                break;
+            }
+            responder = [responder nextResponder];
         }
 
-        if ([responder isKindOfClass:[UIView class]]) {
-            CGPoint p = [self convertPoint:CGPointZero fromView:responder];
+        if (viewResponder) {
+            CGPoint p = [self convertPoint:CGPointZero fromView:viewResponder];
             CGFloat k = CGPointEqualToPoint(self.contentOffset, CGPointZero) ? 0.0 : 1.0;
             CGAffineTransform transform = CGAffineTransformMakeTranslation(-self.contentOffset.x * k + floor(p.x / self.frame.size.width) * self.frame.size.width, -self.contentOffset.y * k + floor(p.y / self.frame.size.height) * self.frame.size.height);
 
             [self applyTransformToKeyboardWindows:transform];
-        }
-        else {
-            [self applyTransformToKeyboardWindows:CGAffineTransformIdentity];
         }
     }];
 }
