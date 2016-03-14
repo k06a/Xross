@@ -18,6 +18,8 @@
 
 @property (strong, nonatomic) MLWNCController *ky_ncController;
 @property (strong, nonatomic) FBKVOController *ky_kvoController;
+@property (strong, nonatomic) NSNumber *ky_keyboardVisibleObj;
+@property (assign, nonatomic) BOOL ky_keyboardVisible;
 
 @end
 
@@ -25,6 +27,15 @@
 
 @synthesizeAssociation(UIScrollView, ky_ncController);
 @synthesizeAssociation(UIScrollView, ky_kvoController);
+@synthesizeAssociation(UIScrollView, ky_keyboardVisibleObj);
+
+- (BOOL)ky_keyboardVisible {
+    return self.ky_keyboardVisibleObj.boolValue;
+}
+
+- (void)setKy_keyboardVisible:(BOOL)ky_keyboardVisible {
+    self.ky_keyboardVisibleObj = @(ky_keyboardVisible);
+}
 
 @end
 
@@ -51,7 +62,17 @@
             return;
         }
 
+        self.ky_keyboardVisible = NO;
         [self applyTransformToKeyboardWindows:CGAffineTransformIdentity];
+    }];
+    
+    [self.ky_ncController addObserverForName:UIKeyboardDidShowNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *_Nonnull note) {
+        @strongify(self);
+        if (!self) {
+            return;
+        }
+        
+        self.ky_keyboardVisible = YES;
     }];
 
     self.ky_kvoController = [FBKVOController controllerWithObserver:self];
@@ -64,7 +85,9 @@
         UIView *viewResponder = nil;
         UIResponder *responder = [UIResponder ky_currentFirstResponder];
         if (responder == nil) {
-            [self applyTransformToKeyboardWindows:CGAffineTransformIdentity];
+            if (!self.ky_keyboardVisible) {
+                [self applyTransformToKeyboardWindows:CGAffineTransformIdentity];
+            }
             return;
         }
         while (responder) {
