@@ -271,6 +271,7 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
         (self.nextViewController || self.nextViewControllerToBe))
     {
         CGFloat progress = KYXrossDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x)/self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y)/self.scrollView.frame.size.height;
+        progress = MIN(MAX(0, progress), 1);
         [self.delegate xross:self didScrollToDirection:direction progress:progress];
     }
     
