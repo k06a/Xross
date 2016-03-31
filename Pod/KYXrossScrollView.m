@@ -14,8 +14,6 @@
 
 @interface UIScrollView () <UIGestureRecognizerDelegate>
 
-- (void)_attemptToDragParent:(id)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3;
-
 @end
 
 //

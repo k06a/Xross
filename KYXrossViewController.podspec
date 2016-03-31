@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "KYXrossViewController"
-  s.version          = "0.4.5"
+  s.version          = "0.4.6"
   s.summary          = "All-directions-enabled UIPageViewController"
 
   s.homepage         = "https://github.com/ML-Works/frontend"
@@ -19,4 +19,5 @@ Pod::Spec.new do |s|
   s.dependency 'libextobjc'
   s.dependency 'KVOController'
   s.dependency 'NCController'
+  s.dependency 'UAObfuscatedString'
 end

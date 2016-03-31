@@ -8,13 +8,13 @@
 
 #import <libextobjc/extobjc.h>
 #import <JRSwizzle/JRSwizzle.h>
+#import <UAObfuscatedString/UAObfuscatedString.h>
+
 #import "UIScrollView+KYNotScrollSuperview.h"
 
-@interface UIScrollView ()
-
-- (void)_attemptToDragParent:(id)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3;
-
-@end
+static NSString *selectorOfInterest() {
+    return NSMutableString.string._.a.t.t.e.m.p.t.T.o.D.r.a.g.P.a.r.e.n.t.colon.f.o.r.N.e.w.B.o.u.n.d.s.colon.o.l.d.B.o.u.n.d.s.colon;
+}
 
 //
 
@@ -53,14 +53,14 @@
 }
 
 + (void)load {
-    [self jr_swizzleMethod:@selector(_attemptToDragParent:forNewBounds:oldBounds:)
-                withMethod:@selector(xxx_attemptToDragParent:forNewBounds:oldBounds:)
+    [self jr_swizzleMethod:NSSelectorFromString(selectorOfInterest())
+                withMethod:@selector(xxx_selectorOfInterest:newBounds:oldBounds:)
                      error:NULL];
 }
 
-- (void)xxx_attemptToDragParent:(UIScrollView *)arg1 forNewBounds:(CGRect)arg2 oldBounds:(CGRect)arg3 {
+- (void)xxx_selectorOfInterest:(UIScrollView *)arg1 newBounds:(CGRect)arg2 oldBounds:(CGRect)arg3 {
     if (!self.ky_notScrollSuperview && !arg1.ky_notScrollableBySubviews) {
-        [self xxx_attemptToDragParent:arg1 forNewBounds:arg2 oldBounds:arg3];
+        [self xxx_selectorOfInterest:arg1 newBounds:arg2 oldBounds:arg3];
     }
 }
 
