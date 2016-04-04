@@ -237,6 +237,7 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 }
 
 - (void)moveToDirection:(KYXrossDirection)direction controller:(UIViewController *)controller {
+    self.view.userInteractionEnabled = NO;
     self.nextViewControllerToBe = controller;
     self.scrollView.contentOffset = CGPointMake(direction.x, direction.y);
     [self.kyScrollView setContentOffsetTo:CGPointMake(direction.x * self.scrollView.frame.size.width, direction.y * self.scrollView.frame.size.height) animated:YES];
@@ -304,6 +305,9 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
         self.viewController.view.frame = self.scrollView.bounds;
         [self.viewController becomeFirstResponder];
 
+        if (!self.view.userInteractionEnabled) {
+            self.view.userInteractionEnabled = YES;
+        }
         if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
             [self.delegate xross:self didMoveToDirection:direction];
         }
