@@ -13,7 +13,7 @@
 #import "UIScrollView+KYNotScrollSuperview.h"
 
 static NSString *selectorOfInterest() {
-    return NSMutableString.string._.a.t.t.e.m.p.t.T.o.D.r.a.g.P.a.r.e.n.t.colon.f.o.r.N.e.w.B.o.u.n.d.s.colon.o.l.d.B.o.u.n.d.s.colon;
+    return NSMutableString.string.underscore.a.t.t.e.m.p.t.T.o.D.r.a.g.P.a.r.e.n.t.colon.f.o.r.N.e.w.B.o.u.n.d.s.colon.o.l.d.B.o.u.n.d.s.colon;
 }
 
 //
