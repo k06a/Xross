@@ -208,10 +208,17 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 
 - (void)reloadData {
     if (self.viewController) {
+        UIViewController *removedViewController = self.viewController;
         [self.viewController willMoveToParentViewController:nil];
         [self.viewController.view removeFromSuperview];
         [self.viewController removeFromParentViewController];
         self.viewController = nil;
+        
+        if (removedViewController) {
+            if ([self.delegate respondsToSelector:@selector(xross:removedViewController:)]) {
+                [self.delegate xross:self removedViewController:removedViewController];
+            }
+        }
     }
 
     self.viewController = [self.dataSource xross:self viewControllerForDirection:KYXrossDirectionNone];
