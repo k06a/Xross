@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <libextobjc/extobjc.h>
 
 #import "KYXrossScrollView.h"
 #import "KYXrossViewController.h"
@@ -60,10 +61,11 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 
 // KVO Dependent Keys
 + (NSSet<NSString *> *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
-    return [[super keyPathsForValuesAffectingValueForKey:key] setByAddingObjectsFromArray:@{
-        NSStringFromSelector(@selector(isMoving)) : @[ NSStringFromSelector(@selector(nextViewController)) ],
-        NSStringFromSelector(@selector(isMovingDisabled)) : @[ @"scrollView.scrollEnabled" ],
-    }[key] ?: @[]];
+    KYXrossViewController *this = nil;
+    return @{
+        @keypath(this.isMoving) : @[ @keypath(this.nextViewController) ],
+        @keypath(this.isMovingDisabled) : @[ @keypath(this.scrollView.scrollEnabled) ],
+    }[key] ?: [super keyPathsForValuesAffectingValueForKey:key];
 }
 
 - (BOOL)isMoving {
@@ -242,10 +244,11 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
     [self moveToDirection:direction distance:1];
 }
 
-- (void)moveToDirection:(KYXrossDirection)direction distance:(NSUInteger)distance {
+- (void)moveToDirection:(KYXrossDirection)direction distance:(NSInteger)distance {
+    assert(distance >= 0);
     self.view.userInteractionEnabled = NO;
     CGPoint newDirection = CGPointMake(direction.x * distance, direction.y * distance);
-    self.scrollView.contentOffset = newDirection;
+    self.scrollView.contentOffset = CGPointMake(direction.x, direction.y);
     [self.kyScrollView setContentOffsetTo:CGPointMake(newDirection.x * self.scrollView.frame.size.width, newDirection.y * self.scrollView.frame.size.height) animated:YES];
 }
 
