@@ -75,7 +75,6 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 
 - (void)reloadData;
 - (void)moveToDirection:(KYXrossDirection)direction;
-- (void)moveToDirection:(KYXrossDirection)direction distance:(NSInteger)distance;
 
 @end
 

@@ -241,15 +241,9 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 }
 
 - (void)moveToDirection:(KYXrossDirection)direction {
-    [self moveToDirection:direction distance:1];
-}
-
-- (void)moveToDirection:(KYXrossDirection)direction distance:(NSInteger)distance {
-    assert(distance >= 0);
     self.view.userInteractionEnabled = NO;
-    CGPoint newDirection = CGPointMake(direction.x * distance, direction.y * distance);
     self.scrollView.contentOffset = CGPointMake(direction.x, direction.y);
-    [self.kyScrollView setContentOffsetTo:CGPointMake(newDirection.x * self.scrollView.frame.size.width, newDirection.y * self.scrollView.frame.size.height) animated:YES];
+    [self.kyScrollView setContentOffsetTo:CGPointMake(direction.x * self.scrollView.frame.size.width, direction.y * self.scrollView.frame.size.height) animated:YES];
 }
 
 #pragma mark - Scroll View
