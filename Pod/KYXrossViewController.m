@@ -63,8 +63,8 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 + (NSSet<NSString *> *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     KYXrossViewController *this = nil;
     return @{
-        @keypath(this.isMoving) : @[ @keypath(this.nextViewController) ],
-        @keypath(this.isMovingDisabled) : @[ @keypath(this.scrollView.scrollEnabled) ],
+        @keypath(this.isMoving) : [NSSet setWithArray:@[ @keypath(this.nextViewController) ]],
+        @keypath(this.isMovingDisabled) : [NSSet setWithArray:@[ @keypath(this.scrollView.scrollEnabled) ]],
     }[key] ?: [super keyPathsForValuesAffectingValueForKey:key];
 }
 
