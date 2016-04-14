@@ -75,6 +75,7 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 
 - (void)reloadData;
 - (void)moveToDirection:(KYXrossDirection)direction;
+- (void)moveToDirection:(KYXrossDirection)direction completion:(void(^)())completion;
 
 @end
 
