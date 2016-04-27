@@ -53,6 +53,7 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 @property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
 @property (strong, nonatomic) NSDate *allowMoveToNextAfter;
 @property (assign, nonatomic) UIEdgeInsets needEdgeInsets;
+@property (copy, nonatomic) void(^completionBlock)();
 
 @end
 
@@ -241,6 +242,11 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
 }
 
 - (void)moveToDirection:(KYXrossDirection)direction {
+    [self moveToDirection:direction completion:nil];
+}
+
+- (void)moveToDirection:(KYXrossDirection)direction completion:(void(^)())completion {
+    self.completionBlock = completion;
     self.view.userInteractionEnabled = NO;
     self.scrollView.contentOffset = CGPointMake(direction.x, direction.y);
     [self.kyScrollView setContentOffsetTo:CGPointMake(direction.x * self.scrollView.frame.size.width, direction.y * self.scrollView.frame.size.height) animated:YES];
@@ -308,6 +314,9 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
         self.viewController.view.frame = self.scrollView.bounds;
         [self.viewController becomeFirstResponder];
 
+        self.nextViewController = nil;
+        self.nextViewControllerDirection = KYXrossDirectionNone;
+        
         if (!self.view.userInteractionEnabled) {
             self.view.userInteractionEnabled = YES;
         }
@@ -317,7 +326,11 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
         if ([self.delegate respondsToSelector:@selector(xross:removedViewController:)]) {
             [self.delegate xross:self removedViewController:self.nextViewController];
         }
-
+        if (self.completionBlock) {
+            self.completionBlock();
+            self.completionBlock = nil;
+        }
+        
         if (!(self.supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation))) {
             NSArray<NSNumber *> *orientations = @[
                 @(UIInterfaceOrientationMaskPortrait),
@@ -332,9 +345,6 @@ BOOL KYXrossDirectionEquals(KYXrossDirection direction, KYXrossDirection directi
                 }
             }
         }
-
-        self.nextViewController = nil;
-        self.nextViewControllerDirection = KYXrossDirectionNone;
         return;
     }
 
