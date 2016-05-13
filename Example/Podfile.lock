@@ -1,0 +1,65 @@
+PODS:
+  - JRSwizzle (1.0)
+  - KVOController (1.1.0)
+  - libextobjc (0.4.1):
+    - libextobjc/EXTADT (= 0.4.1)
+    - libextobjc/EXTConcreteProtocol (= 0.4.1)
+    - libextobjc/EXTKeyPathCoding (= 0.4.1)
+    - libextobjc/EXTNil (= 0.4.1)
+    - libextobjc/EXTSafeCategory (= 0.4.1)
+    - libextobjc/EXTScope (= 0.4.1)
+    - libextobjc/EXTSelectorChecking (= 0.4.1)
+    - libextobjc/EXTSynthesize (= 0.4.1)
+    - libextobjc/NSInvocation+EXT (= 0.4.1)
+    - libextobjc/NSMethodSignature+EXT (= 0.4.1)
+    - libextobjc/RuntimeExtensions (= 0.4.1)
+    - libextobjc/UmbrellaHeader (= 0.4.1)
+  - libextobjc/EXTADT (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/EXTConcreteProtocol (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/EXTKeyPathCoding (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/EXTNil (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/EXTSafeCategory (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/EXTScope (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/EXTSelectorChecking (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/EXTSynthesize (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/NSInvocation+EXT (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/NSMethodSignature+EXT (0.4.1):
+    - libextobjc/RuntimeExtensions
+  - libextobjc/RuntimeExtensions (0.4.1)
+  - libextobjc/UmbrellaHeader (0.4.1)
+  - NCController (0.2.1)
+  - UAObfuscatedString (0.3.2)
+  - Xross (0.6.0):
+    - JRSwizzle
+    - KVOController
+    - libextobjc
+    - NCController
+    - UAObfuscatedString
+
+DEPENDENCIES:
+  - Xross (from `../`)
+
+EXTERNAL SOURCES:
+  Xross:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  JRSwizzle: dd5ead5d913a0f29e7f558200165849f006bb1e3
+  KVOController: 321b5fc59300fcaabd42c0f679baa7a27efbb2fd
+  libextobjc: a650fc1bf489a3d3a9bc2e621efa3e1006fc5471
+  NCController: e05249e11c5747679719d2d2c7cb8ae995ea6797
+  UAObfuscatedString: 128d0df4876ad570ef07c7851e27e094c6e080a9
+  Xross: 0d4c87cd86d46f0a793d4a9e22861e5529f2318e
+
+PODFILE CHECKSUM: bf978f13dba8733fb9a64604a3018d676e1552bf
+
+COCOAPODS: 1.0.0

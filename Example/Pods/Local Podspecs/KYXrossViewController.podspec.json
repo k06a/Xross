@@ -1,0 +1,37 @@
+{
+  "name": "KYXrossViewController",
+  "version": "0.5.1",
+  "summary": "All-directions-enabled UIPageViewController",
+  "homepage": "https://github.com/ML-Works/frontend",
+  "license": "MIT",
+  "authors": {
+    "Anton Bukov": "k06aaa@gmail.com"
+  },
+  "source": {
+    "svn": "https://github.com/ML-Works/frontend/tags/KYXrossViewController/0.5.1/libraries/KYXrossViewController"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "requires_arc": true,
+  "source_files": "Pod/**/*",
+  "public_header_files": "Pod/**/*.h",
+  "frameworks": "UIKit",
+  "dependencies": {
+    "JRSwizzle": [
+
+    ],
+    "libextobjc": [
+
+    ],
+    "KVOController": [
+
+    ],
+    "NCController": [
+
+    ],
+    "UAObfuscatedString": [
+
+    ]
+  }
+}
