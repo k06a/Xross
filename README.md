@@ -1,9 +1,9 @@
-# MLWXrossViewController
+# Xross
 
-[![CI Status](http://img.shields.io/travis/Andrew Podkovyrin/MLWXrossViewController.svg?style=flat)](https://travis-ci.org/Andrew Podkovyrin/MLWXrossViewController)
-[![Version](https://img.shields.io/cocoapods/v/MLWXrossViewController.svg?style=flat)](http://cocoapods.org/pods/MLWXrossViewController)
-[![License](https://img.shields.io/cocoapods/l/MLWXrossViewController.svg?style=flat)](http://cocoapods.org/pods/MLWXrossViewController)
-[![Platform](https://img.shields.io/cocoapods/p/MLWXrossViewController.svg?style=flat)](http://cocoapods.org/pods/MLWXrossViewController)
+[![CI Status](http://img.shields.io/travis/Andrew Podkovyrin/Xross.svg?style=flat)](https://travis-ci.org/ML-Works/Xross)
+[![Version](https://img.shields.io/cocoapods/v/Xross.svg?style=flat)](http://cocoapods.org/pods/Xross)
+[![License](https://img.shields.io/cocoapods/l/Xross.svg?style=flat)](http://cocoapods.org/pods/Xross)
+[![Platform](https://img.shields.io/cocoapods/p/Xross.svg?style=flat)](http://cocoapods.org/pods/Xross)
 
 ## Usage
 
@@ -13,17 +13,17 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Installation
 
-MLWXrossViewController is available through [CocoaPods](http://cocoapods.org). To install
+Xross is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "MLWXrossViewController"
+pod 'Xross'
 ```
 
 ## Author
 
-Andrew Podkovyrin, podkovyrin@gmail.com
+Antonn Bukov, k06aaa@gmail.com
 
 ## License
 
-MLWXrossViewController is available under the MIT license. See the LICENSE file for more info.
+Xross is available under the MIT license. See the LICENSE file for more info.
