@@ -1,6 +1,6 @@
 # Xross
 
-[![CI Status](http://img.shields.io/travis/Andrew Podkovyrin/Xross.svg?style=flat)](https://travis-ci.org/ML-Works/Xross)
+[![CI Status](http://img.shields.io/travis/ML-Works/Xross.svg?style=flat)](https://travis-ci.org/ML-Works/Xross)
 [![Version](https://img.shields.io/cocoapods/v/Xross.svg?style=flat)](http://cocoapods.org/pods/Xross)
 [![License](https://img.shields.io/cocoapods/l/Xross.svg?style=flat)](http://cocoapods.org/pods/Xross)
 [![Platform](https://img.shields.io/cocoapods/p/Xross.svg?style=flat)](http://cocoapods.org/pods/Xross)
