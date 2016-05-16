@@ -6,7 +6,5 @@ target 'Xross_Example' do
 end
 
 target 'Xross_Tests' do
-  pod "Xross", :path => "../"
 
-  
 end

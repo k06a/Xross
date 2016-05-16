@@ -6,43 +6,43 @@
 	<dict>
 		<key>JRSwizzle.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>1</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>KVOController.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>2</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>NCController.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>4</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>Pods-Xross_Example.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>5</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>Pods-Xross_Tests.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>6</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>UAObfuscatedString.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>7</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>Xross.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>8</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>libextobjc.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>3</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -53,6 +53,11 @@
 			<true/>
 		</dict>
 		<key>65E86FC8F874CD855F1291330BDE16D1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>772072C883D3619C5D65289D4F602677</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -68,11 +73,6 @@
 			<true/>
 		</dict>
 		<key>98903A5236278DB8DF2306E11E673B5C</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>A7DA5236734F0FC6731AC988B2E6A9DC</key>
 		<dict>
 			<key>primary</key>
 			<true/>

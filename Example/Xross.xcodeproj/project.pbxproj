@@ -22,7 +22,6 @@
 		6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
-		D02575C71E9981BF7D697FAC /* libPods-KYXrossViewController_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 796EFCF70B047526BDCC7AED /* libPods-KYXrossViewController_Tests.a */; };
 		D41496FF9B1D74B4D7752FF1 /* libPods-Xross_Example.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F8926A76AB84C9B9BD76051 /* libPods-Xross_Example.a */; };
 		F7453B7BBFF1308C3839F2C5 /* libPods-Xross_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E5E0773FA77E2C4EA56B99F /* libPods-Xross_Tests.a */; };
 /* End PBXBuildFile section */
@@ -96,7 +95,6 @@
 				6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */,
 				6003F5B2195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */,
-				D02575C71E9981BF7D697FAC /* libPods-KYXrossViewController_Tests.a in Frameworks */,
 				F7453B7BBFF1308C3839F2C5 /* libPods-Xross_Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
