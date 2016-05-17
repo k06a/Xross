@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MLWXrossScrollView : UIScrollView
 
+@property (assign, nonatomic) BOOL skipLayoutSubviewCalls;
+
 - (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated;
 
 @end

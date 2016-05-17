@@ -328,6 +328,8 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
             self.completionBlock = nil;
         }
 
+        self.mlwScrollView.skipLayoutSubviewCalls = NO;
+
         if (!(self.supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation))) {
             NSArray<NSNumber *> *orientations = @[
                 @(UIInterfaceOrientationMaskPortrait),
@@ -379,6 +381,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         }
 
         [self.scrollView layoutIfNeeded];
+        self.mlwScrollView.skipLayoutSubviewCalls = YES;
     }
 }
 

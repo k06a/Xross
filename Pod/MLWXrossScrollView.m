@@ -7,9 +7,9 @@
 //
 
 #import <JRSwizzle/JRSwizzle.h>
-#import "UIScrollView+MLWStickyKeyboard.h"
-#import "UIScrollView+MLWNotScrollSuperview.h"
 #import "UIResponder+MLWCurrentFirstResponder.h"
+#import "UIScrollView+MLWNotScrollSuperview.h"
+#import "UIScrollView+MLWStickyKeyboard.h"
 #import "MLWXrossScrollView.h"
 
 @interface UIScrollView () <UIGestureRecognizerDelegate>
@@ -50,6 +50,12 @@
         return [super gestureRecognizer:gestureRecognizer shouldRequireFailureOfGestureRecognizer:otherGestureRecognizer];
     }
     return NO;
+}
+
+- (void)layoutSubviews {
+    if (!self.skipLayoutSubviewCalls) {
+        [super layoutSubviews];
+    }
 }
 
 @end
