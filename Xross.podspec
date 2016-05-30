@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
 
   s.homepage         = "https://github.com/ML-Works/Xross"
   s.license          = 'MIT'
-  s.author           = { "Anton Bukov" => "k06aaa@gmail.com" }
+  s.author           = { "Anton Bukov" => "k06a@mlworks.com" }
   s.source           = { :git => "https://github.com/ML-Works/Xross.git", :tag => "#{s.version}" }
   
   s.platform     = :ios, '8.0'
