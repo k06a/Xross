@@ -46,9 +46,10 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 
 @optional
 - (void)xross:(MLWXrossViewController *)xrossViewController didMoveToDirection:(MLWXrossDirection)direction;
-- (BOOL)xross:(MLWXrossViewController *)xrossViewController allowBounceToDirection:(MLWXrossDirection)direction;
+- (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldBounceToDirection:(MLWXrossDirection)direction;
 - (void)xross:(MLWXrossViewController *)xrossViewController removedViewController:(UIViewController *)viewController;
 - (void)xross:(MLWXrossViewController *)xrossViewController didScrollToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress;
+- (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldApplyInsetToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress;
 
 @end
 

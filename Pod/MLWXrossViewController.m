@@ -12,6 +12,8 @@
 #import "MLWXrossScrollView.h"
 #import "MLWXrossViewController.h"
 
+static CGFloat kScrollDampling = 0.4;
+
 MLWXrossDirection MLWXrossDirectionNone = (MLWXrossDirection){0, 0};
 MLWXrossDirection MLWXrossDirectionTop = (MLWXrossDirection){0, -1};
 MLWXrossDirection MLWXrossDirectionBottom = (MLWXrossDirection){0, 1};
@@ -51,6 +53,8 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 @property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
 @property (strong, nonatomic) NSDate *allowMoveToNextAfter;
 @property (assign, nonatomic) UIEdgeInsets needEdgeInsets;
+@property (assign, nonatomic) BOOL allowedToApplyInset;
+@property (assign, nonatomic) BOOL prevAllowedToApplyInset;
 @property (copy, nonatomic) void (^completionBlock)();
 
 @end
@@ -123,6 +127,26 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         self.denyLeftMovement ? 0 : self.needEdgeInsets.left,
         self.denyBottomMovement ? 0 : self.needEdgeInsets.bottom,
         self.denyRightMovement ? 0 : self.needEdgeInsets.right);
+
+    if (!self.prevAllowedToApplyInset && self.allowedToApplyInset) {
+        CGFloat sign = (self.nextViewControllerDirection.x < 0 || self.nextViewControllerDirection.y < 0) ? -1 : 1;
+        self.viewController.view.center = CGPointMake(
+            self.viewController.view.center.x + self.scrollView.contentOffset.x * (1 - kScrollDampling) * sign,
+            self.viewController.view.center.y + self.scrollView.contentOffset.y * (1 - kScrollDampling) * sign);
+        self.nextViewController.view.center = CGPointMake(
+            self.nextViewController.view.center.x + self.scrollView.contentOffset.x * (1 - kScrollDampling) * sign,
+            self.nextViewController.view.center.y + self.scrollView.contentOffset.y * (1 - kScrollDampling) * sign);
+        [UIView animateWithDuration:0.4 delay:0.0 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
+            self.viewController.view.center = CGPointMake(
+                self.viewController.view.center.x - self.scrollView.contentOffset.x * (1 - kScrollDampling) * sign,
+                self.viewController.view.center.y - self.scrollView.contentOffset.y * (1 - kScrollDampling) * sign);
+            self.nextViewController.view.center = CGPointMake(
+                self.nextViewController.view.center.x - self.scrollView.contentOffset.x * (1 - kScrollDampling) * sign,
+                self.nextViewController.view.center.y - self.scrollView.contentOffset.y * (1 - kScrollDampling) * sign);
+        }
+                         completion:nil];
+    }
+    self.prevAllowedToApplyInset = self.allowedToApplyInset;
 }
 
 - (UIScrollView *)scrollView {
@@ -175,10 +199,10 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 
     self.scrollView.contentSize = self.scrollView.frame.size;
     self.needEdgeInsets = UIEdgeInsetsMake(
-        (self.nextViewControllerDirection.y < 0) ? self.scrollView.frame.size.height : 1,
-        (self.nextViewControllerDirection.x < 0) ? self.scrollView.frame.size.width : 1,
-        (self.nextViewControllerDirection.y > 0) ? self.scrollView.frame.size.height : 1,
-        (self.nextViewControllerDirection.x > 0) ? self.scrollView.frame.size.width : 1);
+        (self.nextViewControllerDirection.y < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
+        (self.nextViewControllerDirection.x < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1,
+        (self.nextViewControllerDirection.y > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
+        (self.nextViewControllerDirection.x > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1);
     [self updateInsets];
 }
 
@@ -275,11 +299,22 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         (ABS(scrollView.contentOffset.x) < FLT_EPSILON) ? 0 : scrollView.contentOffset.x / ABS(scrollView.contentOffset.x),
         (ABS(scrollView.contentOffset.y) < FLT_EPSILON) ? 0 : scrollView.contentOffset.y / ABS(scrollView.contentOffset.y));
 
-    if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)] &&
-        self.nextViewController) {
-        CGFloat progress = MLWXrossDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x) / self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y) / self.scrollView.frame.size.height;
-        progress = MIN(MAX(0, progress), 1);
+    CGFloat progress = MIN(1, MAX(0, MLWXrossDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x) / self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y) / self.scrollView.frame.size.height));
+
+    if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)] && self.nextViewController) {
         [self.delegate xross:self didScrollToDirection:direction progress:progress];
+    }
+
+    if ([self.delegate respondsToSelector:@selector(xross:shouldApplyInsetToDirection:progress:)]) {
+        if (!self.nextViewController) {
+            self.allowedToApplyInset = NO;
+        }
+        if (!self.allowedToApplyInset) {
+            self.allowedToApplyInset = [self.delegate xross:self shouldApplyInsetToDirection:direction progress:progress];
+        }
+    }
+    else {
+        self.allowedToApplyInset = YES;
     }
 
     // Remove viewController or nextViewController not visible by current scrolling
@@ -357,8 +392,8 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         }
         if (self.nextViewController == nil) {
             BOOL bounces = self.bounces;
-            if ([self.delegate respondsToSelector:@selector(xross:allowBounceToDirection:)]) {
-                bounces = [self.delegate xross:self allowBounceToDirection:direction];
+            if ([self.delegate respondsToSelector:@selector(xross:shouldBounceToDirection:)]) {
+                bounces = [self.delegate xross:self shouldBounceToDirection:direction];
             }
             if (!bounces) {
                 self.allowMoveToNextAfter = [NSDate dateWithTimeIntervalSinceNow:0.2];
