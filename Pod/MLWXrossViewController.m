@@ -305,7 +305,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         [self.delegate xross:self didScrollToDirection:direction progress:progress];
     }
 
-    if ([self.delegate respondsToSelector:@selector(xross:shouldApplyInsetToDirection:progress:)]) {
+    if (self.scrollView.isDragging && [self.delegate respondsToSelector:@selector(xross:shouldApplyInsetToDirection:progress:)]) {
         if (!self.nextViewController) {
             self.allowedToApplyInset = NO;
         }
