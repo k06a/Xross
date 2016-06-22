@@ -72,7 +72,10 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 }
 
 - (BOOL)isMoving {
-    return (self.nextViewController != nil);
+    return self.nextViewController ||
+           self.scrollView.isDragging ||
+           self.scrollView.isTracking ||
+           self.scrollView.isDecelerating;
 }
 
 - (BOOL)isMovingDisabled {
