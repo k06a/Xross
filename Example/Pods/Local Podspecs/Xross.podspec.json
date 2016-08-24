@@ -1,15 +1,15 @@
 {
   "name": "Xross",
-  "version": "0.6.1",
+  "version": "0.7.4",
   "summary": "All-directions-enabled UIPageViewController",
   "homepage": "https://github.com/ML-Works/Xross",
   "license": "MIT",
   "authors": {
-    "Anton Bukov": "k06aaa@gmail.com"
+    "Anton Bukov": "k06a@mlworks.com"
   },
   "source": {
     "git": "https://github.com/ML-Works/Xross.git",
-    "tag": "0.6.1"
+    "tag": "0.7.4"
   },
   "platforms": {
     "ios": "8.0"

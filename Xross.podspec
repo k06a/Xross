@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Xross"
-  s.version          = "0.7.3"
+  s.version          = "0.7.4"
   s.summary          = "All-directions-enabled UIPageViewController"
 
   s.homepage         = "https://github.com/ML-Works/Xross"
@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Pod/**/*'
   
   s.public_header_files = 'Pod/**/*.h'
+
   s.frameworks = 'UIKit'
   s.dependency 'JRSwizzle'
   s.dependency 'libextobjc'

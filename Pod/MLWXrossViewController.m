@@ -193,19 +193,20 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
 
-    self.viewController.view.frame = (CGRect){CGPointZero, self.scrollView.frame.size};
-    self.nextViewController.view.frame = CGRectOffset(
-        self.viewController.view.frame,
-        self.nextViewControllerDirection.x * self.scrollView.frame.size.width,
-        self.nextViewControllerDirection.y * self.scrollView.frame.size.height);
-
-    self.scrollView.contentSize = self.scrollView.frame.size;
-    self.needEdgeInsets = UIEdgeInsetsMake(
-        (self.nextViewControllerDirection.y < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
-        (self.nextViewControllerDirection.x < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1,
-        (self.nextViewControllerDirection.y > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
-        (self.nextViewControllerDirection.x > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1);
-    [self updateInsets];
+    [UIView performWithoutAnimation:^{
+        self.viewController.view.frame = (CGRect){CGPointZero, self.scrollView.frame.size};
+        self.nextViewController.view.frame = CGRectOffset(
+            self.viewController.view.frame,
+            self.nextViewControllerDirection.x * self.scrollView.frame.size.width,
+            self.nextViewControllerDirection.y * self.scrollView.frame.size.height);
+        self.scrollView.contentSize = self.scrollView.frame.size;
+        self.needEdgeInsets = UIEdgeInsetsMake(
+            (self.nextViewControllerDirection.y < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
+            (self.nextViewControllerDirection.x < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1,
+            (self.nextViewControllerDirection.y > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
+            (self.nextViewControllerDirection.x > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1);
+        [self updateInsets];
+    }];
 }
 
 - (void)loadView {
@@ -342,10 +343,12 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         [self.nextViewController resignFirstResponder];
 
         // Center VC
-        self.scrollView.contentOffset = CGPointZero;
-        self.needEdgeInsets = UIEdgeInsetsMake(1, 1, 1, 1);
-        [self updateInsets];
-        self.viewController.view.frame = self.scrollView.bounds;
+        [UIView performWithoutAnimation:^{
+            self.scrollView.contentOffset = CGPointZero;
+            self.needEdgeInsets = UIEdgeInsetsMake(1, 1, 1, 1);
+            [self updateInsets];
+            self.viewController.view.frame = self.scrollView.bounds;
+        }];
         [self.viewController becomeFirstResponder];
 
         self.nextViewController = nil;
@@ -410,7 +413,11 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         [self.scrollView addSubview:self.nextViewController.view];
         self.nextViewController.view.clipsToBounds = YES;
         [self.nextViewController didMoveToParentViewController:self];
-
+        [UIView performWithoutAnimation:^{
+            self.nextViewController.view.frame = self.scrollView.bounds;
+            [self.nextViewController.view layoutIfNeeded];
+        }];
+        
         if (self.viewController == nil && MLWXrossDirectionIsNone(direction)) {
             if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
                 [self.delegate xross:self didMoveToDirection:direction];
