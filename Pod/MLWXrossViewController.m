@@ -383,6 +383,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
             [self.viewController endAppearanceTransition];
         }
 
+        UIViewController *prevNextViewController = self.nextViewController;
         self.nextViewController = nil;
         self.nextViewControllerDirection = MLWXrossDirectionNone;
 
@@ -393,7 +394,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
             [self.delegate xross:self didMoveToDirection:direction];
         }
         if ([self.delegate respondsToSelector:@selector(xross:removedViewController:)]) {
-            [self.delegate xross:self removedViewController:self.nextViewController];
+            [self.delegate xross:self removedViewController:prevNextViewController];
         }
         if (self.completionBlock) {
             self.completionBlock();
