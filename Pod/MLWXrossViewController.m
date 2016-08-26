@@ -277,6 +277,28 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
     [self.mlwScrollView setContentOffsetTo:CGPointMake(direction.x * self.scrollView.frame.size.width, direction.y * self.scrollView.frame.size.height) animated:YES];
 }
 
+#pragma mark - View
+
+- (BOOL)shouldAutomaticallyForwardAppearanceMethods {
+    return NO;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [self.viewController beginAppearanceTransition:YES animated:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [self.viewController endAppearanceTransition];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.viewController beginAppearanceTransition:NO animated:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [self.viewController endAppearanceTransition];
+}
+
 #pragma mark - Scroll View
 
 // Avoid recursive calls of scrollViewDidScroll
@@ -334,6 +356,10 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         }
         else {
             direction = MLWXrossDirectionNone;
+            [self.viewController beginAppearanceTransition:YES animated:NO];
+            [self.viewController endAppearanceTransition];
+            [self.nextViewController beginAppearanceTransition:NO animated:NO];
+            [self.nextViewController endAppearanceTransition];
         }
 
         // Remove VC
@@ -341,6 +367,9 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         [self.nextViewController.view removeFromSuperview];
         [self.nextViewController removeFromParentViewController];
         [self.nextViewController resignFirstResponder];
+        if (!MLWXrossDirectionIsNone(direction)) {
+            [self.nextViewController endAppearanceTransition];
+        }
 
         // Center VC
         [UIView performWithoutAnimation:^{
@@ -350,6 +379,9 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
             self.viewController.view.frame = self.scrollView.bounds;
         }];
         [self.viewController becomeFirstResponder];
+        if (!MLWXrossDirectionIsNone(direction)) {
+            [self.viewController endAppearanceTransition];
+        }
 
         self.nextViewController = nil;
         self.nextViewControllerDirection = MLWXrossDirectionNone;
@@ -406,6 +438,8 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
             }
             return;
         }
+        [self.viewController beginAppearanceTransition:NO animated:YES];
+        [self.nextViewController beginAppearanceTransition:YES animated:YES];
         [self addChildViewController:self.nextViewController];
         if (self.nextViewController.view.backgroundColor == nil) { // Fixed bug with broken scrolling
             self.nextViewController.view.backgroundColor = [UIColor whiteColor];
@@ -417,7 +451,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
             self.nextViewController.view.frame = self.scrollView.bounds;
             [self.nextViewController.view layoutIfNeeded];
         }];
-        
+
         if (self.viewController == nil && MLWXrossDirectionIsNone(direction)) {
             if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
                 [self.delegate xross:self didMoveToDirection:direction];
