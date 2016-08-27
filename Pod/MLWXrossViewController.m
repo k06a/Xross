@@ -193,20 +193,22 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
 
-    [UIView performWithoutAnimation:^{
-        self.viewController.view.frame = (CGRect){CGPointZero, self.scrollView.frame.size};
-        self.nextViewController.view.frame = CGRectOffset(
-            self.viewController.view.frame,
-            self.nextViewControllerDirection.x * self.scrollView.frame.size.width,
-            self.nextViewControllerDirection.y * self.scrollView.frame.size.height);
-        self.scrollView.contentSize = self.scrollView.frame.size;
-        self.needEdgeInsets = UIEdgeInsetsMake(
-            (self.nextViewControllerDirection.y < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
-            (self.nextViewControllerDirection.x < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1,
-            (self.nextViewControllerDirection.y > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
-            (self.nextViewControllerDirection.x > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1);
-        [self updateInsets];
-    }];
+    if (!self.mlwScrollView.skipLayoutSubviewCalls) {
+        [UIView performWithoutAnimation:^{
+            self.viewController.view.frame = (CGRect){CGPointZero, self.scrollView.frame.size};
+            self.nextViewController.view.frame = CGRectOffset(
+                self.viewController.view.frame,
+                self.nextViewControllerDirection.x * self.scrollView.frame.size.width,
+                self.nextViewControllerDirection.y * self.scrollView.frame.size.height);
+            self.scrollView.contentSize = self.scrollView.frame.size;
+            self.needEdgeInsets = UIEdgeInsetsMake(
+                (self.nextViewControllerDirection.y < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
+                (self.nextViewControllerDirection.x < 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1,
+                (self.nextViewControllerDirection.y > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.height : 1,
+                (self.nextViewControllerDirection.x > 0 && self.allowedToApplyInset) ? self.scrollView.frame.size.width : 1);
+            [self updateInsets];
+        }];
+    }
 }
 
 - (void)loadView {
