@@ -56,14 +56,11 @@
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     UIView *gestureRecognizerView = [gestureRecognizer.view hitTest:[gestureRecognizer locationInView:gestureRecognizer.view] withEvent:nil];
-    NSUInteger panGestureIndex = [gestureRecognizerView.gestureRecognizers indexOfObjectPassingTest:^BOOL(__kindof UIGestureRecognizer * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        return [obj isKindOfClass:[UIPanGestureRecognizer class]];
-    }];
-    
-    if ([gestureRecognizerView isKindOfClass:[UIControl class]] && panGestureIndex != NSNotFound) {
+
+    if ([gestureRecognizerView isKindOfClass:[UISlider class]]) {
         return NO;
     }
-    
+
     return YES;
 }
 
