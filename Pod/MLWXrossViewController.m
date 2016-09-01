@@ -473,7 +473,11 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    self.mlwScrollView.contentOffset = CGPointZero;
+    CGFloat width = CGRectGetWidth(self.scrollView.bounds);
+    CGFloat height = CGRectGetHeight(self.scrollView.bounds);
+    self.mlwScrollView.contentOffset = CGPointMake(
+        round(self.mlwScrollView.contentOffset.x / width) * width,
+        round(self.mlwScrollView.contentOffset.y / height) * height);
 }
 
 @end
