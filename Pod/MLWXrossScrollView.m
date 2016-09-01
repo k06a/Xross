@@ -46,10 +46,22 @@
     if ([otherGestureRecognizer.view.superview isKindOfClass:[UITableView class]]) {
         return YES;
     }
+    
     if ([[MLWXrossScrollView superclass] instancesRespondToSelector:@selector(gestureRecognizer:shouldRequireFailureOfGestureRecognizer:)]) {
         return [super gestureRecognizer:gestureRecognizer shouldRequireFailureOfGestureRecognizer:otherGestureRecognizer];
     }
     return NO;
+}
+
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    UIView *gestureRecognizerView = [gestureRecognizer.view hitTest:[gestureRecognizer locationInView:gestureRecognizer.view] withEvent:nil];
+
+    if ([gestureRecognizerView isKindOfClass:[UISlider class]]) {
+        return NO;
+    }
+
+    return YES;
 }
 
 - (void)layoutSubviews {
