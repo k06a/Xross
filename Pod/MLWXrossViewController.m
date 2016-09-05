@@ -484,8 +484,4 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         round(self.mlwScrollView.contentOffset.y / height) * height);
 }
 
-//- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
-//    [self scrollViewDidEndDecelerating:scrollView];
-//}
-
 @end
