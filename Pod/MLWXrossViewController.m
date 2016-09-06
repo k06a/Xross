@@ -350,14 +350,18 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         self.allowedToApplyInset = YES;
     }
 
-    // Remove viewController or nextViewController not visible by current scrolling
-    if (ABS(self.scrollView.contentOffset.x) == CGRectGetWidth(self.scrollView.bounds) ||
-        ABS(self.scrollView.contentOffset.y) == CGRectGetHeight(self.scrollView.bounds) ||
-        (self.nextViewController &&
-         self.scrollView.contentOffset.x == 0 &&
-         self.scrollView.contentOffset.y == 0)) {
+    BOOL returnedBack = (self.nextViewController &&
+                         ((self.scrollView.contentInset.left > 1 && self.scrollView.contentOffset.x >= 0) ||
+                          (self.scrollView.contentInset.right > 1 && self.scrollView.contentOffset.x <= 0) ||
+                          (self.scrollView.contentInset.top > 1 && self.scrollView.contentOffset.y >= 0) ||
+                          (self.scrollView.contentInset.bottom > 1 && self.scrollView.contentOffset.y <= 0)));
 
-        if (ABS(self.scrollView.contentOffset.x) || ABS(self.scrollView.contentOffset.y)) {
+    // Remove viewController or nextViewController not visible by current scrolling
+    if (ABS(self.scrollView.contentOffset.x) >= CGRectGetWidth(self.scrollView.bounds) ||
+        ABS(self.scrollView.contentOffset.y) >= CGRectGetHeight(self.scrollView.bounds) ||
+        returnedBack) {
+
+        if (!returnedBack) {
             // Swap VCs
             UIViewController *tmpView = self.viewController;
             self.viewController = self.nextViewController;
