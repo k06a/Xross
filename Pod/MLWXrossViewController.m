@@ -264,7 +264,12 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         }
         [self.scrollView addSubview:self.viewController.view];
         self.viewController.view.clipsToBounds = YES;
-        self.viewController.view.frame = self.scrollView.bounds;
+        if (!CGRectEqualToRect(self.viewController.view.bounds, self.scrollView.bounds)) {
+            self.viewController.view.bounds = self.scrollView.bounds;
+        }
+        self.viewController.view.center = CGPointMake(
+            CGRectGetMidX(self.scrollView.bounds),
+            CGRectGetMidY(self.scrollView.bounds));
         [self.viewController didMoveToParentViewController:self];
         self.scrollView.contentSize = CGSizeMake(self.scrollView.frame.size.width,
                                                  self.scrollView.frame.size.height);
@@ -392,7 +397,12 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
             self.scrollView.contentOffset = CGPointZero;
             self.needEdgeInsets = UIEdgeInsetsMake(1, 1, 1, 1);
             [self updateInsets];
-            self.viewController.view.frame = self.scrollView.bounds;
+            if (!CGRectEqualToRect(self.viewController.view.bounds, self.scrollView.bounds)) {
+                self.viewController.view.bounds = self.scrollView.bounds;
+            }
+            self.viewController.view.center = CGPointMake(
+                CGRectGetMidX(self.scrollView.bounds),
+                CGRectGetMidY(self.scrollView.bounds));
         }];
         [self.viewController becomeFirstResponder];
         if (!MLWXrossDirectionIsNone(direction)) {
@@ -465,7 +475,12 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
         self.nextViewController.view.clipsToBounds = YES;
         [self.nextViewController didMoveToParentViewController:self];
         [UIView performWithoutAnimation:^{
-            self.nextViewController.view.frame = self.scrollView.bounds;
+            if (!CGRectEqualToRect(self.nextViewController.view.bounds, self.scrollView.bounds)) {
+                self.nextViewController.view.bounds = self.scrollView.bounds;
+            }
+            self.nextViewController.view.center = CGPointMake(
+                CGRectGetMidX(self.scrollView.bounds),
+                CGRectGetMidY(self.scrollView.bounds));
             [self.nextViewController.view layoutIfNeeded];
         }];
 
