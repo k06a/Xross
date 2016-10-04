@@ -355,7 +355,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
     CGFloat progress = MIN(1, MAX(0, MLWXrossDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x) / self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y) / self.scrollView.frame.size.height));
 
-    if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)] && self.nextViewController) {
+    if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
         [self.delegate xross:self didScrollToDirection:direction progress:progress];
     }
 
