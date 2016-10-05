@@ -473,6 +473,8 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
             if (!bounces) {
                 self.allowMoveToNextAfter = [NSDate dateWithTimeIntervalSinceNow:0.2];
                 [self.mlwScrollView setContentOffsetTo:CGPointZero animated:NO];
+                self.mlwScrollView.scrollEnabled = NO;
+                self.mlwScrollView.scrollEnabled = YES;
             }
             return;
         }
