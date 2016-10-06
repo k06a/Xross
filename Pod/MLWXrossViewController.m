@@ -475,6 +475,9 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
                 [self.mlwScrollView setContentOffsetTo:CGPointZero animated:NO];
                 self.mlwScrollView.scrollEnabled = NO;
                 self.mlwScrollView.scrollEnabled = YES;
+                if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
+                    [self.delegate xross:self didScrollToDirection:direction progress:0.0];
+                }
             }
             return;
         }
