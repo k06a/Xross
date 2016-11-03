@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "Xross"
-  s.version          = "0.8.10"
+  s.version          = "0.8.11"
   s.summary          = "All-directions-enabled UIPageViewController"
 
   s.homepage         = "https://github.com/ML-Works/Xross"
