@@ -74,6 +74,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 @property (assign, nonatomic) BOOL denyLeftMovement;
 @property (assign, nonatomic) BOOL denyRightMovement;
 
++ (Class)xrossViewClass;
 - (void)reloadData;
 - (void)moveToDirection:(MLWXrossDirection)direction;
 - (void)moveToDirection:(MLWXrossDirection)direction completion:(void (^_Nullable)())completion;

@@ -203,8 +203,12 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         }];
 }
 
++ (Class)xrossViewClass {
+    return [MLWXrossScrollView class];
+}
+
 - (void)loadView {
-    self.view = [[MLWXrossScrollView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.view = [[[self.class xrossViewClass] alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.scrollView.showsHorizontalScrollIndicator = NO;
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.directionalLockEnabled = YES;
