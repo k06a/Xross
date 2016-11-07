@@ -285,6 +285,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
 - (void)viewDidAppear:(BOOL)animated {
     [self.viewController endAppearanceTransition];
+    [self fixStatusBarOrientationIfNeeded];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -329,6 +330,23 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
                 (self.nextViewControllerDirection.x > 0) ? CGRectGetWidth(self.scrollView.bounds) : kDefaultEdgeInsets.right);
             [self updateInsets];
         }];
+    }
+}
+
+- (void)fixStatusBarOrientationIfNeeded {
+    if (!(self.supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation))) {
+        NSArray<NSNumber *> *orientations = @[
+            @(UIInterfaceOrientationMaskPortrait),
+            @(UIInterfaceOrientationMaskLandscapeLeft),
+            @(UIInterfaceOrientationMaskLandscapeRight),
+            @(UIInterfaceOrientationMaskPortraitUpsideDown)
+        ];
+        for (NSNumber *orientation in orientations) {
+            if (orientation.unsignedIntegerValue & self.supportedInterfaceOrientations) {
+                [[UIDevice currentDevice] setValue:orientation forKey:@keypath([UIDevice currentDevice], orientation)];
+                break;
+            }
+        }
     }
 }
 
@@ -444,20 +462,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
         self.mlwScrollView.skipLayoutSubviewCalls = NO;
 
-        if (!(self.supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation))) {
-            NSArray<NSNumber *> *orientations = @[
-                @(UIInterfaceOrientationMaskPortrait),
-                @(UIInterfaceOrientationMaskLandscapeLeft),
-                @(UIInterfaceOrientationMaskLandscapeRight),
-                @(UIInterfaceOrientationMaskPortraitUpsideDown)
-            ];
-            for (NSNumber *orientation in orientations) {
-                if (orientation.unsignedIntegerValue & self.supportedInterfaceOrientations) {
-                    [[UIDevice currentDevice] setValue:orientation forKey:@"orientation"];
-                    break;
-                }
-            }
-        }
+        [self fixStatusBarOrientationIfNeeded];
         return;
     }
 
