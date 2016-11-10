@@ -68,6 +68,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 @property (assign, nonatomic) UIEdgeInsets needEdgeInsets;
 @property (assign, nonatomic) BOOL allowedToApplyInset;
 @property (assign, nonatomic) BOOL prevAllowedToApplyInset;
+@property (assign, nonatomic) MLWXrossDirection prevDirection;
 @property (copy, nonatomic) void (^completionBlock)();
 
 @end
@@ -377,10 +378,6 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
     CGFloat progress = MIN(1, MAX(0, MLWXrossDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x) / self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y) / self.scrollView.frame.size.height));
 
-    if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
-        [self.delegate xross:self didScrollToDirection:direction progress:progress];
-    }
-
     if (self.scrollView.isDragging && [self.delegate respondsToSelector:@selector(xross:shouldApplyInsetToDirection:progress:)]) {
         if (!self.nextViewController) {
             self.allowedToApplyInset = NO;
@@ -399,12 +396,19 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
                           (self.scrollView.contentInset.top > 1 && self.scrollView.contentOffset.y >= 0) ||
                           (self.scrollView.contentInset.bottom > 1 && self.scrollView.contentOffset.y <= 0)));
 
+    BOOL willRemoveVC = ABS(self.scrollView.contentOffset.x) >= CGRectGetWidth(self.scrollView.bounds) ||
+    ABS(self.scrollView.contentOffset.y) >= CGRectGetHeight(self.scrollView.bounds) ||
+    returnedBack;
+    
+    BOOL willAddVC = self.nextViewController == nil && !MLWXrossDirectionEquals(direction, MLWXrossDirectionNone);
+    
     // Remove viewController or nextViewController not visible by current scrolling
-    if (ABS(self.scrollView.contentOffset.x) >= CGRectGetWidth(self.scrollView.bounds) ||
-        ABS(self.scrollView.contentOffset.y) >= CGRectGetHeight(self.scrollView.bounds) ||
-        returnedBack) {
-
+    if (willRemoveVC) {
         if (!returnedBack) {
+            if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
+                [self.delegate xross:self didScrollToDirection:self.prevDirection progress:1.0];
+            }
+
             // Swap VCs
             UIViewController *tmpView = self.viewController;
             self.viewController = self.nextViewController;
@@ -414,6 +418,10 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
             }];
         }
         else {
+            if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
+                [self.delegate xross:self didScrollToDirection:self.prevDirection progress:0.0];
+            }
+
             direction = MLWXrossDirectionNone;
             [self.viewController beginAppearanceTransition:YES animated:NO];
             [self.viewController endAppearanceTransition];
@@ -463,11 +471,8 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         self.mlwScrollView.skipLayoutSubviewCalls = NO;
 
         [self fixStatusBarOrientationIfNeeded];
-        return;
     }
-
-    // Add nextViewController if possible for known direction
-    if (self.nextViewController == nil && !MLWXrossDirectionEquals(direction, MLWXrossDirectionNone)) {
+    else if (willAddVC) { // Add nextViewController if possible for known direction
         if ([[NSDate date] compare:self.allowMoveToNextAfter] == NSOrderedDescending) {
             self.nextViewController = [self.dataSource xross:self viewControllerForDirection:direction];
             if (self.nextViewController) {
@@ -515,7 +520,17 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
         [self.scrollView layoutIfNeeded];
         self.mlwScrollView.skipLayoutSubviewCalls = YES;
+        if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
+            [self.delegate xross:self didScrollToDirection:direction progress:progress];
+        }
     }
+    else {
+        if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
+            [self.delegate xross:self didScrollToDirection:direction progress:progress];
+        }
+    }
+    
+    self.prevDirection = direction;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
