@@ -493,6 +493,11 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
                     [self.delegate xross:self didScrollToDirection:direction progress:0.0];
                 }
             }
+            else {
+                if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
+                    [self.delegate xross:self didScrollToDirection:direction progress:progress];
+                }
+            }
             return;
         }
         [self.viewController beginAppearanceTransition:NO animated:YES];
