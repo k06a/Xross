@@ -64,7 +64,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 @property (assign, nonatomic) MLWXrossDirection nextViewControllerDirection;
 @property (readonly, nonatomic) MLWXrossScrollView *mlwScrollView;
 @property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
-@property (strong, nonatomic) NSDate *allowMoveToNextAfter;
+@property (strong, nonatomic) NSDate *denyMovementUntilDate;
 @property (assign, nonatomic) UIEdgeInsets needEdgeInsets;
 @property (assign, nonatomic) BOOL allowedToApplyInset;
 @property (assign, nonatomic) BOOL prevAllowedToApplyInset;
@@ -194,7 +194,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
 
-    self.allowMoveToNextAfter = [NSDate dateWithTimeIntervalSinceNow:0.3];
+    self.denyMovementUntilDate = [NSDate dateWithTimeIntervalSinceNow:0.3];
     self.scrollView.contentOffset = CGPointZero;
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
         self.scrollView.contentOffset = CGPointZero;
@@ -473,7 +473,8 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         [self fixStatusBarOrientationIfNeeded];
     }
     else if (willAddVC) { // Add nextViewController if possible for known direction
-        if ([[NSDate date] compare:self.allowMoveToNextAfter] == NSOrderedDescending) {
+        if (self.denyMovementUntilDate == nil ||
+            [[NSDate date] compare:self.denyMovementUntilDate] == NSOrderedDescending) {
             self.nextViewController = [self.dataSource xross:self viewControllerForDirection:direction];
             if (self.nextViewController) {
                 self.nextViewControllerDirection = direction;
@@ -485,10 +486,9 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
                 bounces = [self.delegate xross:self shouldBounceToDirection:direction];
             }
             if (!bounces) {
-                self.allowMoveToNextAfter = [NSDate dateWithTimeIntervalSinceNow:0.2];
-                [self.mlwScrollView setContentOffsetTo:CGPointZero animated:NO];
-                self.mlwScrollView.scrollEnabled = NO;
-                self.mlwScrollView.scrollEnabled = YES;
+                self.scrollView.contentOffset = CGPointZero;
+                self.scrollView.scrollEnabled = NO;
+                self.scrollView.scrollEnabled = YES;
                 if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
                     [self.delegate xross:self didScrollToDirection:direction progress:0.0];
                 }
