@@ -268,9 +268,17 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 }
 
 - (void)moveToDirection:(MLWXrossDirection)direction completion:(void (^)())completion {
+    self.scrollView.contentOffset = CGPointMake(direction.x, direction.y);
+    NSAssert(self.nextViewController, @"self.nextViewController should not be nil, check your xross:viewControllerForDirection: implementation");
+    if (!self.nextViewController) {
+        if (completion) {
+            completion();
+        }
+        return;
+    }
+    
     self.completionBlock = completion;
     self.view.userInteractionEnabled = NO;
-    self.scrollView.contentOffset = CGPointMake(direction.x, direction.y);
     [self.mlwScrollView setContentOffsetTo:CGPointMake(direction.x * self.scrollView.frame.size.width, direction.y * self.scrollView.frame.size.height) animated:YES];
 }
 
