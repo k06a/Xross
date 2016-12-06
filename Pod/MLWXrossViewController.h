@@ -55,12 +55,12 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 
 // Xross
 
-@interface MLWXrossViewController : UIViewController
+@interface MLWXrossViewController<__covariant ChildViewControllerType : UIViewController *> : UIViewController
 
 @property (nullable, weak, nonatomic) id<MLWXrossViewControllerDataSource> dataSource;
 @property (nullable, weak, nonatomic) id<MLWXrossViewControllerDelegate> delegate;
-@property (nullable, readonly, nonatomic) UIViewController *viewController;
-@property (nullable, readonly, nonatomic) UIViewController *nextViewController;
+@property (nullable, readonly, nonatomic) ChildViewControllerType viewController;
+@property (nullable, readonly, nonatomic) ChildViewControllerType nextViewController;
 @property (readonly, nonatomic) UIScrollView *scrollView;
 @property (assign, nonatomic) BOOL bounces;
 @property (assign, nonatomic, getter=isMovingDisabled) BOOL movingDisabled;
