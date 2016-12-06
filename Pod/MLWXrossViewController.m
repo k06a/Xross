@@ -481,8 +481,9 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         [self fixStatusBarOrientationIfNeeded];
     }
     else if (willAddVC) { // Add nextViewController if possible for known direction
-        if (self.denyMovementUntilDate == nil ||
-            [[NSDate date] compare:self.denyMovementUntilDate] == NSOrderedDescending) {
+        if (!self.scrollView.isDecelerating && // Avoid bouncing back from denied bouncing edge
+            (self.denyMovementUntilDate == nil ||
+             [[NSDate date] compare:self.denyMovementUntilDate] == NSOrderedDescending)) {
             self.nextViewController = [self.dataSource xross:self viewControllerForDirection:direction];
             if (self.nextViewController) {
                 self.nextViewControllerDirection = direction;
