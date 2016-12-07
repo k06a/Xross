@@ -213,7 +213,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     self.scrollView.showsHorizontalScrollIndicator = NO;
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.directionalLockEnabled = YES;
-    self.scrollView.bounces = YES;
+    self.scrollView.bounces = NO;
     self.scrollView.pagingEnabled = YES;
     self.scrollView.delegate = self;
     self.scrollView.scrollEnabled = YES;
@@ -397,6 +397,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     else {
         self.allowedToApplyInset = YES;
     }
+    self.scrollView.bounces = !self.allowedToApplyInset;
 
     BOOL returnedBack = (self.nextViewController &&
                          ((self.scrollView.contentInset.left > 1 && self.scrollView.contentOffset.x >= 0) ||
@@ -481,9 +482,8 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         [self fixStatusBarOrientationIfNeeded];
     }
     else if (willAddVC) { // Add nextViewController if possible for known direction
-        if (!self.scrollView.isDecelerating && // Avoid bouncing back from denied bouncing edge
-            (self.denyMovementUntilDate == nil ||
-             [[NSDate date] compare:self.denyMovementUntilDate] == NSOrderedDescending)) {
+        if (self.denyMovementUntilDate == nil ||
+            [[NSDate date] compare:self.denyMovementUntilDate] == NSOrderedDescending) {
             self.nextViewController = [self.dataSource xross:self viewControllerForDirection:direction];
             if (self.nextViewController) {
                 self.nextViewControllerDirection = direction;
@@ -495,7 +495,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
                 bounces = [self.delegate xross:self shouldBounceToDirection:direction];
             }
             if (!bounces) {
-                self.scrollView.contentOffset = CGPointZero;
+                [self.scrollView setContentOffset:CGPointZero animated:NO];
                 self.scrollView.scrollEnabled = NO;
                 self.scrollView.scrollEnabled = YES;
                 if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
@@ -503,6 +503,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
                 }
             }
             else {
+                self.scrollView.bounces = YES;
                 if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
                     [self.delegate xross:self didScrollToDirection:direction progress:progress];
                 }
@@ -547,7 +548,14 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     self.prevDirection = direction;
 }
 
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (!decelerate) {
+        [self scrollViewDidEndDecelerating:scrollView];
+    }
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    self.scrollView.bounces = NO;
     CGFloat width = CGRectGetWidth(self.scrollView.bounds);
     CGFloat height = CGRectGetHeight(self.scrollView.bounds);
     self.mlwScrollView.contentOffset = CGPointMake(
