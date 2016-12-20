@@ -418,6 +418,10 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
                 [self.delegate xross:self didScrollToDirection:self.prevDirection progress:1.0];
             }
 
+            if (self.nextViewController == nil) {
+                return;
+            }
+            
             // Swap VCs
             UIViewController *tmpView = self.viewController;
             self.viewController = self.nextViewController;
