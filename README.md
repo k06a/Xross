@@ -6,6 +6,14 @@
 [![License](https://img.shields.io/cocoapods/l/Xross.svg?style=flat)](http://cocoapods.org/pods/Xross)
 [![Platform](https://img.shields.io/cocoapods/p/Xross.svg?style=flat)](http://cocoapods.org/pods/Xross)
 
+Xross is container view controller similar to UIPageController with 4-direction movement support.
+
+Supports three types of transitions:
+
+| Default                        | 3D Cube                        | Stack                                                         |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------- |
+| <img src="images/xross-1.gif"> | <img src="images/xross-2.gif"> | <img src="images/xross-3.gif" width="50%"><img src="images/xross-4.gif" width="50%"> |
+
 ## Usage
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
