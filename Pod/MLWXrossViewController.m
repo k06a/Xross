@@ -69,10 +69,10 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
 static MLWXrossShadowLayer *ShadowLayerForTransition(CALayer *currLayer, CALayer *nextLayer) {
     if ([currLayer.sublayers.lastObject isKindOfClass:[MLWXrossShadowLayer class]]) {
-        return currLayer.sublayers.lastObject;
+        return (MLWXrossShadowLayer *)currLayer.sublayers.lastObject;
     }
     if ([nextLayer.sublayers.lastObject isKindOfClass:[MLWXrossShadowLayer class]]) {
-        return nextLayer.sublayers.lastObject;
+        return (MLWXrossShadowLayer *)nextLayer.sublayers.lastObject;
     }
     return nil;
 }
