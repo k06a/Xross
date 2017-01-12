@@ -20,6 +20,8 @@ typedef struct {
 typedef enum : NSUInteger {
     MLWXrossTransitionTypeDefault,
     MLWXrossTransitionType3DCube,
+    MLWXrossTransitionType3DCubeTo,
+    MLWXrossTransitionType3DCubeFrom,
     MLWXrossTransitionTypeStackNext,
     MLWXrossTransitionTypeStackPrev,
     MLWXrossTransitionTypeCustom = 0x10000,

@@ -129,7 +129,13 @@
 }
 
 - (MLWXrossTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction {
-    return (MLWXrossTransitionType)self.segmentedControl.selectedSegmentIndex;
+    NSArray<NSNumber *> *dict = @[
+        @(MLWXrossTransitionTypeDefault),
+        @(MLWXrossTransitionType3DCube),
+        @(MLWXrossTransitionTypeStackNext),
+        @(MLWXrossTransitionTypeStackPrev),
+    ];
+    return dict[self.segmentedControl.selectedSegmentIndex].unsignedIntegerValue;
 }
 
 - (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldBounceToDirection:(MLWXrossDirection)direction {

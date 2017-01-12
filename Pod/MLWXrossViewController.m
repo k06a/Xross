@@ -87,7 +87,7 @@ static void ApplyTransitionDefault(CALayer *currLayer, CALayer *nextLayer, MLWXr
     [shadowLayer removeFromSuperlayer];
 }
 
-static void ApplyTransition3DCube(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
+static void ApplyTransition3DCubeFromTo(BOOL from, BOOL to, CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
     MLWXrossShadowLayer *shadowLayer = ShadowLayerForTransition(currLayer, nextLayer);
     CGFloat orientedProgress = progress * ((MLWXrossDirectionEquals(direction, MLWXrossDirectionLeft) || MLWXrossDirectionEquals(direction, MLWXrossDirectionTop)) ? -1 : 1);
     BOOL rotationToNext = MLWXrossDirectionEquals(direction, MLWXrossDirectionRight) || MLWXrossDirectionEquals(direction, MLWXrossDirectionBottom);
@@ -108,16 +108,20 @@ static void ApplyTransition3DCube(CALayer *currLayer, CALayer *nextLayer, MLWXro
         }
         
         CATransform3D currTransform = CATransform3DIdentity;
-        currTransform.m34 = -0.001;
-        currTransform = CATransform3DTranslate(currTransform, (rotationToNext ? 1 : -1) * size / 2 * isHorizontal, (rotationToNext ? 1 : -1) * size / 2 * isVertical, 0);
-        currTransform = CATransform3DRotate(currTransform, -orientedProgress * M_PI_2 * (isHorizontal ? 1 : -1), isVertical, isHorizontal, 0);
-        currTransform = CATransform3DTranslate(currTransform, (rotationToNext ? -1 : 1) * size / 2 * isHorizontal, (rotationToNext ? -1 : 1) * size / 2 * isVertical, 0);
+        if (from) {
+            currTransform.m34 = -0.001;
+            currTransform = CATransform3DTranslate(currTransform, (rotationToNext ? 1 : -1) * size / 2 * isHorizontal, (rotationToNext ? 1 : -1) * size / 2 * isVertical, 0);
+            currTransform = CATransform3DRotate(currTransform, -orientedProgress * M_PI_2 * (isHorizontal ? 1 : -1), isVertical, isHorizontal, 0);
+            currTransform = CATransform3DTranslate(currTransform, (rotationToNext ? -1 : 1) * size / 2 * isHorizontal, (rotationToNext ? -1 : 1) * size / 2 * isVertical, 0);
+        }
         
         CATransform3D nextTransform = CATransform3DIdentity;
-        nextTransform.m34 = -0.001;
-        nextTransform = CATransform3DTranslate(nextTransform, (rotationToNext ? -1 : 1) * size / 2 * isHorizontal, (rotationToNext ? -1 : 1) * size / 2 * isVertical, 0);
-        nextTransform = CATransform3DRotate(nextTransform, (isHorizontal ? 1 : -1) * M_PI_2 + (rotationToNext ? 0 : M_PI) - orientedProgress * M_PI_2 * (isHorizontal ? 1 : -1), isVertical, isHorizontal, 0);
-        nextTransform = CATransform3DTranslate(nextTransform, (rotationToNext ? 1 : -1) * size / 2 * isHorizontal, (rotationToNext ? 1 : -1) * size / 2 * isVertical, 0);
+        if (to) {
+            nextTransform.m34 = -0.001;
+            nextTransform = CATransform3DTranslate(nextTransform, (rotationToNext ? -1 : 1) * size / 2 * isHorizontal, (rotationToNext ? -1 : 1) * size / 2 * isVertical, 0);
+            nextTransform = CATransform3DRotate(nextTransform, (isHorizontal ? 1 : -1) * M_PI_2 + (rotationToNext ? 0 : M_PI) - orientedProgress * M_PI_2 * (isHorizontal ? 1 : -1), isVertical, isHorizontal, 0);
+            nextTransform = CATransform3DTranslate(nextTransform, (rotationToNext ? 1 : -1) * size / 2 * isHorizontal, (rotationToNext ? 1 : -1) * size / 2 * isVertical, 0);
+        }
         
         [CATransaction begin];
         [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
@@ -138,6 +142,18 @@ static void ApplyTransition3DCube(CALayer *currLayer, CALayer *nextLayer, MLWXro
         nextLayer.shouldRasterize = NO;
         [shadowLayer removeFromSuperlayer];
     }
+}
+
+static void ApplyTransition3DCube(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
+    ApplyTransition3DCubeFromTo(YES, YES, currLayer, nextLayer, direction, progress);
+}
+
+static void ApplyTransition3DCubeFrom(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
+    ApplyTransition3DCubeFromTo(YES, NO, currLayer, nextLayer, direction, progress);
+}
+
+static void ApplyTransition3DCubeTo(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
+    ApplyTransition3DCubeFromTo(NO, YES, currLayer, nextLayer, direction, progress);
 }
 
 static void ApplyTransitionStack(BOOL rotationToNext, CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
@@ -452,6 +468,7 @@ static void ApplyTransitionStackPrev(CALayer *currLayer, CALayer *nextLayer, MLW
 
 - (void)viewWillAppear:(BOOL)animated {
     [self.viewController beginAppearanceTransition:YES animated:animated];
+    self.scrollView.contentOffset = CGPointZero;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -718,6 +735,12 @@ static void ApplyTransitionStackPrev(CALayer *currLayer, CALayer *nextLayer, MLW
             break;
         case MLWXrossTransitionType3DCube:
             ApplyTransition3DCube(currLayer, nextLayer, direction, progress);
+            break;
+        case MLWXrossTransitionType3DCubeFrom:
+            ApplyTransition3DCubeFrom(currLayer, nextLayer, direction, progress);
+            break;
+        case MLWXrossTransitionType3DCubeTo:
+            ApplyTransition3DCubeTo(currLayer, nextLayer, direction, progress);
             break;
         case MLWXrossTransitionTypeStackNext:
             ApplyTransitionStackNext(currLayer, nextLayer, direction, progress);
