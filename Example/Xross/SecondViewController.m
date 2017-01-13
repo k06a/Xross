@@ -15,6 +15,7 @@
 
 @property (assign, nonatomic) CGPoint position;
 @property (strong, nonatomic) UISwitch *bounceSwitch;
+@property (strong, nonatomic) UISegmentedControl *segmentedControl;
 @property (strong, nonatomic) MLWXrossViewController *xross;
 @property (strong, nonatomic) UIViewController *topViewController;
 @property (strong, nonatomic) WKWebView *webView;
@@ -47,6 +48,21 @@
         self.bounceSwitch.translatesAutoresizingMaskIntoConstraints = NO;
         [self.bounceSwitch.centerXAnchor constraintEqualToAnchor:_topViewController.view.centerXAnchor].active = YES;
         [self.bounceSwitch.centerYAnchor constraintEqualToAnchor:_topViewController.view.centerYAnchor].active = YES;
+        
+        UILabel *bounceLabel = [UILabel new];
+        bounceLabel.text = @"Bounce Enabled:";
+        [_topViewController.view addSubview:bounceLabel];
+        bounceLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [bounceLabel.centerYAnchor constraintEqualToAnchor:self.bounceSwitch.centerYAnchor].active = YES;
+        [bounceLabel.trailingAnchor constraintEqualToAnchor:self.bounceSwitch.leadingAnchor constant:-10.0].active = YES;
+        
+        self.segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Default", @"3D Cube", @"Stack(Next)", @"Stack(Prev)"]];
+        self.segmentedControl.selectedSegmentIndex = 0;
+        [_topViewController.view addSubview:self.segmentedControl];
+        self.segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.segmentedControl.centerXAnchor constraintEqualToAnchor:_topViewController.view.centerXAnchor].active = YES;
+        [self.segmentedControl.topAnchor constraintEqualToAnchor:self.bounceSwitch.bottomAnchor constant:20.0].active = YES;
+        [self.segmentedControl.widthAnchor constraintLessThanOrEqualToAnchor:self.segmentedControl.superview.widthAnchor multiplier:0.9].active = YES;
     }
     return _topViewController;
 }
@@ -74,7 +90,6 @@
     self.xross.view.backgroundColor = [UIColor blackColor];
     self.xross.dataSource = self;
     self.xross.delegate = self;
-    self.xross.bounces = YES;
     [self addChildViewController:self.xross];
     self.xross.view.frame = self.view.bounds;
     [self.view addSubview:self.xross.view];
@@ -92,18 +107,18 @@
 
 - (nullable UIViewController *)xross:(MLWXrossViewController *)xrossViewController viewControllerForDirection:(MLWXrossDirection)direction {
     BOOL samePosition = MLWXrossDirectionIsNone(direction);
-    CGPoint position = CGPointMake(self.position.x + direction.x,
+    CGPoint nextPosition = CGPointMake(self.position.x + direction.x,
                                    self.position.y + direction.y);
 
-    if (samePosition || (self.position.y != 0 && position.y == 0)) {
+    if (samePosition || (self.position.y != 0 && nextPosition.y == 0)) {
         return self.topViewController;
     }
 
-    if (samePosition || (self.position.y != 2 && position.y == 2)) {
+    if (samePosition || (self.position.y != 2 && nextPosition.y == 2)) {
         return self.webViewController;
     }
 
-    UIColor *color = self.colors[[NSValue valueWithCGPoint:position]];
+    UIColor *color = self.colors[[NSValue valueWithCGPoint:nextPosition]];
     if (color) {
         UIViewController *controller = [[UIViewController alloc] init];
         controller.view.backgroundColor = color;
@@ -113,7 +128,17 @@
     return nil;
 }
 
-- (BOOL)xross:(MLWXrossViewController *)xrossViewController allowBounceToDirection:(MLWXrossDirection)direction {
+- (MLWXrossTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction {
+    NSArray<NSNumber *> *dict = @[
+        @(MLWXrossTransitionTypeDefault),
+        @(MLWXrossTransitionType3DCube),
+        @(MLWXrossTransitionTypeStackNext),
+        @(MLWXrossTransitionTypeStackPrev),
+    ];
+    return dict[self.segmentedControl.selectedSegmentIndex].unsignedIntegerValue;
+}
+
+- (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldBounceToDirection:(MLWXrossDirection)direction {
     return self.bounceSwitch.on;
 }
 

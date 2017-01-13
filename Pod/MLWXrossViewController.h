@@ -17,6 +17,16 @@ typedef struct {
     NSInteger y;
 } MLWXrossDirection;
 
+typedef enum : NSUInteger {
+    MLWXrossTransitionTypeDefault,
+    MLWXrossTransitionType3DCube,
+    MLWXrossTransitionType3DCubeTo,
+    MLWXrossTransitionType3DCubeFrom,
+    MLWXrossTransitionTypeStackNext,
+    MLWXrossTransitionTypeStackPrev,
+    MLWXrossTransitionTypeCustom = 0x10000,
+} MLWXrossTransitionType;
+
 typedef MLWXrossDirection MLWXrossPosition;
 
 extern MLWXrossDirection MLWXrossDirectionNone;
@@ -31,6 +41,8 @@ BOOL MLWXrossDirectionIsNone(MLWXrossDirection direction);
 BOOL MLWXrossDirectionIsHorizontal(MLWXrossDirection direction);
 BOOL MLWXrossDirectionIsVertical(MLWXrossDirection direction);
 BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection direction2);
+
+typedef void (*MLWCustomTransitionTypeFunctor)(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress);
 
 // Data Source
 
@@ -50,6 +62,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 - (void)xross:(MLWXrossViewController *)xrossViewController removedViewController:(UIViewController *)viewController;
 - (void)xross:(MLWXrossViewController *)xrossViewController didScrollToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress;
 - (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldApplyInsetToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress;
+- (MLWXrossTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction;
 
 @end
 
@@ -65,6 +78,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 @property (assign, nonatomic) BOOL bounces;
 @property (assign, nonatomic, getter=isMovingDisabled) BOOL movingDisabled;
 @property (readonly, nonatomic, getter=isMoving) BOOL moving;
+@property (assign, nonatomic) MLWCustomTransitionTypeFunctor customTransitionTypeFunctor;
 
 // Use to deny parent scrolling when inner VC contains __kindof UIScrollView
 @property (assign, nonatomic) BOOL denyHorizontalMovement;
