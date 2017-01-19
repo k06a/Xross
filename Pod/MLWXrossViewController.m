@@ -552,7 +552,7 @@ static void ApplyTransitionStackPrev(CALayer *currLayer, CALayer *nextLayer, MLW
 // Avoid diagonal scrolling
 - (void)scrollViewDidScrollNotRecursive:(UIScrollView *)scrollView {
     scrollView.contentOffset = CGPointMake(
-        (ABS(scrollView.contentOffset.y) > ABS(scrollView.contentOffset.x)) ? 0 : scrollView.contentOffset.x,
+        (ABS(scrollView.contentOffset.y) >= ABS(scrollView.contentOffset.x)) ? 0 : scrollView.contentOffset.x,
         (ABS(scrollView.contentOffset.x) > ABS(scrollView.contentOffset.y)) ? 0 : scrollView.contentOffset.y);
 
     [self scrollViewDidScrollNotRecursiveNotDiagonal:scrollView];
