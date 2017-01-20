@@ -703,12 +703,12 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
             self.nextViewController = [self.dataSource xross:self viewControllerForDirection:direction];
             if (self.nextViewController) {
                 self.nextViewControllerDirection = direction;
-                if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
-                    self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
-                }
-                else {
-                    self.transitionType = MLWXrossTransitionTypeDefault;
-                }
+            }
+            if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
+                self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
+            }
+            else {
+                self.transitionType = MLWXrossTransitionTypeDefault;
             }
         }
         if (self.nextViewController == nil) {
