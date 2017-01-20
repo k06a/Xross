@@ -56,7 +56,7 @@
         [bounceLabel.centerYAnchor constraintEqualToAnchor:self.bounceSwitch.centerYAnchor].active = YES;
         [bounceLabel.trailingAnchor constraintEqualToAnchor:self.bounceSwitch.leadingAnchor constant:-10.0].active = YES;
         
-        self.segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Default", @"3D Cube", @"Stack(Next)", @"Stack(Prev)"]];
+        self.segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Default", @"3D Cube", @"Stack", @"Stack(swing)"]];
         self.segmentedControl.selectedSegmentIndex = 0;
         [_topViewController.view addSubview:self.segmentedControl];
         self.segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
@@ -133,9 +133,18 @@
         @(MLWXrossTransitionTypeDefault),
         @(MLWXrossTransitionType3DCube),
         @(MLWXrossTransitionTypeStackNext),
-        @(MLWXrossTransitionTypeStackPrev),
+        @(MLWXrossTransitionTypeStackNextWithSwing),
     ];
-    return dict[self.segmentedControl.selectedSegmentIndex].unsignedIntegerValue;
+    MLWXrossTransitionType type = dict[self.segmentedControl.selectedSegmentIndex].unsignedIntegerValue;
+    if (type == MLWXrossTransitionTypeStackNext &&
+        direction.x + direction.y < 0) {
+        type = MLWXrossTransitionTypeStackPrev;
+    }
+    if (type == MLWXrossTransitionTypeStackNextWithSwing &&
+        direction.x + direction.y < 0) {
+        type = MLWXrossTransitionTypeStackPrevWithSwing;
+    }
+    return type;
 }
 
 - (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldBounceToDirection:(MLWXrossDirection)direction {

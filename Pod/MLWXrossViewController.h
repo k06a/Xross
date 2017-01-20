@@ -24,6 +24,8 @@ typedef enum : NSUInteger {
     MLWXrossTransitionType3DCubeFrom,
     MLWXrossTransitionTypeStackNext,
     MLWXrossTransitionTypeStackPrev,
+    MLWXrossTransitionTypeStackNextWithSwing,
+    MLWXrossTransitionTypeStackPrevWithSwing,
     MLWXrossTransitionTypeCustom = 0x10000,
 } MLWXrossTransitionType;
 
