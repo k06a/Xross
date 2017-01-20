@@ -8,7 +8,7 @@
 
 Xross is container view controller similar to UIPageController with 4-direction movement support.
 
-Supports three types of transitions:
+Supports four types of transitions:
 
 | Default                        | 3D Cube                        | Stack                          | Stack with swing               |
 | ------------------------------ | ------------------------------ | ------------------------------ | ------------------------------ |
