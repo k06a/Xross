@@ -24,7 +24,10 @@ MLWXrossDirection MLWXrossDirectionLeft = (MLWXrossDirection){-1, 0};
 MLWXrossDirection MLWXrossDirectionRight = (MLWXrossDirection){1, 0};
 
 MLWXrossDirection MLWXrossDirectionMake(NSInteger x, NSInteger y) {
-    return (MLWXrossDirection){x ? x / ABS(x) : 0, y ? y / ABS(y) : 0};
+    return (!x && !y) ? MLWXrossDirectionNone : (MLWXrossDirection){
+        ABS(y) <  ABS(x) ? (x > 0 ? 1 : -1) : 0,
+        ABS(y) >= ABS(x) ? (y > 0 ? 1 : -1) : 0
+    };
 }
 
 MLWXrossDirection MLWXrossDirectionFromOffset(CGPoint offset) {
@@ -591,14 +594,24 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     scrollView.contentOffset = CGPointMake(
         (ABS(scrollView.contentOffset.y) >= ABS(scrollView.contentOffset.x)) ? 0 : scrollView.contentOffset.x,
         (ABS(scrollView.contentOffset.x) > ABS(scrollView.contentOffset.y)) ? 0 : scrollView.contentOffset.y);
+    
+    // Update pan gesture recognizer if needed
+    if (self.scrollView.isDragging) {
+        CGPoint translation = [self.scrollView.panGestureRecognizer translationInView:self.scrollView];
+        if (scrollView.contentOffset.x == 0) {
+            translation.x = 0;
+        }
+        else {
+            translation.y = 0;
+        }
+        [self.scrollView.panGestureRecognizer setTranslation:translation inView:self.scrollView];
+    }
 
     [self scrollViewDidScrollNotRecursiveNotDiagonal:scrollView];
 }
 
 - (void)scrollViewDidScrollNotRecursiveNotDiagonal:(UIScrollView *)scrollView {
-    MLWXrossDirection direction = MLWXrossDirectionMake(
-        (ABS(scrollView.contentOffset.x) < FLT_EPSILON) ? 0 : scrollView.contentOffset.x / ABS(scrollView.contentOffset.x),
-        (ABS(scrollView.contentOffset.y) < FLT_EPSILON) ? 0 : scrollView.contentOffset.y / ABS(scrollView.contentOffset.y));
+    MLWXrossDirection direction = MLWXrossDirectionMake(scrollView.contentOffset.x, scrollView.contentOffset.y);
 
     CGFloat progress = MIN(1, MAX(0, MLWXrossDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x) / self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y) / self.scrollView.frame.size.height));
 
@@ -718,8 +731,9 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
             }
             if (!bounces) {
                 [self.scrollView setContentOffset:CGPointZero animated:NO];
-                self.scrollView.scrollEnabled = NO;
-                self.scrollView.scrollEnabled = YES;
+                //[self.scrollView.panGestureRecognizer setTranslation:CGPointZero inView:self.scrollView];
+                self.scrollView.panGestureRecognizer.enabled = NO;
+                self.scrollView.panGestureRecognizer.enabled = YES;
                 [self updateTransitionProgress:0.0 toDirection:direction];
             }
             else {
