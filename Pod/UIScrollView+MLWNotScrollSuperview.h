@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (assign, nonatomic) BOOL mlw_notScrollSuperview;
 @property (assign, nonatomic) BOOL mlw_notScrollableBySubviews;
+@property (readonly, strong, nonatomic) UIScrollView *mlw_isInsideAttemptToDragParent;
 
 @end
 

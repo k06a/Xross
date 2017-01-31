@@ -15,16 +15,29 @@
 
 //
 
-static BOOL MLWScrollViewIsBouncing(UIScrollView *scrollView) {
-    CGFloat topOffset = scrollView.contentOffset.y + scrollView.contentInset.top;
-    CGFloat bottomOffset = scrollView.contentOffset.y + CGRectGetHeight(scrollView.bounds) - scrollView.contentInset.bottom - scrollView.contentSize.height;
-    return (topOffset < 0) || (bottomOffset > 0);
-}
-
 static CGPoint MLWPointDirectionMake(NSInteger x, NSInteger y) {
     return (!x && !y) ? CGPointZero : CGPointMake(
         ABS(y) <  ABS(x) ? (x > 0 ? 1 : -1) : 0,
         ABS(y) >= ABS(x) ? (y > 0 ? 1 : -1) : 0);
+}
+
+static CGPoint MLWScrollViewBouncingDirectionForContentOffset(UIScrollView *scrollView, CGPoint contentOffset) {
+    CGFloat topOffset = contentOffset.y + scrollView.contentInset.top;
+    CGFloat leftOffset = contentOffset.x + scrollView.contentInset.left;
+    CGFloat bottomOffset = contentOffset.y + CGRectGetHeight(scrollView.bounds)
+                         - scrollView.contentInset.bottom - scrollView.contentSize.height;
+    CGFloat rightOffset = contentOffset.x + CGRectGetWidth(scrollView.bounds)
+                        - scrollView.contentInset.right - scrollView.contentSize.width;
+    return MLWPointDirectionMake((leftOffset < 0 ? -1 : 0) + (rightOffset  > 0 ? 1 : 0),
+                                 (topOffset  < 0 ? -1 : 0) + (bottomOffset > 0 ? 1 : 0));
+}
+
+static CGPoint MLWScrollViewBouncingDirection(UIScrollView *scrollView) {
+    return MLWScrollViewBouncingDirectionForContentOffset(scrollView, scrollView.contentOffset);
+}
+
+static BOOL MLWScrollViewIsBouncing(UIScrollView *scrollView) {
+    return CGPointEqualToPoint(MLWScrollViewBouncingDirection(scrollView), CGPointZero);
 }
 
 //
@@ -37,142 +50,59 @@ static CGPoint MLWPointDirectionMake(NSInteger x, NSInteger y) {
 
 @interface MLWXrossScrollView ()
 
-@property (weak, nonatomic) UIScrollView *innerScrollView;
+@property (assign, nonatomic) BOOL delegateRespondsToScrollViewWillScrollToContentOffset;
+@property (assign, nonatomic) BOOL avoidInnerScrollViewRecursiveCall;
 
 @end
 
 @implementation MLWXrossScrollView
 
+@dynamic delegate;
+
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.mlw_stickyKeyboard = YES;
-        self.mlw_notScrollableBySubviews = YES;
+        //self.mlw_notScrollableBySubviews = YES;
+        
+        _originOffset = CGPointZero;
     }
     return self;
 }
 
-- (void)handleOtherPanGesture:(UIPanGestureRecognizer *)otherGestureRecognizer {
-    if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan ||
-        otherGestureRecognizer.state == UIGestureRecognizerStateChanged) {
-        if (self.innerScrollView == nil) {
-            self.innerScrollView = (id)otherGestureRecognizer.view;
-        }
-    }
-    
-    if (otherGestureRecognizer.state == UIGestureRecognizerStateEnded ||
-        otherGestureRecognizer.state == UIGestureRecognizerStateCancelled ||
-        otherGestureRecognizer.state == UIGestureRecognizerStateFailed) {
-        if (self.innerScrollView == otherGestureRecognizer.view) {
-            self.innerScrollView = nil;
-        }
-        [otherGestureRecognizer removeTarget:self action:@selector(handleOtherPanGesture:)];
-    }
-}
-
-- (BOOL)isAllowedToStartScrollingWithContentOffset:(CGPoint)contentOffset {
-    CGPoint direction = MLWPointDirectionMake(contentOffset.x, contentOffset.y);
-    CGPoint otherTranslation = [self.innerScrollView.panGestureRecognizer translationInView:self.innerScrollView];
-    otherTranslation = CGPointApplyAffineTransform(otherTranslation, self.innerScrollView.transform);
-    CGPoint otherDirection = MLWPointDirectionMake(-otherTranslation.x, -otherTranslation.y);
-    CGPoint velocity = [self.innerScrollView.panGestureRecognizer velocityInView:self.innerScrollView];
-    CGFloat speed = sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
-    CGFloat verticalSpeed = ABS(velocity.y);
-    CGFloat horizontalSpeed = ABS(velocity.x);
-
-    if (self.innerScrollView.window == nil) {
-        return YES;
-    }
-    
-    if (self.innerScrollView.panGestureRecognizer.state != UIGestureRecognizerStateBegan &&
-        self.innerScrollView.panGestureRecognizer.state != UIGestureRecognizerStateChanged &&
-        !self.innerScrollView.isDragging &&
-        !self.innerScrollView.isDecelerating) {
-        return YES;
-    }
-    
-    if (!self.innerScrollView.isZooming &&
-        CGPointEqualToPoint(direction, otherDirection) &&
-        MLWScrollViewIsBouncing(self.innerScrollView) &&
-        ((self.innerScrollView.isDragging && speed < 1000) ||
-         self.innerScrollView.isDecelerating)) {
-        return YES;
-    }
-    
-    if (!self.innerScrollView.isZooming &&
-        ABS(direction.x) != ABS(otherDirection.x) &&
-        !CGPointEqualToPoint(self.contentOffset, CGPointZero)) {
-        return YES;
-    }
-    
-    //
-    // Allow horizontal movement while inner vertical scrolling
-    // Formula: |y| < |x| / 2
-    //
-    //      y^
-    //  *\   |   /*
-    //  **\  |  /**
-    //  ***\ | /***
-    //  ****\|/**** x
-    // ------+------>
-    //  ****/|\****
-    //  ***/ | \***
-    //  **/  |  \**
-    //  */   |   \*
-    //
-    if (self.innerScrollView.contentSize.width == CGRectGetWidth(self.bounds) &&
-        !self.innerScrollView.alwaysBounceHorizontal && verticalSpeed > 50) {
-        
-        if (verticalSpeed && horizontalSpeed) {
-            return verticalSpeed < horizontalSpeed / 2;
-        }
-
-        // While vertical scrolling started trying to swipe horizontal gives zeros
-        if (!verticalSpeed && !horizontalSpeed) {
-            return YES;
-        }
-    }
-    
-    //
-    // Allow vertical movement while inner horizaontal scrolling
-    // Formula: |y| > |x| / 2
-    //
-    //      y^
-    //   \***|***/
-    //    \**|**/
-    //     \*|*/
-    //      \|/     x
-    // ------+------>
-    //      /|\
-    //     /*|*\
-    //    /**|**\
-    //   /***|***\
-    //
-    if (self.innerScrollView.contentSize.height == CGRectGetHeight(self.bounds) &&
-        !self.innerScrollView.alwaysBounceVertical && horizontalSpeed > 50) {
-        
-        if (verticalSpeed && horizontalSpeed) {
-            return verticalSpeed > horizontalSpeed / 2;
-        }
-        
-        // While vertical scrolling started trying to swipe horizontal gives zeros
-        if (!verticalSpeed && !horizontalSpeed) {
-            return YES;
-        }
-    }
-    
-    return NO;
+- (void)setDelegate:(id<MLWXrossScrollViewDelegate>)delegate {
+    self.delegateRespondsToScrollViewWillScrollToContentOffset = [delegate respondsToSelector:@selector(scrollView:willScrollToContentOffset:)];
+    [super setDelegate:delegate];
 }
 
 - (void)setContentOffset:(CGPoint)contentOffset {
-    if (CGPointEqualToPoint(contentOffset, self.contentOffset) ||
-        !CGPointEqualToPoint(self.contentOffset, CGPointZero) ||
-        [self isAllowedToStartScrollingWithContentOffset:contentOffset]) {
+    if (self.avoidInnerScrollViewRecursiveCall) {
         [super setContentOffset:contentOffset];
-    } else {
-        if (self.panGestureRecognizer.state == UIGestureRecognizerStateChanged) {
-            [self.panGestureRecognizer setTranslation:CGPointZero inView:self];
-        }
+        return;
     }
+    
+    // Fix inner bounce deceleration starts to scrolls xross
+    if (CGPointEqualToPoint(self.contentOffset, CGPointZero) &&
+        self.mlw_isInsideAttemptToDragParent &&
+        self.mlw_isInsideAttemptToDragParent.isDecelerating) {
+        return;
+    }
+    
+    CGPoint selfBounceDirection = MLWScrollViewBouncingDirectionForContentOffset(self, contentOffset);
+    CGPoint innerBounceDirection = self.mlw_isInsideAttemptToDragParent ? MLWScrollViewBouncingDirection(self.mlw_isInsideAttemptToDragParent) : CGPointZero;
+    if (CGPointEqualToPoint(self.contentOffset, CGPointZero) &&
+        !CGPointEqualToPoint(innerBounceDirection, CGPointZero) &&
+        !CGPointEqualToPoint(selfBounceDirection, innerBounceDirection)) {
+        return;
+    }
+
+    if (self.delegateRespondsToScrollViewWillScrollToContentOffset &&
+        !CGPointEqualToPoint(contentOffset, self.contentOffset)) {
+        self.avoidInnerScrollViewRecursiveCall = YES;
+        contentOffset = [self.delegate scrollView:self willScrollToContentOffset:contentOffset];
+        self.avoidInnerScrollViewRecursiveCall = NO;
+    }
+
+    [super setContentOffset:contentOffset];
 }
 
 // Avoid UITextField to scroll superview to become visible on becoming first responder
@@ -207,31 +137,27 @@ static CGPoint MLWPointDirectionMake(NSInteger x, NSInteger y) {
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    UIView *gestureRecognizerView = [gestureRecognizer.view hitTest:[gestureRecognizer locationInView:gestureRecognizer.view] withEvent:nil];
+    CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
+    UIView *viewAtPoint = [gestureRecognizer.view hitTest:point withEvent:nil];
 
     // Avoid xross movement by UISlider
-    if ([gestureRecognizerView isKindOfClass:[UISlider class]]) {
+    if ([viewAtPoint isKindOfClass:[UISlider class]]) {
         return NO;
     }
     
-//    if ([[MLWXrossScrollView superclass] instancesRespondToSelector:_cmd]) {
-//        return [super gestureRecognizerShouldBegin:gestureRecognizer];
-//    }
+    if ([[MLWXrossScrollView superclass] instancesRespondToSelector:_cmd]) {
+        return [super gestureRecognizerShouldBegin:gestureRecognizer];
+    }
 
     return YES;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    if (gestureRecognizer == self.panGestureRecognizer) {
-        if ([otherGestureRecognizer.view isKindOfClass:[UIScrollView class]] &&
-            [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-            [otherGestureRecognizer addTarget:self action:@selector(handleOtherPanGesture:)];
-        }
-    
-        return YES;
-    }
-    
-    return NO;
+    // Allow simultaneous non-scroll pan gesture recognizers
+    return (self.panGestureRecognizer == otherGestureRecognizer) ||
+           (self.panGestureRecognizer == gestureRecognizer &&
+            [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
+            ![otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]);
 }
 
 @end

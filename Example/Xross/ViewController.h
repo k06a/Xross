@@ -1,8 +1,8 @@
 //
-//  ViewController.h
-//  XrossScreens
+//  SecondViewController.h
+//  Xross
 //
-//  Created by Anton Bukov on 23.11.15.
+//  Created by Anton Bukov on 24.11.15.
 //  Copyright © 2015 Searchie. All rights reserved.
 //
 
