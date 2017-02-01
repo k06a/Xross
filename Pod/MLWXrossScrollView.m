@@ -36,8 +36,16 @@ static CGPoint MLWScrollViewBouncingDirection(UIScrollView *scrollView) {
     return MLWScrollViewBouncingDirectionForContentOffset(scrollView, scrollView.contentOffset);
 }
 
-static BOOL MLWScrollViewIsBouncing(UIScrollView *scrollView) {
-    return CGPointEqualToPoint(MLWScrollViewBouncingDirection(scrollView), CGPointZero);
+static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
+    CGRect bounds = (CGRect){view.bounds.origin, frame.size};
+    if (!CGSizeEqualToSize(view.bounds.size, bounds.size)) {
+        view.bounds = bounds;
+        [view layoutIfNeeded];
+    }
+    CGPoint center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
+    if (!CGPointEqualToPoint(view.center, center)) {
+        view.center = center;
+    }
 }
 
 //
@@ -52,6 +60,7 @@ static BOOL MLWScrollViewIsBouncing(UIScrollView *scrollView) {
 
 @property (assign, nonatomic) BOOL delegateRespondsToScrollViewWillScrollToContentOffset;
 @property (assign, nonatomic) BOOL avoidInnerScrollViewRecursiveCall;
+@property (assign, nonatomic) BOOL skipSetContentOffsetCalls;
 
 @end
 
@@ -64,9 +73,99 @@ static BOOL MLWScrollViewIsBouncing(UIScrollView *scrollView) {
         self.mlw_stickyKeyboard = YES;
         //self.mlw_notScrollableBySubviews = YES;
         
-        _originOffset = CGPointZero;
+        [self updateInsets];
     }
     return self;
+}
+
+- (CGPoint)originOffset {
+    return CGPointMake(self.originOffsetInSteps.x * CGRectGetWidth(self.bounds),
+                       self.originOffsetInSteps.y * CGRectGetHeight(self.bounds));
+}
+
+- (CGPoint)relativeContentOffset {
+    return CGPointMake(self.contentOffset.x - self.originOffset.x,
+                       self.contentOffset.y - self.originOffset.y);
+}
+
+- (void)setOriginOffsetInSteps:(CGPoint)originOffsetInSteps {
+    _originOffsetInSteps = originOffsetInSteps;
+    [self updateInsets];
+}
+
+- (void)setNextDirection:(CGPoint)nextDirection {
+    _nextDirection = nextDirection;
+    [self updateInsets];
+}
+
+- (void)updateInsets {
+    CGPoint contentOffset = self.contentOffset;
+    
+    self.skipSetContentOffsetCalls = YES;
+    self.contentInset = UIEdgeInsetsMake(
+        ((self.nextDirection.y < 0) - self.originOffsetInSteps.y) * CGRectGetHeight(self.bounds) + 1,
+        ((self.nextDirection.x < 0) - self.originOffsetInSteps.x) * CGRectGetWidth(self.bounds) + 1,
+        ((self.nextDirection.y > 0) + self.originOffsetInSteps.y) * CGRectGetHeight(self.bounds) + 1,
+        ((self.nextDirection.x > 0) + self.originOffsetInSteps.x) * CGRectGetWidth(self.bounds) + 1);
+    self.skipSetContentOffsetCalls = NO;
+    
+    [super setContentOffset:contentOffset];
+}
+
+- (void)didMoveToWindow {
+    [super didMoveToWindow];
+    [self updateInsets];
+    self.contentOffset = self.originOffset;
+}
+
+- (void)setCenterView:(UIView *)centerView {
+    if (centerView) {
+        if (!centerView.superview) {
+            [self addSubview:centerView];
+        }
+        CGRect frame = (CGRect){self.originOffset, self.bounds.size};
+        ViewSetFrameWithoutRelayoutIfPossible(centerView, frame);
+    }
+    else {
+        [_centerView removeFromSuperview];
+    }
+    
+    _centerView = centerView;
+}
+
+- (void)setNextView:(UIView *)nextView {
+    NSAssert(NO, @"Do not call this method directly, use -setNextView:toDirection:");
+}
+
+- (void)setNextView:(UIView *)nextView toDirection:(CGPoint)direction {
+    if (nextView) {
+        if (!nextView.superview) {
+            [self addSubview:nextView];
+        }
+        NSAssert(self.centerView, @"centerView should exist when setting nextView");
+        CGRect frame = (CGRect){self.originOffset, self.bounds.size};
+        frame.origin.x += direction.x * CGRectGetWidth(self.bounds);
+        frame.origin.y += direction.y * CGRectGetHeight(self.bounds);
+        ViewSetFrameWithoutRelayoutIfPossible(nextView, frame);
+    }
+    else {
+        [_nextView removeFromSuperview];
+    }
+    
+    _nextView = nextView;
+}
+
+- (void)willRemoveSubview:(UIView *)subview {
+    [super willRemoveSubview:subview];
+    
+    if (_centerView == subview) {
+        _centerView = _nextView;
+        _nextView = nil;
+    }
+    
+    if (_nextView == subview) {
+        _nextView = nil;
+    }
 }
 
 - (void)setDelegate:(id<MLWXrossScrollViewDelegate>)delegate {
@@ -75,13 +174,18 @@ static BOOL MLWScrollViewIsBouncing(UIScrollView *scrollView) {
 }
 
 - (void)setContentOffset:(CGPoint)contentOffset {
+    //NSLog(@"contentOffset = %@", NSStringFromCGPoint(contentOffset));
+    if (self.skipSetContentOffsetCalls) {
+        return;
+    }
+    
     if (self.avoidInnerScrollViewRecursiveCall) {
         [super setContentOffset:contentOffset];
         return;
     }
     
     // Fix inner bounce deceleration starts to scrolls xross
-    if (CGPointEqualToPoint(self.contentOffset, CGPointZero) &&
+    if (CGPointEqualToPoint(self.relativeContentOffset, CGPointZero) &&
         self.mlw_isInsideAttemptToDragParent &&
         self.mlw_isInsideAttemptToDragParent.isDecelerating) {
         return;
@@ -89,20 +193,21 @@ static BOOL MLWScrollViewIsBouncing(UIScrollView *scrollView) {
     
     CGPoint selfBounceDirection = MLWScrollViewBouncingDirectionForContentOffset(self, contentOffset);
     CGPoint innerBounceDirection = self.mlw_isInsideAttemptToDragParent ? MLWScrollViewBouncingDirection(self.mlw_isInsideAttemptToDragParent) : CGPointZero;
-    if (CGPointEqualToPoint(self.contentOffset, CGPointZero) &&
+    if (CGPointEqualToPoint(self.relativeContentOffset, CGPointZero) &&
         !CGPointEqualToPoint(innerBounceDirection, CGPointZero) &&
         !CGPointEqualToPoint(selfBounceDirection, innerBounceDirection)) {
         return;
     }
 
-    if (self.delegateRespondsToScrollViewWillScrollToContentOffset &&
-        !CGPointEqualToPoint(contentOffset, self.contentOffset)) {
-        self.avoidInnerScrollViewRecursiveCall = YES;
-        contentOffset = [self.delegate scrollView:self willScrollToContentOffset:contentOffset];
-        self.avoidInnerScrollViewRecursiveCall = NO;
+    self.avoidInnerScrollViewRecursiveCall = YES;
+    {
+        if (self.delegateRespondsToScrollViewWillScrollToContentOffset &&
+            !CGPointEqualToPoint(contentOffset, self.contentOffset)) {
+            contentOffset = [self.delegate scrollView:self willScrollToContentOffset:contentOffset];
+        }
+        [super setContentOffset:contentOffset];
     }
-
-    [super setContentOffset:contentOffset];
+    self.avoidInnerScrollViewRecursiveCall = NO;
 }
 
 // Avoid UITextField to scroll superview to become visible on becoming first responder
@@ -115,7 +220,7 @@ static BOOL MLWScrollViewIsBouncing(UIScrollView *scrollView) {
 }
 
 - (void)layoutSubviews {
-    if (!self.skipLayoutSubviewCalls) {
+    if (self.subviews.count < 2) {
         [super layoutSubviews];
     }
 }

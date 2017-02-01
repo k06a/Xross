@@ -25,8 +25,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nullable, weak, nonatomic) id<MLWXrossScrollViewDelegate> delegate;
 
-@property (assign, nonatomic) BOOL skipLayoutSubviewCalls;
-@property (assign, nonatomic) CGPoint originOffset;
+@property (assign, nonatomic) CGPoint originOffsetInSteps;
+@property (readonly, nonatomic) CGPoint originOffset;
+@property (readonly, nonatomic) CGPoint relativeContentOffset;
+@property (assign, nonatomic) CGPoint nextDirection;
+
+@property (nullable, strong, nonatomic) UIView *centerView;
+@property (nullable, strong, nonatomic) UIView *nextView;
+- (void)setNextView:(UIView *)nextView toDirection:(CGPoint)direction;
 
 - (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated;
 

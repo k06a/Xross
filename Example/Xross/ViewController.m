@@ -107,6 +107,8 @@
 #pragma mark - Xross
 
 - (nullable UIViewController *)xross:(MLWXrossViewController *)xrossViewController viewControllerForDirection:(MLWXrossDirection)direction {
+    NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
+    
     BOOL samePosition = MLWXrossDirectionIsNone(direction);
     CGPoint nextPosition = CGPointMake(self.position.x + direction.x,
                                        self.position.y + direction.y);
@@ -130,6 +132,8 @@
 }
 
 - (MLWXrossTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction {
+    NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
+    
     NSArray<NSNumber *> *dict = @[
         @(MLWXrossTransitionTypeDefault),
         @(MLWXrossTransitionType3DCube),
@@ -149,13 +153,27 @@
 }
 
 - (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldBounceToDirection:(MLWXrossDirection)direction {
+    NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
     return self.bounceSwitch.on;
 }
 
 - (void)xross:(MLWXrossViewController *)xrossViewController didMoveToDirection:(MLWXrossDirection)direction {
+    NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
     self.position = CGPointMake(self.position.x + direction.x,
                                 self.position.y + direction.y);
-    NSLog(@"pos = (%@,%@)", @(self.position.x), @(self.position.y));
+}
+
+- (void)xross:(MLWXrossViewController *)xrossViewController removedViewController:(UIViewController *)viewController {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+}
+
+- (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldApplyInsetToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress {
+    NSLog(@"%s (%@,%@) %.4f%%", __PRETTY_FUNCTION__, @(direction.x), @(direction.y), progress*100);
+    return YES;
+}
+
+- (void)xross:(MLWXrossViewController *)xrossViewController didScrollToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress {
+    NSLog(@"%s (%@,%@) %.4f%%", __PRETTY_FUNCTION__, @(direction.x), @(direction.y), progress*100);
 }
 
 @end
