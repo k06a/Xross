@@ -425,8 +425,9 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     
     self.moveToDirectionCompletionBlock = completion;
     self.view.userInteractionEnabled = NO;
-    CGPoint point = CGPointMake(self.view.originOffset.x + direction.x * self.view.frame.size.width,
-                                self.view.originOffset.y + direction.y * self.view.frame.size.height);
+    CGPoint point = CGPointMake(
+        self.view.originOffset.x + direction.x * CGRectGetWidth(self.view.bounds),
+        self.view.originOffset.y + direction.y * CGRectGetHeight(self.view.bounds));
     [self.view setContentOffsetTo:point animated:YES];
 }
 
@@ -740,21 +741,25 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (!decelerate) {
-        [self finishScrolling:scrollView animated:YES];
+        [self finishScrolling:scrollView];
     }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self finishScrolling:scrollView animated:NO];
+    [self finishScrolling:scrollView];
 }
 
-- (void)finishScrolling:(UIScrollView *)scrollView animated:(BOOL)animated {
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    [self finishScrolling:scrollView];
+}
+
+- (void)finishScrolling:(UIScrollView *)scrollView {
     CGPoint point = CGPointMake(
         round(self.view.contentOffset.x / CGRectGetWidth(self.view.bounds)) * CGRectGetWidth(self.view.bounds),
         round(self.view.contentOffset.y / CGRectGetHeight(self.view.bounds)) * CGRectGetHeight(self.view.bounds));
     if (!self.view.isDragging &&
         !CGPointEqualToPoint(point, self.view.contentOffset)) {
-        [self.view setContentOffsetTo:point animated:animated];
+        [self.view setContentOffsetTo:point animated:NO];
     }
     self.view.bounces = NO;
 }
