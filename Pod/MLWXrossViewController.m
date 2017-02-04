@@ -16,9 +16,6 @@
 
 //
 
-static CGFloat const kAllowedInsetAnimationMaxDuration = 0.4;
-static CGFloat const kAllowedInsetAnimationMaxDurationDistance = 100;
-
 MLWXrossDirection MLWXrossDirectionNone = (MLWXrossDirection){0, 0};
 MLWXrossDirection MLWXrossDirectionTop = (MLWXrossDirection){0, -1};
 MLWXrossDirection MLWXrossDirectionBottom = (MLWXrossDirection){0, 1};
@@ -272,7 +269,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 //
 
-@interface MLWXrossViewController () <UIScrollViewDelegate>
+@interface MLWXrossViewController () <MLWXrossScrollViewDelegate>
 
 @property (strong, nonatomic) MLWXrossScrollView *view;
 
@@ -729,7 +726,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         }
     }
     
-    if ((direction.x || direction.y) && progress ||
+    if (((direction.x || direction.y) && progress) ||
         !CGPointEqualToPoint(self.view.contentOffset, self.view.originOffset)) {
         if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
             [self.delegate xross:self didScrollToDirection:direction progress:progress];
