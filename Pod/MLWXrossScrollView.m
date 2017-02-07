@@ -7,6 +7,7 @@
 //
 
 #import <JRSwizzle/JRSwizzle.h>
+#import <libextobjc/extobjc.h>
 
 #import "UIResponder+MLWCurrentFirstResponder.h"
 #import "UIScrollView+MLWNotScrollSuperview.h"
@@ -68,6 +69,20 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
 @dynamic delegate;
 
++ (NSSet<NSString *> *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
+    MLWXrossScrollView *this;
+    return @{
+        @keypath(this.originOffset):[NSSet setWithArray:@[
+            @keypath(this.originOffsetInSteps),
+            @keypath(this.bounds.size),
+        ]],
+        @keypath(this.relativeContentOffset):[NSSet setWithArray:@[
+            @keypath(this.contentOffset),
+            @keypath(this.originOffset),
+        ]],
+    }[key] ?: [super keyPathsForValuesAffectingValueForKey:key];
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.mlw_stickyKeyboard = YES;
@@ -76,6 +91,24 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         [self updateInsets];
     }
     return self;
+}
+
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    [self updateInsets];
+    if (self.nextView == nil) {
+        [super setContentOffset:self.originOffset];
+        if (self.centerView) {
+            CGRect frame = (CGRect){self.originOffset, self.bounds.size};
+            ViewSetFrameWithoutRelayoutIfPossible(self.centerView, frame);
+        }
+    }
+}
+
+- (void)layoutSubviews {
+    if (self.nextView == nil) {
+        [super layoutSubviews];
+    }
 }
 
 - (CGPoint)originOffset {
@@ -99,9 +132,10 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 }
 
 - (void)updateInsets {
-    CGPoint contentOffset = self.contentOffset;
+    CGPoint savedContentOffset = self.contentOffset;
     
     self.skipSetContentOffsetCalls = YES;
+    self.contentSize = self.bounds.size;
     self.contentInset = UIEdgeInsetsMake(
         ((self.nextDirection.y < 0) - self.originOffsetInSteps.y) * CGRectGetHeight(self.bounds) + 1,
         ((self.nextDirection.x < 0) - self.originOffsetInSteps.x) * CGRectGetWidth(self.bounds) + 1,
@@ -109,7 +143,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         ((self.nextDirection.x > 0) + self.originOffsetInSteps.x) * CGRectGetWidth(self.bounds) + 1);
     self.skipSetContentOffsetCalls = NO;
     
-    [super setContentOffset:contentOffset];
+    [super setContentOffset:savedContentOffset];
 }
 
 - (void)didMoveToWindow {
@@ -120,7 +154,8 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
 - (void)setCenterView:(UIView *)centerView {
     if (centerView) {
-        if (!centerView.superview) {
+        if (centerView.superview != self) {
+            [centerView removeFromSuperview];
             [self addSubview:centerView];
         }
         CGRect frame = (CGRect){self.originOffset, self.bounds.size};
@@ -139,7 +174,8 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
 - (void)setNextView:(UIView *)nextView toDirection:(CGPoint)direction {
     if (nextView) {
-        if (!nextView.superview) {
+        if (nextView.superview != self) {
+            [nextView removeFromSuperview];
             [self addSubview:nextView];
         }
         NSAssert(self.centerView, @"centerView should exist when setting nextView");
@@ -217,12 +253,6 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
 - (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated {
     [super setContentOffset:contentOffset animated:animated];
-}
-
-- (void)layoutSubviews {
-    if (self.subviews.count < 2) {
-        [super layoutSubviews];
-    }
 }
 
 #pragma mark - Gesture Recognizer Delegate

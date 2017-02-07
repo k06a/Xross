@@ -279,7 +279,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 @property (assign, nonatomic) MLWXrossTransitionType transitionType;
 @property (assign, nonatomic) BOOL scrollViewWillSkipCalls;
 @property (assign, nonatomic) MLWXrossDirection prevDirection;
-@property (strong, nonatomic) NSDate *denyMovementUntilDate;
+@property (assign, nonatomic) BOOL denyMovementWhileRotation;
 @property (copy, nonatomic) void (^moveToDirectionCompletionBlock)();
 
 @end
@@ -329,6 +329,9 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    if (self.nextViewController) {
+        return (1 << [UIApplication sharedApplication].statusBarOrientation);
+    }
     return self.viewController
                ? [self.viewController supportedInterfaceOrientations]
                : [super supportedInterfaceOrientations];
@@ -337,13 +340,15 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
 
-    self.denyMovementUntilDate = [NSDate dateWithTimeIntervalSinceNow:0.3];
-    self.view.originOffsetInSteps = self.view.originOffsetInSteps;
+    @weakify(self);
+    self.denyMovementWhileRotation = YES;
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-        self.view.originOffsetInSteps = self.view.originOffsetInSteps;
+        [self.view setNeedsLayout];
+        [self.view layoutIfNeeded];
     }
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-            self.view.originOffsetInSteps = self.view.originOffsetInSteps;
+            @strongify(self);
+            self.denyMovementWhileRotation = NO;
         }];
 }
 
@@ -451,16 +456,6 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     [self.viewController endAppearanceTransition];
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-
-    if (!CGSizeEqualToSize(self.view.contentSize, self.view.bounds.size)) {
-        [UIView performWithoutAnimation:^{
-            self.view.contentSize = self.view.bounds.size;
-        }];
-    }
-}
-
 - (void)fixStatusBarOrientationIfNeeded {
     if (!(self.supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation))) {
         NSArray<NSNumber *> *orientations = @[
@@ -503,7 +498,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         return self.view.contentOffset;
     }
     
-    if (self.denyMovementUntilDate && [[NSDate date] compare:self.denyMovementUntilDate] == NSOrderedAscending) {
+    if (self.denyMovementWhileRotation) {
         return self.view.contentOffset;
     }
     
@@ -543,7 +538,6 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         
         skipUpdateTransitionCall = MLWXrossDirectionIsNone(direction);
     }
-    
     
     // Add nextViewController
     if (!self.nextViewController &&
