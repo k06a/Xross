@@ -10,6 +10,7 @@
 
 #import <JRSwizzle/JRSwizzle.h>
 #import <libextobjc/extobjc.h>
+#import <UAObfuscatedString/UAObfuscatedString.h>
 
 #import "UIResponder+MLWCurrentFirstResponder.h"
 #import "UIScrollView+MLWNotScrollSuperview.h"
@@ -40,6 +41,30 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         view.center = center;
     }
 }
+
+//
+
+@implementation UIGestureRecognizer (MLWScrollView)
+
++ (void)load {
+    NSString *selectorStr = [NSMutableString string].underscore.s.h.o.u.l.d.T.r.a.n.s.f.e.r.T.r.a.c.k.i.n.g.F.r.o.m.P.a.r.e.n.t.S.c.r.o.l.l.V.i.e.w.F.o.r.C.u.r.r.e.n.t.O.f.f.s.e.t;
+    Class klass = NSClassFromString([NSMutableString string].U.I.S.c.r.o.l.l.V.i.e.w.P.a.n.G.e.s.t.u.r.e.R.e.c.o.g.n.i.z.e.r);
+    assert([klass jr_swizzleMethod:NSSelectorFromString(selectorStr)
+                        withMethod:@selector(mlw_shouldTransferTrackingFromParentScrollViewForCurrentOffset)
+                             error:NULL]);
+}
+
+// Fix iPhone 5S specific bug with inner scrolling freeze
+- (BOOL)mlw_shouldTransferTrackingFromParentScrollViewForCurrentOffset {
+    BOOL result = [self mlw_shouldTransferTrackingFromParentScrollViewForCurrentOffset];
+    if (self.state == UIGestureRecognizerStatePossible &&
+        [self.view isKindOfClass:[UIScrollView class]]) {
+        return YES;
+    }
+    return result;
+}
+
+@end
 
 //
 
