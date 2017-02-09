@@ -18,15 +18,7 @@
 
 //
 
-static CGPoint MLWPointDirectionMake(NSInteger x, NSInteger y) {
-    return (!x && !y) ? CGPointZero : CGPointMake(
-        ABS(y) <  ABS(x) ? (x > 0 ? 1 : -1) : 0,
-        ABS(y) >= ABS(x) ? (y > 0 ? 1 : -1) : 0);
-}
-
-//
 // Negative value of one of insets means boincing started to that direction
-//
 static UIEdgeInsets MLWScrollViewBouncingInsetsForContentOffset(UIScrollView *scrollView, CGPoint contentOffset) {
     CGFloat topOffset = contentOffset.y + scrollView.contentInset.top;
     CGFloat leftOffset = contentOffset.x + scrollView.contentInset.left;
@@ -296,7 +288,8 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     }
     
     // Allow simultateous scrolling with inner scroll views
-    if (otherGestureRecognizer.view != self &&
+    if (gestureRecognizer == self.panGestureRecognizer &&
+        otherGestureRecognizer.view != self &&
         [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
         [otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]) {
         [otherGestureRecognizer addTarget:self action:@selector(handleOtherPanGesture:)];
@@ -317,7 +310,9 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         otherGestureRecognizer.state == UIGestureRecognizerStateCancelled ||
         otherGestureRecognizer.state == UIGestureRecognizerStateFailed) {
         [otherGestureRecognizer removeTarget:self action:_cmd];
-        self.innerScrollView = nil;
+        if (otherGestureRecognizer.view == self.innerScrollView) {
+            self.innerScrollView = nil;
+        }
     }
 }
 
