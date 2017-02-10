@@ -288,14 +288,12 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 @dynamic view;
 
-// KVO Dependent Keys
 + (NSSet<NSString *> *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     MLWXrossViewController *this = nil;
     return @{
         @keypath(this.isMoving) : [NSSet setWithArray:@[ @keypath(this.nextViewController) ]],
         @keypath(this.isMovingDisabled) : [NSSet setWithArray:@[ @keypath(this.view.scrollEnabled) ]],
-    }[key]
-               ?: [super keyPathsForValuesAffectingValueForKey:key];
+    }[key] ?: [super keyPathsForValuesAffectingValueForKey:key];
 }
 
 - (BOOL)isMoving {
@@ -537,6 +535,10 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         direction = MLWXrossDirectionMake(directionVector.x, directionVector.y);
         
         skipUpdateTransitionCall = MLWXrossDirectionIsNone(direction);
+    }
+    
+    if (self.denyMovementWhileRotation) {
+        return self.view.contentOffset;
     }
     
     // Add nextViewController
