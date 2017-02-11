@@ -111,8 +111,9 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     return self;
 }
 
-- (void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    
     [self updateInsets];
     if (self.nextView == nil) {
         [super setContentOffset:self.originOffset];

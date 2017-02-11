@@ -279,6 +279,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 @property (assign, nonatomic) MLWXrossTransitionType transitionType;
 @property (assign, nonatomic) BOOL scrollViewWillSkipCalls;
 @property (assign, nonatomic) MLWXrossDirection prevDirection;
+@property (assign, nonatomic) MLWXrossDirection prevWantedDirection;
 @property (assign, nonatomic) BOOL denyMovementWhileRotation;
 @property (copy, nonatomic) void (^moveToDirectionCompletionBlock)();
 
@@ -443,7 +444,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 - (void)viewDidAppear:(BOOL)animated {
     [self.viewController endAppearanceTransition];
-    [self fixStatusBarOrientationIfNeeded];
+    [self fixStatusBarOrientationIfNeededForCurrentSupported:self.supportedInterfaceOrientations];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -454,17 +455,57 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     [self.viewController endAppearanceTransition];
 }
 
-- (void)fixStatusBarOrientationIfNeeded {
-    if (!(self.supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation))) {
+- (void)fixStatusBarOrientationIfNeededForCurrentSupported:(UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    UIInterfaceOrientation realInterfaceOrientation = ^{
+        switch (deviceOrientation) {
+            case UIDeviceOrientationPortrait:
+                return UIInterfaceOrientationPortrait;
+            case UIDeviceOrientationPortraitUpsideDown:
+                return UIInterfaceOrientationPortraitUpsideDown;
+            case UIDeviceOrientationLandscapeLeft:
+                return UIInterfaceOrientationLandscapeRight;
+            case UIDeviceOrientationLandscapeRight:
+                return UIInterfaceOrientationLandscapeLeft;
+            case UIDeviceOrientationUnknown:
+            case UIDeviceOrientationFaceUp:
+            case UIDeviceOrientationFaceDown:
+                return UIInterfaceOrientationUnknown;
+        }
+    }();
+    
+    if (!(supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation)) ||
+        (realInterfaceOrientation != UIInterfaceOrientationUnknown &&
+        !(supportedInterfaceOrientations & (1 << realInterfaceOrientation)))) {
         NSArray<NSNumber *> *orientations = @[
-            @(UIInterfaceOrientationMaskPortrait),
-            @(UIInterfaceOrientationMaskLandscapeLeft),
-            @(UIInterfaceOrientationMaskLandscapeRight),
-            @(UIInterfaceOrientationMaskPortraitUpsideDown)
+            @(UIInterfaceOrientationPortrait),
+            @(UIInterfaceOrientationLandscapeLeft),
+            @(UIInterfaceOrientationLandscapeRight),
+            @(UIInterfaceOrientationPortraitUpsideDown)
         ];
         for (NSNumber *orientation in orientations) {
-            if (orientation.unsignedIntegerValue & self.supportedInterfaceOrientations) {
-                [[UIDevice currentDevice] setValue:orientation forKey:@keypath([UIDevice currentDevice], orientation)];
+            if (self.supportedInterfaceOrientations & (1 << orientation.unsignedIntegerValue)) {
+                if ([UIDevice currentDevice].orientation == orientation.unsignedIntegerValue) {
+                    //
+                    // Rotate UI to real device orientation
+                    //
+                    //UIViewController *aDummyController = [[UIViewController alloc] init];
+                    //aDummyController.view.backgroundColor = [UIColor clearColor];
+                    //aDummyController.view.hidden = YES;
+                    
+                    //self.view.userInteractionEnabled = NO;
+                    //[self presentViewController:aDummyController animated:YES completion:^{
+                    //    [aDummyController dismissViewControllerAnimated:YES completion:^{
+                    //        self.view.userInteractionEnabled = YES;
+                    //    }];
+                    //}];
+                }
+                else {
+                    //
+                    // Rotate UI to new VC supported orientation
+                    //
+                    [[UIDevice currentDevice] setValue:orientation forKey:@keypath([UIDevice currentDevice], orientation)];
+                }
                 break;
             }
         }
@@ -500,10 +541,17 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         return self.view.contentOffset;
     }
     
+    if (self.view.panGestureRecognizer.state == UIGestureRecognizerStateEnded ||
+        self.view.panGestureRecognizer.state == UIGestureRecognizerStateFailed ||
+        self.view.panGestureRecognizer.state == UIGestureRecognizerStateCancelled) {
+        self.prevWantedDirection = MLWXrossDirectionNone;
+    }
+    
     CGPoint directionVector = CGPointMake(
         contentOffset.x - scrollView.originOffset.x,
         contentOffset.y - scrollView.originOffset.y);
     MLWXrossDirection direction = MLWXrossDirectionMake(directionVector.x, directionVector.y);
+    MLWXrossDirection originalDirection = direction;
     
     // Update content offset with direction respect
     contentOffset = CGPointMake(
@@ -560,6 +608,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         self.prevDirection = MLWXrossDirectionMake(result.x - scrollView.originOffset.x, result.y - scrollView.originOffset.y);
     }
     
+    self.prevWantedDirection = originalDirection;
     return result;
 }
 
@@ -608,6 +657,8 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         [self.viewController endAppearanceTransition];
     }
     
+    UIInterfaceOrientationMask prevSupportedInterfaceOrientations = self.supportedInterfaceOrientations; // Before nextViewControlled get nilled
+    
     UIViewController *prevNextViewController = self.nextViewController;
     self.nextViewController = nil;
     self.nextViewControllerDirection = MLWXrossDirectionNone;
@@ -626,7 +677,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         self.moveToDirectionCompletionBlock = nil;
     }
     
-    [self fixStatusBarOrientationIfNeeded];
+    [self fixStatusBarOrientationIfNeededForCurrentSupported:prevSupportedInterfaceOrientations];
 }
 
 - (void)addNextViewControllerToDirection:(MLWXrossDirection)direction {
@@ -699,18 +750,14 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     }
     else {
         if(!self.view.bounces &&
-           !MLWXrossDirectionEquals(direction, self.prevDirection)) {
+           !MLWXrossDirectionEquals(direction, self.prevWantedDirection)) {
         
             BOOL bounces = self.bounces;
             if ([self.delegate respondsToSelector:@selector(xross:shouldBounceToDirection:)]) {
                 bounces = [self.delegate xross:self shouldBounceToDirection:direction];
             }
             
-            if (!bounces) {
-                contentOffset = self.view.originOffset;
-                progress = 0.0;
-            }
-            else {
+            if (bounces) {
                 if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
                     self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
                 }
@@ -719,6 +766,12 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
                 }
                 self.view.bounces = YES;
             }
+        }
+        
+        if (!self.view.bounces) {
+            progress = 0.0;
+            contentOffset = self.view.originOffset;
+            [self.view.panGestureRecognizer setTranslation:CGPointMake(-self.prevWantedDirection.x, -self.prevWantedDirection.y) inView:self.view];
         }
     }
     

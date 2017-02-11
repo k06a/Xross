@@ -82,11 +82,18 @@
         _webViewController = [[UIViewController alloc] init];
         self.webView.frame = [UIScreen mainScreen].bounds;
         [_webViewController.view addSubview:self.webView];
+        self.webView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.webView.topAnchor constraintEqualToAnchor:self.webView.superview.topAnchor].active = YES;
+        [self.webView.bottomAnchor constraintEqualToAnchor:self.webView.superview.bottomAnchor].active = YES;
+        [self.webView.leadingAnchor constraintEqualToAnchor:self.webView.superview.leadingAnchor].active = YES;
+        [self.webView.trailingAnchor constraintEqualToAnchor:self.webView.superview.trailingAnchor].active = YES;
     }
     return _webViewController;
 }
 
-- (void)buildViews {
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
     self.xross = [[MLWXrossViewController alloc] init];
     self.xross.view.backgroundColor = [UIColor blackColor];
     self.xross.dataSource = self;
@@ -95,13 +102,21 @@
     self.xross.view.frame = self.view.bounds;
     [self.view addSubview:self.xross.view];
     [self.xross didMoveToParentViewController:self];
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [self buildViews];
+    self.xross.view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.xross.view.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
+    [self.xross.view.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor].active = YES;
+    [self.xross.view.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
+    [self.xross.view.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
 
     [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com"]]];
+}
+
+- (BOOL)shouldAutorotate {
+    return self.xross.shouldAutorotate;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    return self.xross.supportedInterfaceOrientations;
 }
 
 #pragma mark - Xross
