@@ -456,9 +456,9 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 }
 
 - (void)fixStatusBarOrientationIfNeededForCurrentSupported:(UIInterfaceOrientationMask)supportedInterfaceOrientations {
-    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    UIInterfaceOrientation statusBarInterfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
     UIInterfaceOrientation realInterfaceOrientation = ^{
-        switch (deviceOrientation) {
+        switch ([UIDevice currentDevice].orientation) {
             case UIDeviceOrientationPortrait:
                 return UIInterfaceOrientationPortrait;
             case UIDeviceOrientationPortraitUpsideDown:
@@ -474,7 +474,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         }
     }();
     
-    if (!(supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation)) ||
+    if (!(self.supportedInterfaceOrientations & (1 << statusBarInterfaceOrientation)) ||
         (realInterfaceOrientation != UIInterfaceOrientationUnknown &&
         !(supportedInterfaceOrientations & (1 << realInterfaceOrientation)))) {
         NSArray<NSNumber *> *orientations = @[
@@ -485,7 +485,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         ];
         for (NSNumber *orientation in orientations) {
             if (self.supportedInterfaceOrientations & (1 << orientation.unsignedIntegerValue)) {
-                if ([UIDevice currentDevice].orientation == orientation.unsignedIntegerValue) {
+                if (realInterfaceOrientation != UIInterfaceOrientationUnknown &&realInterfaceOrientation == orientation.unsignedIntegerValue) {
                     //
                     // Rotate UI to real device orientation
                     //
