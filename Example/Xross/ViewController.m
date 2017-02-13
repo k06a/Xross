@@ -1,141 +1,194 @@
 //
-//  ViewController.m
+//  SecondViewController.m
 //  XrossScreens
 //
-//  Created by Anton Bukov on 23.11.15.
+//  Created by Anton Bukov on 24.11.15.
 //  Copyright © 2015 Searchie. All rights reserved.
 //
 
 #import <WebKit/WebKit.h>
 
+#import <Xross/Xross.h>
+
 #import "ViewController.h"
 
-@interface ViewController () <UIPageViewControllerDataSource, UIPageViewControllerDelegate>
+@interface ViewController () <MLWXrossViewControllerDataSource, MLWXrossViewControllerDelegate>
 
-@property (strong, nonatomic) UIScrollView *scrollView;
-@property (strong, nonatomic) UIView *topView;
-@property (strong, nonatomic) UIPageViewController *pageViewController;
+@property (assign, nonatomic) CGPoint position;
+@property (strong, nonatomic) UISwitch *bounceSwitch;
+@property (strong, nonatomic) UISegmentedControl *segmentedControl;
+@property (strong, nonatomic) MLWXrossViewController *xross;
+@property (strong, nonatomic) UIViewController *topViewController;
 @property (strong, nonatomic) WKWebView *webView;
-
-@property (readonly, nonatomic) NSInteger currentPage;
+@property (strong, nonatomic) UIViewController *webViewController;
+@property (strong, nonatomic) NSDictionary<NSValue *, UIColor *> *colors;
 
 @end
 
 @implementation ViewController
 
-- (NSInteger)currentPage {
-    if (self.pageViewController.viewControllers.count == 0) {
-        return -1;
+- (NSDictionary<NSValue *, UIColor *> *)colors {
+    if (_colors == nil) {
+        _colors = @{
+            [NSValue valueWithCGPoint:CGPointMake(0, 1)] : [UIColor blueColor],
+            [NSValue valueWithCGPoint:CGPointMake(1, 1)] : [UIColor redColor],
+            [NSValue valueWithCGPoint:CGPointMake(2, 1)] : [UIColor grayColor],
+            [NSValue valueWithCGPoint:CGPointMake(3, 1)] : [UIColor yellowColor],
+        };
     }
-    return self.pageViewController.viewControllers.firstObject.view.tag;
+    return _colors;
 }
 
-- (void)tap:(UITapGestureRecognizer *)recognizer {
-    UIViewController *nextController = [self pageViewController:self.pageViewController viewControllerAfterViewController:self.pageViewController.viewControllers.firstObject];
-    if (nextController == nil) {
-        return;
-    }
-    nextController.view.tag = self.currentPage + 1;
-    [self.pageViewController.view addSubview:nextController.view];
-    nextController.view.frame = self.pageViewController.view.bounds;
+- (UIViewController *)topViewController {
+    if (_topViewController == nil) {
+        _topViewController = [[UIViewController alloc] init];
+        _topViewController.view.backgroundColor = [UIColor greenColor];
 
-    nextController.view.alpha = 0.0;
-    recognizer.view.userInteractionEnabled = NO;
-    [UIView animateWithDuration:0.5 delay:0.0 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
-        nextController.view.alpha = 1.0;
+        self.bounceSwitch = [[UISwitch alloc] init];
+        [_topViewController.view addSubview:self.bounceSwitch];
+        self.bounceSwitch.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.bounceSwitch.centerXAnchor constraintEqualToAnchor:_topViewController.view.centerXAnchor].active = YES;
+        [self.bounceSwitch.centerYAnchor constraintEqualToAnchor:_topViewController.view.centerYAnchor].active = YES;
+        
+        UILabel *bounceLabel = [UILabel new];
+        bounceLabel.text = @"Bounce Enabled:";
+        [_topViewController.view addSubview:bounceLabel];
+        bounceLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [bounceLabel.centerYAnchor constraintEqualToAnchor:self.bounceSwitch.centerYAnchor].active = YES;
+        [bounceLabel.trailingAnchor constraintEqualToAnchor:self.bounceSwitch.leadingAnchor constant:-10.0].active = YES;
+        
+        self.segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Default", @"3D Cube", @"Stack", @"Stack(swing)"]];
+        self.segmentedControl.selectedSegmentIndex = 0;
+        [_topViewController.view addSubview:self.segmentedControl];
+        self.segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.segmentedControl.centerXAnchor constraintEqualToAnchor:_topViewController.view.centerXAnchor].active = YES;
+        [self.segmentedControl.topAnchor constraintEqualToAnchor:self.bounceSwitch.bottomAnchor constant:20.0].active = YES;
+        [self.segmentedControl.widthAnchor constraintLessThanOrEqualToAnchor:self.segmentedControl.superview.widthAnchor multiplier:0.9].active = YES;
     }
-        completion:^(BOOL finished) {
-            [self.pageViewController setViewControllers:@[ nextController ] direction:(UIPageViewControllerNavigationDirectionForward) animated:NO completion:nil];
-            recognizer.view.userInteractionEnabled = YES;
-        }];
+    return _topViewController;
 }
 
-- (void)buildViews {
-    self.scrollView = [[UIScrollView alloc] init];
-    self.scrollView.scrollsToTop = NO;
-    self.scrollView.pagingEnabled = YES;
-    self.scrollView.showsVerticalScrollIndicator = NO;
-    [self.view addSubview:self.scrollView];
-    [self.scrollView.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
-    [self.scrollView.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor].active = YES;
-    [self.scrollView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
-    [self.scrollView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
-
-    self.topView = [[UIView alloc] init];
-    self.topView.backgroundColor = [UIColor greenColor];
-    [self.scrollView addSubview:self.topView];
-    [self.topView.topAnchor constraintEqualToAnchor:self.scrollView.topAnchor].active = YES;
-    [self.topView.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor].active = YES;
-    [self.topView.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor].active = YES;
-
-    self.pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:(UIPageViewControllerTransitionStyleScroll) navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil];
-    [self.pageViewController.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)]];
-    self.pageViewController.view.backgroundColor = [UIColor blackColor];
-    self.pageViewController.delegate = self;
-    self.pageViewController.dataSource = self;
-    [self addChildViewController:self.pageViewController];
-    [self.scrollView addSubview:self.pageViewController.view];
-    [self.pageViewController didMoveToParentViewController:self];
-    self.pageViewController.view.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.pageViewController.view.topAnchor constraintEqualToAnchor:self.topView.bottomAnchor].active = YES;
-    [self.pageViewController.view.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor].active = YES;
-    [self.pageViewController.view.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor].active = YES;
-
-    self.webView = [[WKWebView alloc] init];
-    self.webView.scrollView.contentInset = UIEdgeInsetsMake(20, 0, 0, 0);
-    self.webView.scrollView.contentOffset = CGPointMake(0, 20);
-    self.webView.scrollView.backgroundColor = [UIColor lightGrayColor];
-    [self.scrollView addSubview:self.webView];
-    self.webView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.webView.topAnchor constraintEqualToAnchor:self.pageViewController.view.bottomAnchor].active = YES;
-    [self.webView.bottomAnchor constraintEqualToAnchor:self.scrollView.bottomAnchor].active = YES;
-    [self.webView.leadingAnchor constraintEqualToAnchor:self.scrollView.leadingAnchor].active = YES;
-    [self.webView.trailingAnchor constraintEqualToAnchor:self.scrollView.trailingAnchor].active = YES;
-
-    for (UIView *view in @[ self.topView, self.pageViewController.view, self.webView ]) {
-        view.translatesAutoresizingMaskIntoConstraints = NO;
-        [view.widthAnchor constraintEqualToConstant:[UIScreen mainScreen].bounds.size.width].active = YES;
-        [view.heightAnchor constraintEqualToConstant:[UIScreen mainScreen].bounds.size.height].active = YES;
+- (WKWebView *)webView {
+    if (_webView == nil) {
+        _webView = [[WKWebView alloc] init];
+        _webView.scrollView.contentInset = UIEdgeInsetsMake(20, 0, 0, 0);
+        _webView.scrollView.backgroundColor = [UIColor lightGrayColor];
     }
+    return _webView;
+}
+
+- (UIViewController *)webViewController {
+    if (_webViewController == nil) {
+        _webViewController = [[UIViewController alloc] init];
+        self.webView.frame = [UIScreen mainScreen].bounds;
+        [_webViewController.view addSubview:self.webView];
+        self.webView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.webView.topAnchor constraintEqualToAnchor:self.webView.superview.topAnchor].active = YES;
+        [self.webView.bottomAnchor constraintEqualToAnchor:self.webView.superview.bottomAnchor].active = YES;
+        [self.webView.leadingAnchor constraintEqualToAnchor:self.webView.superview.leadingAnchor].active = YES;
+        [self.webView.trailingAnchor constraintEqualToAnchor:self.webView.superview.trailingAnchor].active = YES;
+    }
+    return _webViewController;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.xross = [[MLWXrossViewController alloc] init];
+    self.xross.view.backgroundColor = [UIColor blackColor];
+    self.xross.dataSource = self;
+    self.xross.delegate = self;
+    [self addChildViewController:self.xross];
+    self.xross.view.frame = self.view.bounds;
+    [self.view addSubview:self.xross.view];
+    [self.xross didMoveToParentViewController:self];
+    self.xross.view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.xross.view.topAnchor constraintEqualToAnchor:self.view.topAnchor].active = YES;
+    [self.xross.view.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor].active = YES;
+    [self.xross.view.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor].active = YES;
+    [self.xross.view.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor].active = YES;
 
-    [self buildViews];
-
-    [self.pageViewController setViewControllers:@[ [self pageViewController:self.pageViewController viewControllerAfterViewController:self.pageViewController] ] direction:(UIPageViewControllerNavigationDirectionForward) animated:NO completion:nil];
     [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com"]]];
 }
 
-#pragma mark - Page View
-
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
-    if (self.currentPage == 4) {
-        return nil;
-    }
-    UIViewController *controller = [[UIViewController alloc] init];
-    controller.view.tag = self.currentPage + 1;
-    controller.view.backgroundColor = @[ [UIColor blueColor],
-                                         [UIColor redColor],
-                                         [UIColor grayColor],
-                                         [UIColor yellowColor],
-                                         [UIColor brownColor] ][self.currentPage + 1];
-    return controller;
+- (BOOL)shouldAutorotate {
+    return self.xross.shouldAutorotate;
 }
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
-    if (self.currentPage == 0) {
-        return nil;
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    return self.xross.supportedInterfaceOrientations;
+}
+
+#pragma mark - Xross
+
+- (nullable UIViewController *)xross:(MLWXrossViewController *)xrossViewController viewControllerForDirection:(MLWXrossDirection)direction {
+    NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
+    
+    BOOL samePosition = MLWXrossDirectionIsNone(direction);
+    CGPoint nextPosition = CGPointMake(self.position.x + direction.x,
+                                       self.position.y + direction.y);
+
+    if (samePosition || (self.position.x == 0 && self.position.y != 0 && nextPosition.y == 0)) {
+        return self.topViewController;
     }
-    UIViewController *controller = [[UIViewController alloc] init];
-    controller.view.tag = self.currentPage - 1;
-    controller.view.backgroundColor = @[ [UIColor blueColor],
-                                         [UIColor redColor],
-                                         [UIColor grayColor],
-                                         [UIColor yellowColor],
-                                         [UIColor brownColor] ][self.currentPage - 1];
-    return controller;
+
+    if (samePosition || (self.position.y != 2 && nextPosition.y == 2)) {
+        return self.webViewController;
+    }
+
+    UIColor *color = self.colors[[NSValue valueWithCGPoint:nextPosition]];
+    if (color) {
+        UIViewController *controller = [self.storyboard instantiateViewControllerWithIdentifier:@"vc-1"];
+        controller.view.backgroundColor = color;
+        return controller;
+    }
+
+    return nil;
+}
+
+- (MLWXrossTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction {
+    NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
+    
+    NSArray<NSNumber *> *dict = @[
+        @(MLWXrossTransitionTypeDefault),
+        @(MLWXrossTransitionType3DCube),
+        @(MLWXrossTransitionTypeStackNext),
+        @(MLWXrossTransitionTypeStackNextWithSwing),
+    ];
+    MLWXrossTransitionType type = dict[self.segmentedControl.selectedSegmentIndex].unsignedIntegerValue;
+    if (type == MLWXrossTransitionTypeStackNext &&
+        direction.x + direction.y < 0) {
+        type = MLWXrossTransitionTypeStackPrev;
+    }
+    if (type == MLWXrossTransitionTypeStackNextWithSwing &&
+        direction.x + direction.y < 0) {
+        type = MLWXrossTransitionTypeStackPrevWithSwing;
+    }
+    return type;
+}
+
+- (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldBounceToDirection:(MLWXrossDirection)direction {
+    NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
+    return self.bounceSwitch.on;
+}
+
+- (void)xross:(MLWXrossViewController *)xrossViewController didMoveToDirection:(MLWXrossDirection)direction {
+    NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
+    self.position = CGPointMake(self.position.x + direction.x,
+                                self.position.y + direction.y);
+}
+
+- (void)xross:(MLWXrossViewController *)xrossViewController removedViewController:(UIViewController *)viewController {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+}
+
+- (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldApplyInsetToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress {
+    NSLog(@"%s (%@,%@) %.4f%%", __PRETTY_FUNCTION__, @(direction.x), @(direction.y), progress*100);
+    return YES;
+}
+
+- (void)xross:(MLWXrossViewController *)xrossViewController didScrollToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress {
+    NSLog(@"%s (%@,%@) %.4f%%", __PRETTY_FUNCTION__, @(direction.x), @(direction.y), progress*100);
 }
 
 @end

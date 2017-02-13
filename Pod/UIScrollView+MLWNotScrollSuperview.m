@@ -22,6 +22,7 @@ static NSString *selectorOfInterest() {
 
 @property (strong, nonatomic) NSNumber *mlw_notScrollSuperview_obj;
 @property (strong, nonatomic) NSNumber *mlw_notScrollableBySubviews_obj;
+@property (strong, nonatomic) UIScrollView *mlw_isInsideAttemptToDragParent_obj;
 
 @end
 
@@ -29,6 +30,7 @@ static NSString *selectorOfInterest() {
 
 @synthesizeAssociation(UIScrollView, mlw_notScrollSuperview_obj);
 @synthesizeAssociation(UIScrollView, mlw_notScrollableBySubviews_obj);
+@synthesizeAssociation(UIScrollView, mlw_isInsideAttemptToDragParent_obj);
 
 @end
 
@@ -52,6 +54,10 @@ static NSString *selectorOfInterest() {
     self.mlw_notScrollableBySubviews_obj = @(mlw_notScrollableBySubviews);
 }
 
+- (UIScrollView *)mlw_isInsideAttemptToDragParent {
+    return self.mlw_isInsideAttemptToDragParent_obj;
+}
+
 + (void)load {
     assert([self jr_swizzleMethod:NSSelectorFromString(selectorOfInterest())
                        withMethod:@selector(xxx_selectorOfInterest:newBounds:oldBounds:)
@@ -60,7 +66,9 @@ static NSString *selectorOfInterest() {
 
 - (void)xxx_selectorOfInterest:(UIScrollView *)arg1 newBounds:(CGRect)arg2 oldBounds:(CGRect)arg3 {
     if (!self.mlw_notScrollSuperview && !arg1.mlw_notScrollableBySubviews) {
+        arg1.mlw_isInsideAttemptToDragParent_obj = self;
         [self xxx_selectorOfInterest:arg1 newBounds:arg2 oldBounds:arg3];
+        arg1.mlw_isInsideAttemptToDragParent_obj = nil;
     }
 }
 

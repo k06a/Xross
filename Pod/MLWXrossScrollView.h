@@ -10,9 +10,29 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MLWXrossScrollView : UIScrollView
+@class MLWXrossScrollView;
 
-@property (assign, nonatomic) BOOL skipLayoutSubviewCalls;
+@protocol MLWXrossScrollViewDelegate <UIScrollViewDelegate>
+
+@optional
+- (CGPoint)scrollView:(MLWXrossScrollView *)scrollView willScrollToContentOffset:(CGPoint)contentOffset;
+
+@end
+
+//
+
+@interface MLWXrossScrollView : UIScrollView <UIGestureRecognizerDelegate>
+
+@property (nullable, weak, nonatomic) id<MLWXrossScrollViewDelegate> delegate;
+
+@property (assign, nonatomic) CGPoint originOffsetInSteps;
+@property (readonly, nonatomic) CGPoint originOffset;
+@property (readonly, nonatomic) CGPoint relativeContentOffset;
+@property (assign, nonatomic) CGPoint nextDirection;
+
+@property (nullable, strong, nonatomic) UIView *centerView;
+@property (nullable, strong, nonatomic) UIView *nextView;
+- (void)setNextView:(UIView *)nextView toDirection:(CGPoint)direction;
 
 - (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated;
 

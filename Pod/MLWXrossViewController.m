@@ -6,16 +6,15 @@
 //  Copyright © 2015 Searchie. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIGestureRecognizerSubclass.h>
+
 #import <libextobjc/extobjc.h>
 
 #import "MLWXrossScrollView.h"
 #import "MLWXrossViewController.h"
+#import "UIScrollView+MLWNotScrollSuperview.h"
 
 //
-
-static CGFloat const kScrollDampling = 0.4;
-static UIEdgeInsets const kDefaultEdgeInsets = (UIEdgeInsets){1, 1, 1, 1};
 
 MLWXrossDirection MLWXrossDirectionNone = (MLWXrossDirection){0, 0};
 MLWXrossDirection MLWXrossDirectionTop = (MLWXrossDirection){0, -1};
@@ -24,7 +23,10 @@ MLWXrossDirection MLWXrossDirectionLeft = (MLWXrossDirection){-1, 0};
 MLWXrossDirection MLWXrossDirectionRight = (MLWXrossDirection){1, 0};
 
 MLWXrossDirection MLWXrossDirectionMake(NSInteger x, NSInteger y) {
-    return (MLWXrossDirection){x ? x / ABS(x) : 0, y ? y / ABS(y) : 0};
+    return (!x && !y) ? MLWXrossDirectionNone : (MLWXrossDirection){
+        ABS(y) <  ABS(x) ? (x > 0 ? 1 : -1) : 0,
+        ABS(y) >= ABS(x) ? (y > 0 ? 1 : -1) : 0
+    };
 }
 
 MLWXrossDirection MLWXrossDirectionFromOffset(CGPoint offset) {
@@ -47,14 +49,6 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
     return direction.x == direction2.x && direction.y == direction2.y;
 }
 
-static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
-    CGRect bounds = (CGRect){view.bounds.origin, frame.size};
-    if (!CGRectEqualToRect(view.bounds, bounds)) {
-        view.bounds = bounds;
-    }
-    view.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
-}
-
 //
 
 @interface MLWXrossShadowLayer : CALayer
@@ -68,11 +62,15 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 //
 
 static MLWXrossShadowLayer *ShadowLayerForTransition(CALayer *currLayer, CALayer *nextLayer) {
-    if ([currLayer.sublayers.lastObject isKindOfClass:[MLWXrossShadowLayer class]]) {
-        return (MLWXrossShadowLayer *)currLayer.sublayers.lastObject;
+    for (MLWXrossShadowLayer *layer in currLayer.sublayers.reverseObjectEnumerator) {
+        if ([layer isKindOfClass:[MLWXrossShadowLayer class]]) {
+            return layer;
+        }
     }
-    if ([nextLayer.sublayers.lastObject isKindOfClass:[MLWXrossShadowLayer class]]) {
-        return (MLWXrossShadowLayer *)nextLayer.sublayers.lastObject;
+    for (MLWXrossShadowLayer *layer in nextLayer.sublayers.reverseObjectEnumerator) {
+        if ([layer isKindOfClass:[MLWXrossShadowLayer class]]) {
+            return layer;
+        }
     }
     return nil;
 }
@@ -271,120 +269,49 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 //
 
-@interface MLWXrossViewController () <UIScrollViewDelegate>
+@interface MLWXrossViewController () <MLWXrossScrollViewDelegate>
+
+@property (strong, nonatomic) MLWXrossScrollView *view;
 
 @property (strong, nonatomic) UIViewController *viewController;
 @property (strong, nonatomic) UIViewController *nextViewController;
 @property (assign, nonatomic) MLWXrossDirection nextViewControllerDirection;
 @property (assign, nonatomic) MLWXrossTransitionType transitionType;
-@property (readonly, nonatomic) MLWXrossScrollView *mlwScrollView;
-@property (assign, nonatomic) BOOL scrollViewDidScrollInCall;
-@property (strong, nonatomic) NSDate *denyMovementUntilDate;
-@property (assign, nonatomic) UIEdgeInsets needEdgeInsets;
-@property (assign, nonatomic) BOOL allowedToApplyInset;
-@property (assign, nonatomic) BOOL prevAllowedToApplyInset;
+@property (assign, nonatomic) BOOL scrollViewWillSkipCalls;
 @property (assign, nonatomic) MLWXrossDirection prevDirection;
-@property (copy, nonatomic) void (^completionBlock)();
+@property (assign, nonatomic) MLWXrossDirection prevWantedDirection;
+@property (assign, nonatomic) BOOL denyMovementWhileRotation;
+@property (copy, nonatomic) void (^moveToDirectionCompletionBlock)();
 
 @end
 
 @implementation MLWXrossViewController
 
-// KVO Dependent Keys
+@dynamic view;
+
 + (NSSet<NSString *> *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
     MLWXrossViewController *this = nil;
     return @{
         @keypath(this.isMoving) : [NSSet setWithArray:@[ @keypath(this.nextViewController) ]],
-        @keypath(this.isMovingDisabled) : [NSSet setWithArray:@[ @keypath(this.scrollView.scrollEnabled) ]],
-    }[key]
-               ?: [super keyPathsForValuesAffectingValueForKey:key];
+        @keypath(this.isMovingDisabled) : [NSSet setWithArray:@[ @keypath(this.view.scrollEnabled) ]],
+    }[key] ?: [super keyPathsForValuesAffectingValueForKey:key];
 }
 
 - (BOOL)isMoving {
     return self.nextViewController ||
-           self.scrollView.isDragging ||
-           self.scrollView.isDecelerating;
+           self.view.isDragging ||
+           self.view.isDecelerating;
 }
 
 - (BOOL)isMovingDisabled {
-    return !self.scrollView.scrollEnabled;
+    return !self.view.scrollEnabled;
 }
 
 - (void)setMovingDisabled:(BOOL)movingDisabled {
-    self.scrollView.scrollEnabled = !movingDisabled;
+    self.view.scrollEnabled = !movingDisabled;
 }
 
-- (BOOL)denyHorizontalMovement {
-    return self.denyLeftMovement && self.denyRightMovement;
-}
-
-- (void)setDenyHorizontalMovement:(BOOL)denyHorizontalMovement {
-    self.denyLeftMovement = denyHorizontalMovement;
-    self.denyRightMovement = denyHorizontalMovement;
-}
-
-- (BOOL)denyVerticalMovement {
-    return self.denyTopMovement && self.denyBottomMovement;
-}
-
-- (void)setDenyVerticalMovement:(BOOL)denyVerticalMovement {
-    self.denyTopMovement = denyVerticalMovement;
-    self.denyBottomMovement = denyVerticalMovement;
-}
-
-- (void)setDenyTopMovement:(BOOL)denyTopMovement {
-    _denyTopMovement = denyTopMovement;
-    [self updateInsets];
-}
-
-- (void)setDenyBottomMovement:(BOOL)denyBottomMovement {
-    _denyBottomMovement = denyBottomMovement;
-    [self updateInsets];
-}
-
-- (void)setDenyLeftMovement:(BOOL)denyLeftMovement {
-    _denyLeftMovement = denyLeftMovement;
-    [self updateInsets];
-}
-
-- (void)setDenyRightMovement:(BOOL)denyRightMovement {
-    _denyRightMovement = denyRightMovement;
-    [self updateInsets];
-}
-
-- (void)updateInsets {
-    self.scrollView.contentInset = UIEdgeInsetsMake(
-        self.denyTopMovement ? 0 : self.needEdgeInsets.top,
-        self.denyLeftMovement ? 0 : self.needEdgeInsets.left,
-        self.denyBottomMovement ? 0 : self.needEdgeInsets.bottom,
-        self.denyRightMovement ? 0 : self.needEdgeInsets.right);
-
-    if (!self.prevAllowedToApplyInset && self.allowedToApplyInset) {
-        CGFloat sign = (self.nextViewControllerDirection.x < 0 || self.nextViewControllerDirection.y < 0) ? -1 : 1;
-        self.viewController.view.center = CGPointMake(
-            self.viewController.view.center.x + self.scrollView.contentOffset.x * (1 - kScrollDampling) * sign,
-            self.viewController.view.center.y + self.scrollView.contentOffset.y * (1 - kScrollDampling) * sign);
-        self.nextViewController.view.center = CGPointMake(
-            self.nextViewController.view.center.x + self.scrollView.contentOffset.x * (1 - kScrollDampling) * sign,
-            self.nextViewController.view.center.y + self.scrollView.contentOffset.y * (1 - kScrollDampling) * sign);
-        [UIView animateWithDuration:0.4 delay:0.0 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
-            self.viewController.view.center = CGPointMake(
-                self.viewController.view.center.x - self.scrollView.contentOffset.x * (1 - kScrollDampling) * sign,
-                self.viewController.view.center.y - self.scrollView.contentOffset.y * (1 - kScrollDampling) * sign);
-            self.nextViewController.view.center = CGPointMake(
-                self.nextViewController.view.center.x - self.scrollView.contentOffset.x * (1 - kScrollDampling) * sign,
-                self.nextViewController.view.center.y - self.scrollView.contentOffset.y * (1 - kScrollDampling) * sign);
-        }
-                         completion:nil];
-    }
-    self.prevAllowedToApplyInset = self.allowedToApplyInset;
-}
-
-- (UIScrollView *)scrollView {
-    return (UIScrollView *)self.view;
-}
-
-- (MLWXrossScrollView *)mlwScrollView {
+- (MLWXrossScrollView *)scrollView {
     return (MLWXrossScrollView *)self.view;
 }
 
@@ -401,6 +328,9 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    if (self.nextViewController) {
+        return (1 << [UIApplication sharedApplication].statusBarOrientation);
+    }
     return self.viewController
                ? [self.viewController supportedInterfaceOrientations]
                : [super supportedInterfaceOrientations];
@@ -409,13 +339,15 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 - (void)willTransitionToTraitCollection:(UITraitCollection *)newCollection withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super willTransitionToTraitCollection:newCollection withTransitionCoordinator:coordinator];
 
-    self.denyMovementUntilDate = [NSDate dateWithTimeIntervalSinceNow:0.3];
-    self.scrollView.contentOffset = CGPointZero;
+    @weakify(self);
+    self.denyMovementWhileRotation = YES;
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-        self.scrollView.contentOffset = CGPointZero;
+        [self.view setNeedsLayout];
+        [self.view layoutIfNeeded];
     }
         completion:^(id<UIViewControllerTransitionCoordinatorContext> _Nonnull context) {
-            self.scrollView.contentOffset = CGPointZero;
+            @strongify(self);
+            self.denyMovementWhileRotation = NO;
         }];
 }
 
@@ -425,16 +357,14 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 - (void)loadView {
     self.view = [[[self.class xrossViewClass] alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.scrollView.showsHorizontalScrollIndicator = NO;
-    self.scrollView.showsVerticalScrollIndicator = NO;
-    self.scrollView.directionalLockEnabled = YES;
-    self.scrollView.bounces = NO;
-    self.scrollView.pagingEnabled = YES;
-    self.scrollView.delegate = self;
-    self.scrollView.scrollEnabled = YES;
-    self.scrollView.scrollsToTop = NO;
-    self.needEdgeInsets = kDefaultEdgeInsets;
-    [self updateInsets];
+    self.view.showsHorizontalScrollIndicator = NO;
+    self.view.showsVerticalScrollIndicator = NO;
+    self.view.directionalLockEnabled = YES;
+    self.view.bounces = NO;
+    self.view.pagingEnabled = YES;
+    self.view.delegate = self;
+    self.view.scrollEnabled = YES;
+    self.view.scrollsToTop = NO;
 }
 
 - (void)viewDidLoad {
@@ -463,15 +393,16 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     }
 
     self.viewController = [self.dataSource xross:self viewControllerForDirection:MLWXrossDirectionNone];
+    
     if (self.viewController) {
         [self addChildViewController:self.viewController];
         if (self.viewController.view.backgroundColor == nil) { // Fixed bug with broken scrolling
             self.viewController.view.backgroundColor = [UIColor whiteColor];
         }
-        [self.scrollView addSubview:self.viewController.view];
-        self.viewController.view.clipsToBounds = YES;
-        ViewSetFrameWithoutRelayoutIfPossible(self.viewController.view, (CGRect){CGPointZero, self.scrollView.bounds.size});
+        self.view.centerView = self.viewController.view;
         [self.viewController didMoveToParentViewController:self];
+        self.viewController.view.clipsToBounds = YES;
+        
         if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
             [self.delegate xross:self didMoveToDirection:MLWXrossDirectionNone];
         }
@@ -483,7 +414,8 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 }
 
 - (void)moveToDirection:(MLWXrossDirection)direction completion:(void (^)())completion {
-    self.scrollView.contentOffset = CGPointMake(direction.x, direction.y);
+    self.view.contentOffset = CGPointMake(self.view.originOffset.x + direction.x,
+                                          self.view.originOffset.y + direction.y);
     NSAssert(self.nextViewController, @"self.nextViewController should not be nil, check your xross:viewControllerForDirection: implementation");
     if (!self.nextViewController) {
         if (completion) {
@@ -492,9 +424,12 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         return;
     }
     
-    self.completionBlock = completion;
+    self.moveToDirectionCompletionBlock = completion;
     self.view.userInteractionEnabled = NO;
-    [self.mlwScrollView setContentOffsetTo:CGPointMake(direction.x * self.scrollView.frame.size.width, direction.y * self.scrollView.frame.size.height) animated:YES];
+    CGPoint point = CGPointMake(
+        self.view.originOffset.x + direction.x * CGRectGetWidth(self.view.bounds),
+        self.view.originOffset.y + direction.y * CGRectGetHeight(self.view.bounds));
+    [self.view setContentOffsetTo:point animated:YES];
 }
 
 #pragma mark - View
@@ -505,12 +440,11 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 - (void)viewWillAppear:(BOOL)animated {
     [self.viewController beginAppearanceTransition:YES animated:animated];
-    self.scrollView.contentOffset = CGPointZero;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [self.viewController endAppearanceTransition];
-    [self fixStatusBarOrientationIfNeeded];
+    [self fixStatusBarOrientationIfNeededForCurrentSupported:self.supportedInterfaceOrientations];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -521,54 +455,57 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     [self.viewController endAppearanceTransition];
 }
 
-- (void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-
-    if (!CGSizeEqualToSize(self.scrollView.contentSize, self.scrollView.bounds.size)) {
-        [UIView performWithoutAnimation:^{
-            self.scrollView.contentSize = self.scrollView.bounds.size;
-        }];
-    }
-
-    if (!self.mlwScrollView.skipLayoutSubviewCalls) {
-        [UIView performWithoutAnimation:^{
-            CGRect viewControllerFrame = (CGRect){CGPointZero, self.scrollView.frame.size};
-            ViewSetFrameWithoutRelayoutIfPossible(self.viewController.view, viewControllerFrame);
-            CGRect frame = CGRectOffset(
-                viewControllerFrame,
-                self.nextViewControllerDirection.x * CGRectGetWidth(self.scrollView.bounds),
-                self.nextViewControllerDirection.y * CGRectGetHeight(self.scrollView.bounds));
-            ViewSetFrameWithoutRelayoutIfPossible(self.nextViewController.view, frame);
-        }];
-    }
-
-    if (self.allowedToApplyInset &&
-        self.scrollView.contentInset.left <= kDefaultEdgeInsets.left &&
-        self.scrollView.contentInset.right <= kDefaultEdgeInsets.right &&
-        self.scrollView.contentInset.top <= kDefaultEdgeInsets.top &&
-        self.scrollView.contentInset.bottom <= kDefaultEdgeInsets.bottom) {
-        [UIView performWithoutAnimation:^{
-            self.needEdgeInsets = UIEdgeInsetsMake(
-                (self.nextViewControllerDirection.y < 0) ? CGRectGetHeight(self.scrollView.bounds) : kDefaultEdgeInsets.top,
-                (self.nextViewControllerDirection.x < 0) ? CGRectGetWidth(self.scrollView.bounds) : kDefaultEdgeInsets.left,
-                (self.nextViewControllerDirection.y > 0) ? CGRectGetHeight(self.scrollView.bounds) : kDefaultEdgeInsets.bottom,
-                (self.nextViewControllerDirection.x > 0) ? CGRectGetWidth(self.scrollView.bounds) : kDefaultEdgeInsets.right);
-            [self updateInsets];
-        }];
-    }
-}
-
-- (void)fixStatusBarOrientationIfNeeded {
-    if (!(self.supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation))) {
+- (void)fixStatusBarOrientationIfNeededForCurrentSupported:(UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    UIInterfaceOrientation realInterfaceOrientation = ^{
+        switch (deviceOrientation) {
+            case UIDeviceOrientationPortrait:
+                return UIInterfaceOrientationPortrait;
+            case UIDeviceOrientationPortraitUpsideDown:
+                return UIInterfaceOrientationPortraitUpsideDown;
+            case UIDeviceOrientationLandscapeLeft:
+                return UIInterfaceOrientationLandscapeRight;
+            case UIDeviceOrientationLandscapeRight:
+                return UIInterfaceOrientationLandscapeLeft;
+            case UIDeviceOrientationUnknown:
+            case UIDeviceOrientationFaceUp:
+            case UIDeviceOrientationFaceDown:
+                return UIInterfaceOrientationUnknown;
+        }
+    }();
+    
+    if (!(supportedInterfaceOrientations & (1 << [UIApplication sharedApplication].statusBarOrientation)) ||
+        (realInterfaceOrientation != UIInterfaceOrientationUnknown &&
+        !(supportedInterfaceOrientations & (1 << realInterfaceOrientation)))) {
         NSArray<NSNumber *> *orientations = @[
-            @(UIInterfaceOrientationMaskPortrait),
-            @(UIInterfaceOrientationMaskLandscapeLeft),
-            @(UIInterfaceOrientationMaskLandscapeRight),
-            @(UIInterfaceOrientationMaskPortraitUpsideDown)
+            @(UIInterfaceOrientationPortrait),
+            @(UIInterfaceOrientationLandscapeLeft),
+            @(UIInterfaceOrientationLandscapeRight),
+            @(UIInterfaceOrientationPortraitUpsideDown)
         ];
         for (NSNumber *orientation in orientations) {
-            if (orientation.unsignedIntegerValue & self.supportedInterfaceOrientations) {
-                [[UIDevice currentDevice] setValue:orientation forKey:@keypath([UIDevice currentDevice], orientation)];
+            if (self.supportedInterfaceOrientations & (1 << orientation.unsignedIntegerValue)) {
+                if ([UIDevice currentDevice].orientation == orientation.unsignedIntegerValue) {
+                    //
+                    // Rotate UI to real device orientation
+                    //
+                    //UIViewController *aDummyController = [[UIViewController alloc] init];
+                    //aDummyController.view.backgroundColor = [UIColor clearColor];
+                    //aDummyController.view.hidden = YES;
+                    
+                    //self.view.userInteractionEnabled = NO;
+                    //[self presentViewController:aDummyController animated:YES completion:^{
+                    //    [aDummyController dismissViewControllerAnimated:YES completion:^{
+                    //        self.view.userInteractionEnabled = YES;
+                    //    }];
+                    //}];
+                }
+                else {
+                    //
+                    // Rotate UI to new VC supported orientation
+                    //
+                    [[UIDevice currentDevice] setValue:orientation forKey:@keypath([UIDevice currentDevice], orientation)];
+                }
                 break;
             }
         }
@@ -577,246 +514,300 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 #pragma mark - Scroll View
 
-// Avoid recursive calls of scrollViewDidScroll
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (!self.scrollViewDidScrollInCall) {
-        self.scrollViewDidScrollInCall = YES;
-        [self scrollViewDidScrollNotRecursive:scrollView];
-        self.scrollViewDidScrollInCall = NO;
+    CGPoint directionVector = CGPointMake(
+        scrollView.contentOffset.x - self.view.originOffset.x,
+        scrollView.contentOffset.y - self.view.originOffset.y);
+    MLWXrossDirection direction = MLWXrossDirectionMake(directionVector.x, directionVector.y);
+    
+    CGFloat horizontalProgress = ABS(scrollView.contentOffset.x - self.view.originOffset.x) / CGRectGetWidth(self.view.bounds);
+    CGFloat verticalProgress = ABS(scrollView.contentOffset.y - self.view.originOffset.y) / CGRectGetHeight(self.view.bounds);
+    CGFloat unlimitedProgrees = MLWXrossDirectionIsHorizontal(direction) ? horizontalProgress : verticalProgress;
+    CGFloat progress = MAX(0.0, MIN(unlimitedProgrees, 1.0));
+    
+    MLWCustomTransitionTypeFunctor transitionFunctor = [self transitionFunctorForTransitionType:self.transitionType];
+    NSAssert(transitionFunctor, @"transitionFunctor must not be nil");
+    if (transitionFunctor) {
+        transitionFunctor(self.viewController.view.layer, self.nextViewController.view.layer, direction, progress);
     }
 }
 
-// Avoid diagonal scrolling
-- (void)scrollViewDidScrollNotRecursive:(UIScrollView *)scrollView {
-    scrollView.contentOffset = CGPointMake(
-        (ABS(scrollView.contentOffset.y) >= ABS(scrollView.contentOffset.x)) ? 0 : scrollView.contentOffset.x,
-        (ABS(scrollView.contentOffset.x) > ABS(scrollView.contentOffset.y)) ? 0 : scrollView.contentOffset.y);
-
-    [self scrollViewDidScrollNotRecursiveNotDiagonal:scrollView];
+- (CGPoint)scrollView:(MLWXrossScrollView *)scrollView willScrollToContentOffset:(CGPoint)contentOffset {
+    if (self.view.window == nil) {
+        return self.view.contentOffset;
+    }
+    
+    if (self.denyMovementWhileRotation) {
+        return self.view.contentOffset;
+    }
+    
+    if (self.view.panGestureRecognizer.state == UIGestureRecognizerStateEnded ||
+        self.view.panGestureRecognizer.state == UIGestureRecognizerStateFailed ||
+        self.view.panGestureRecognizer.state == UIGestureRecognizerStateCancelled) {
+        self.prevWantedDirection = MLWXrossDirectionNone;
+    }
+    
+    CGPoint directionVector = CGPointMake(
+        contentOffset.x - scrollView.originOffset.x,
+        contentOffset.y - scrollView.originOffset.y);
+    MLWXrossDirection direction = MLWXrossDirectionMake(directionVector.x, directionVector.y);
+    MLWXrossDirection originalDirection = direction;
+    
+    // Update content offset with direction respect
+    contentOffset = CGPointMake(
+        scrollView.originOffset.x + directionVector.x * ABS(direction.x),
+        scrollView.originOffset.y + directionVector.y * ABS(direction.y));
+    
+    // Update pan gesture recognizer with direction respect
+    if (self.view.isDragging) {
+        CGPoint translation = [self.view.panGestureRecognizer translationInView:self.view];
+        translation = CGPointMake(
+            translation.x * ABS(direction.x),
+            translation.y * ABS(direction.y));
+        [self.view.panGestureRecognizer setTranslation:translation inView:self.view];
+    }
+    
+    BOOL returnedBack = self.nextViewController &&
+                        !MLWXrossDirectionIsNone(self.prevDirection) &&
+                        !MLWXrossDirectionEquals(direction, self.prevDirection);
+    
+    // Remove viewController or nextViewController
+    BOOL skipUpdateTransitionCall = NO;
+    if (returnedBack ||
+        ABS(contentOffset.x - scrollView.originOffset.x) >= CGRectGetWidth(self.view.bounds) ||
+        ABS(contentOffset.y - scrollView.originOffset.y) >= CGRectGetHeight(self.view.bounds)) {
+        
+        [self removeNextViewControllerFromDirection:direction returnedBack:returnedBack contentOffset:contentOffset];
+        directionVector = CGPointMake(contentOffset.x - scrollView.originOffset.x,
+                                      contentOffset.y - scrollView.originOffset.y);
+        direction = MLWXrossDirectionMake(directionVector.x, directionVector.y);
+        
+        skipUpdateTransitionCall = MLWXrossDirectionIsNone(direction);
+    }
+    
+    if (self.denyMovementWhileRotation) {
+        return self.view.contentOffset;
+    }
+    
+    // Add nextViewController
+    if (!self.nextViewController &&
+        !MLWXrossDirectionIsNone(direction) &&
+        !MLWXrossDirectionEquals(direction, self.prevDirection)) {
+        
+        [self addNextViewControllerToDirection:direction];
+    }
+    
+    CGFloat horizontalProgress = ABS(contentOffset.x - scrollView.originOffset.x) / CGRectGetWidth(self.view.bounds);
+    CGFloat verticalProgress = ABS(contentOffset.y - scrollView.originOffset.y) / CGRectGetHeight(self.view.bounds);
+    CGFloat unlimitedProgrees = MLWXrossDirectionIsHorizontal(direction) ? horizontalProgress : verticalProgress;
+    CGFloat progress = MAX(0.0, MIN(unlimitedProgrees, 1.0));
+    
+    CGPoint result = contentOffset;
+    if (!skipUpdateTransitionCall) {
+        result = [self updateTransitionProgress:progress toDirection:direction contentOffset:contentOffset];
+        self.prevDirection = MLWXrossDirectionMake(result.x - scrollView.originOffset.x, result.y - scrollView.originOffset.y);
+    }
+    
+    self.prevWantedDirection = originalDirection;
+    return result;
 }
 
-- (void)scrollViewDidScrollNotRecursiveNotDiagonal:(UIScrollView *)scrollView {
-    MLWXrossDirection direction = MLWXrossDirectionMake(
-        (ABS(scrollView.contentOffset.x) < FLT_EPSILON) ? 0 : scrollView.contentOffset.x / ABS(scrollView.contentOffset.x),
-        (ABS(scrollView.contentOffset.y) < FLT_EPSILON) ? 0 : scrollView.contentOffset.y / ABS(scrollView.contentOffset.y));
+- (void)removeNextViewControllerFromDirection:(MLWXrossDirection)direction returnedBack:(BOOL)returnedBack contentOffset:(CGPoint)contentOffset {
+    if (!returnedBack) {
+        CGPoint point = CGPointMake(self.view.originOffset.x + direction.x*CGRectGetWidth(self.view.bounds),
+                                    self.view.originOffset.y + direction.y*CGRectGetWidth(self.view.bounds));
+        [self updateTransitionProgress:1.0 toDirection:direction contentOffset:point];
+        
+        // Swap VCs
+        UIViewController *tmpViewController = self.viewController;
+        self.viewController = self.nextViewController;
+        self.nextViewController = tmpViewController;
+        [UIView animateWithDuration:0.25 animations:^{
+            [self setNeedsStatusBarAppearanceUpdate];
+        }];
+    }
+    else {
+        [self updateTransitionProgress:0.0 toDirection:direction contentOffset:self.view.originOffset];
+        
+        [self.viewController beginAppearanceTransition:YES animated:NO];
+        [self.viewController endAppearanceTransition];
+        [self.nextViewController beginAppearanceTransition:NO animated:NO];
+        [self.nextViewController endAppearanceTransition];
+    }
+    
+    // Remove VC
+    [self.nextViewController willMoveToParentViewController:nil];
+    [self.nextViewController.view removeFromSuperview];
+    [self.nextViewController removeFromParentViewController];
+    [self.nextViewController resignFirstResponder];
+    if (!returnedBack) {
+        [self.nextViewController endAppearanceTransition];
+    }
+    
+    self.prevDirection = MLWXrossDirectionNone;
+    self.view.nextDirection = CGPointZero;
+    if (!returnedBack) {
+        self.view.originOffsetInSteps = CGPointMake(
+            self.view.originOffsetInSteps.x + direction.x,
+            self.view.originOffsetInSteps.y + direction.y);
+    }
+    
+    [self.viewController becomeFirstResponder];
+    if (!returnedBack) {
+        [self.viewController endAppearanceTransition];
+    }
+    
+    UIInterfaceOrientationMask prevSupportedInterfaceOrientations = self.supportedInterfaceOrientations; // Before nextViewControlled get nilled
+    
+    UIViewController *prevNextViewController = self.nextViewController;
+    self.nextViewController = nil;
+    self.nextViewControllerDirection = MLWXrossDirectionNone;
+    
+    if (!self.view.userInteractionEnabled) {
+        self.view.userInteractionEnabled = YES;
+    }
+    if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
+        [self.delegate xross:self didMoveToDirection:returnedBack ? MLWXrossDirectionNone : direction];
+    }
+    if ([self.delegate respondsToSelector:@selector(xross:removedViewController:)]) {
+        [self.delegate xross:self removedViewController:prevNextViewController];
+    }
+    if (self.moveToDirectionCompletionBlock) {
+        self.moveToDirectionCompletionBlock();
+        self.moveToDirectionCompletionBlock = nil;
+    }
+    
+    [self fixStatusBarOrientationIfNeededForCurrentSupported:prevSupportedInterfaceOrientations];
+}
 
-    CGFloat progress = MIN(1, MAX(0, MLWXrossDirectionIsHorizontal(direction) ? ABS(self.scrollView.contentOffset.x) / self.scrollView.frame.size.width : ABS(self.scrollView.contentOffset.y) / self.scrollView.frame.size.height));
+- (void)addNextViewControllerToDirection:(MLWXrossDirection)direction {
+    self.nextViewController = [self.dataSource xross:self viewControllerForDirection:direction];
+    if (self.nextViewController) {
+        self.nextViewControllerDirection = direction;
+    }
+    
+    if (!self.nextViewController) {
+        return;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
+        self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
+    }
+    else {
+        self.transitionType = MLWXrossTransitionTypeDefault;
+    }
+    
+    [self.viewController beginAppearanceTransition:NO animated:YES];
+    [self.nextViewController beginAppearanceTransition:YES animated:YES];
+    [self addChildViewController:self.nextViewController];
+    if (self.nextViewController.view.backgroundColor == nil) { // Fixed bug with broken scrolling
+        self.nextViewController.view.backgroundColor = [UIColor whiteColor];
+    }
+    [self.view setNextView:self.nextViewController.view toDirection:CGPointMake(direction.x, direction.y)];
+    [self.nextViewController didMoveToParentViewController:self];
+    self.nextViewController.view.clipsToBounds = YES;
+}
 
-    if (self.scrollView.isDragging && [self.delegate respondsToSelector:@selector(xross:shouldApplyInsetToDirection:progress:)]) {
-        if (!self.nextViewController) {
-            self.allowedToApplyInset = NO;
+- (MLWCustomTransitionTypeFunctor)transitionFunctorForTransitionType:(MLWXrossTransitionType)transitionType {
+    switch (self.transitionType) {
+        case MLWXrossTransitionTypeDefault:            return ApplyTransitionDefault;
+        case MLWXrossTransitionType3DCube:             return ApplyTransition3DCube;
+        case MLWXrossTransitionType3DCubeFrom:         return ApplyTransition3DCubeFrom;
+        case MLWXrossTransitionType3DCubeTo:           return ApplyTransition3DCubeTo;
+        case MLWXrossTransitionTypeStackNext:          return ApplyTransitionStackNext;
+        case MLWXrossTransitionTypeStackPrev:          return ApplyTransitionStackPrev;
+        case MLWXrossTransitionTypeStackNextWithSwing: return ApplyTransitionStackNextWithSwing;
+        case MLWXrossTransitionTypeStackPrevWithSwing: return ApplyTransitionStackPrevWithSwing;
+        case MLWXrossTransitionTypeCustom:             return self.customTransitionTypeFunctor;
+        default:                                       return nil;
+    }
+}
+
+- (CGPoint)updateTransitionProgress:(CGFloat)progress
+                        toDirection:(MLWXrossDirection)direction
+                      contentOffset:(CGPoint)contentOffset {
+    
+    if (self.nextViewController) {
+        if (self.view.nextDirection.x == 0 && self.view.nextDirection.y == 0) {
+            BOOL isAllowedToApplyInset = NO;
+            if (self.view.isDragging || self.view.mlw_isInsideAttemptToDragParent.isDragging) {
+                if ([self.delegate respondsToSelector:@selector(xross:shouldApplyInsetToDirection:progress:)]) {
+                    isAllowedToApplyInset = [self.delegate xross:self shouldApplyInsetToDirection:direction progress:progress];
+                }
+                else {
+                    isAllowedToApplyInset = YES;
+                }
+                
+                if (isAllowedToApplyInset) {
+                    self.view.nextDirection = CGPointMake(direction.x, direction.y);
+                }
+            }
+            self.view.bounces = !isAllowedToApplyInset;
         }
-        if (!self.allowedToApplyInset) {
-            self.allowedToApplyInset = [self.delegate xross:self shouldApplyInsetToDirection:direction progress:progress];
+        else {
+            self.view.bounces = NO;
         }
     }
     else {
-        self.allowedToApplyInset = YES;
-    }
-    self.scrollView.bounces = !self.allowedToApplyInset;
-
-    BOOL returnedBack = (self.nextViewController &&
-                         ((self.scrollView.contentInset.left > 1 && self.scrollView.contentOffset.x >= 0) ||
-                          (self.scrollView.contentInset.right > 1 && self.scrollView.contentOffset.x <= 0) ||
-                          (self.scrollView.contentInset.top > 1 && self.scrollView.contentOffset.y >= 0) ||
-                          (self.scrollView.contentInset.bottom > 1 && self.scrollView.contentOffset.y <= 0)));
-
-    BOOL willRemoveVC = ABS(self.scrollView.contentOffset.x) >= CGRectGetWidth(self.scrollView.bounds) ||
-    ABS(self.scrollView.contentOffset.y) >= CGRectGetHeight(self.scrollView.bounds) ||
-    returnedBack;
-    
-    BOOL willAddVC = self.nextViewController == nil && !MLWXrossDirectionEquals(direction, MLWXrossDirectionNone);
-    
-    // Remove viewController or nextViewController not visible by current scrolling
-    if (willRemoveVC) {
-        if (!returnedBack) {
-            [self updateTransitionProgress:1.0 toDirection:self.prevDirection];
-            
-            if (self.nextViewController == nil) {
-                return;
-            }
-            
-            // Swap VCs
-            UIViewController *tmpView = self.viewController;
-            self.viewController = self.nextViewController;
-            self.nextViewController = tmpView;
-            [UIView animateWithDuration:0.25 animations:^{
-                [self setNeedsStatusBarAppearanceUpdate];
-            }];
-        }
-        else {
-            [self updateTransitionProgress:0.0 toDirection:self.prevDirection];
-            
-            direction = MLWXrossDirectionNone;
-            [self.viewController beginAppearanceTransition:YES animated:NO];
-            [self.viewController endAppearanceTransition];
-            [self.nextViewController beginAppearanceTransition:NO animated:NO];
-            [self.nextViewController endAppearanceTransition];
-        }
-
-        // Remove VC
-        [self.nextViewController willMoveToParentViewController:nil];
-        [self.nextViewController.view removeFromSuperview];
-        [self.nextViewController removeFromParentViewController];
-        [self.nextViewController resignFirstResponder];
-        if (!MLWXrossDirectionIsNone(direction)) {
-            [self.nextViewController endAppearanceTransition];
-        }
-
-        // Center VC
-        [UIView performWithoutAnimation:^{
-            self.scrollView.contentOffset = CGPointZero;
-            self.needEdgeInsets = kDefaultEdgeInsets;
-            [self updateInsets];
-            ViewSetFrameWithoutRelayoutIfPossible(self.viewController.view, self.scrollView.bounds);
-        }];
-        [self.viewController becomeFirstResponder];
-        if (!MLWXrossDirectionIsNone(direction)) {
-            [self.viewController endAppearanceTransition];
-        }
-
-        UIViewController *prevNextViewController = self.nextViewController;
-        self.nextViewController = nil;
-        self.nextViewControllerDirection = MLWXrossDirectionNone;
-
-        if (!self.view.userInteractionEnabled) {
-            self.view.userInteractionEnabled = YES;
-        }
-        if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
-            [self.delegate xross:self didMoveToDirection:direction];
-        }
-        if ([self.delegate respondsToSelector:@selector(xross:removedViewController:)]) {
-            [self.delegate xross:self removedViewController:prevNextViewController];
-        }
-        if (self.completionBlock) {
-            self.completionBlock();
-            self.completionBlock = nil;
-        }
-
-        self.mlwScrollView.skipLayoutSubviewCalls = NO;
-
-        [self fixStatusBarOrientationIfNeeded];
-    }
-    else if (willAddVC) { // Add nextViewController if possible for known direction
-        if (self.denyMovementUntilDate == nil ||
-            [[NSDate date] compare:self.denyMovementUntilDate] == NSOrderedDescending) {
-            self.nextViewController = [self.dataSource xross:self viewControllerForDirection:direction];
-            if (self.nextViewController) {
-                self.nextViewControllerDirection = direction;
-            }
-            if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
-                self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
-            }
-            else {
-                self.transitionType = MLWXrossTransitionTypeDefault;
-            }
-        }
-        if (self.nextViewController == nil) {
+        if(!self.view.bounces &&
+           !MLWXrossDirectionEquals(direction, self.prevWantedDirection)) {
+        
             BOOL bounces = self.bounces;
             if ([self.delegate respondsToSelector:@selector(xross:shouldBounceToDirection:)]) {
                 bounces = [self.delegate xross:self shouldBounceToDirection:direction];
             }
-            if (!bounces) {
-                [self.scrollView setContentOffset:CGPointZero animated:NO];
-                self.scrollView.scrollEnabled = NO;
-                self.scrollView.scrollEnabled = YES;
-                [self updateTransitionProgress:0.0 toDirection:direction];
-            }
-            else {
-                self.scrollView.bounces = YES;
-                [self updateTransitionProgress:progress toDirection:direction];
-            }
-            return;
-        }
-        [self.viewController beginAppearanceTransition:NO animated:YES];
-        [self.nextViewController beginAppearanceTransition:YES animated:YES];
-        [self addChildViewController:self.nextViewController];
-        if (self.nextViewController.view.backgroundColor == nil) { // Fixed bug with broken scrolling
-            self.nextViewController.view.backgroundColor = [UIColor whiteColor];
-        }
-        [self.scrollView addSubview:self.nextViewController.view];
-        self.nextViewController.view.clipsToBounds = YES;
-        [self.nextViewController didMoveToParentViewController:self];
-        [UIView performWithoutAnimation:^{
-            CGRect nextFrame = CGRectOffset(
-                (CGRect){CGPointZero, self.scrollView.bounds.size},
-                self.nextViewControllerDirection.x * CGRectGetWidth(self.scrollView.bounds),
-                self.nextViewControllerDirection.y * CGRectGetHeight(self.scrollView.bounds));
-            ViewSetFrameWithoutRelayoutIfPossible(self.nextViewController.view, nextFrame);
-        }];
-
-        if (self.viewController == nil && MLWXrossDirectionIsNone(direction)) {
-            if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
-                [self.delegate xross:self didMoveToDirection:direction];
+            
+            if (bounces) {
+                if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
+                    self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
+                }
+                else {
+                    self.transitionType = MLWXrossTransitionTypeDefault;
+                }
+                self.view.bounces = YES;
             }
         }
-
-        [self.scrollView layoutIfNeeded];
-        self.mlwScrollView.skipLayoutSubviewCalls = YES;
-        [self updateTransitionProgress:progress toDirection:direction];
-    }
-    else {
-        [self updateTransitionProgress:progress toDirection:direction];
-    }
-    
-    self.prevDirection = direction;
-}
-
-- (void)updateTransitionProgress:(CGFloat)progress toDirection:(MLWXrossDirection)direction {
-    CALayer *currLayer = self.viewController.view.layer;
-    CALayer *nextLayer = self.nextViewController.view.layer;
-    
-    switch (self.transitionType) {
-        case MLWXrossTransitionTypeDefault:
-            ApplyTransitionDefault(currLayer, nextLayer, direction, progress);
-            break;
-        case MLWXrossTransitionType3DCube:
-            ApplyTransition3DCube(currLayer, nextLayer, direction, progress);
-            break;
-        case MLWXrossTransitionType3DCubeFrom:
-            ApplyTransition3DCubeFrom(currLayer, nextLayer, direction, progress);
-            break;
-        case MLWXrossTransitionType3DCubeTo:
-            ApplyTransition3DCubeTo(currLayer, nextLayer, direction, progress);
-            break;
-        case MLWXrossTransitionTypeStackNext:
-            ApplyTransitionStackNext(currLayer, nextLayer, direction, progress);
-            break;
-        case MLWXrossTransitionTypeStackPrev:
-            ApplyTransitionStackPrev(currLayer, nextLayer, direction, progress);
-            break;
-        case MLWXrossTransitionTypeStackNextWithSwing:
-            ApplyTransitionStackNextWithSwing(currLayer, nextLayer, direction, progress);
-            break;
-        case MLWXrossTransitionTypeStackPrevWithSwing:
-            ApplyTransitionStackPrevWithSwing(currLayer, nextLayer, direction, progress);
-            break;
-        case MLWXrossTransitionTypeCustom:
-            NSAssert(self.customTransitionTypeFunctor, @"self.customTransitionTypeFunctor must not be nil in case of MLWXrossTransitionTypeStackCustom");
-            if (self.customTransitionTypeFunctor) {
-                self.customTransitionTypeFunctor(currLayer, nextLayer, direction, progress);
-            }
-            break;
+        
+        if (!self.view.bounces) {
+            progress = 0.0;
+            contentOffset = self.view.originOffset;
+            [self.view.panGestureRecognizer setTranslation:CGPointMake(-self.prevWantedDirection.x, -self.prevWantedDirection.y) inView:self.view];
+        }
     }
     
-    if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
-        [self.delegate xross:self didScrollToDirection:direction progress:progress];
+    if (((direction.x || direction.y) && progress) ||
+        !CGPointEqualToPoint(self.view.contentOffset, self.view.originOffset)) {
+        if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
+            [self.delegate xross:self didScrollToDirection:direction progress:progress];
+        }
     }
+    
+    return contentOffset;
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (!decelerate) {
-        [self scrollViewDidEndDecelerating:scrollView];
+        [self finishScrolling:scrollView];
     }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    self.scrollView.bounces = NO;
-    CGFloat width = CGRectGetWidth(self.scrollView.bounds);
-    CGFloat height = CGRectGetHeight(self.scrollView.bounds);
-    self.mlwScrollView.contentOffset = CGPointMake(
-        round(self.mlwScrollView.contentOffset.x / width) * width,
-        round(self.mlwScrollView.contentOffset.y / height) * height);
+    [self finishScrolling:scrollView];
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    [self finishScrolling:scrollView];
+}
+
+- (void)finishScrolling:(UIScrollView *)scrollView {
+    CGPoint point = CGPointMake(
+        round(self.view.contentOffset.x / CGRectGetWidth(self.view.bounds)) * CGRectGetWidth(self.view.bounds),
+        round(self.view.contentOffset.y / CGRectGetHeight(self.view.bounds)) * CGRectGetHeight(self.view.bounds));
+    if (!self.view.isDragging &&
+        !CGPointEqualToPoint(point, self.view.contentOffset)) {
+        [self.view setContentOffsetTo:point animated:NO];
+    }
+    self.view.bounces = NO;
 }
 
 @end

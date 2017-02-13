@@ -82,14 +82,6 @@ typedef void (*MLWCustomTransitionTypeFunctor)(CALayer *currLayer, CALayer *next
 @property (readonly, nonatomic, getter=isMoving) BOOL moving;
 @property (assign, nonatomic) MLWCustomTransitionTypeFunctor customTransitionTypeFunctor;
 
-// Use to deny parent scrolling when inner VC contains __kindof UIScrollView
-@property (assign, nonatomic) BOOL denyHorizontalMovement;
-@property (assign, nonatomic) BOOL denyVerticalMovement;
-@property (assign, nonatomic) BOOL denyTopMovement;
-@property (assign, nonatomic) BOOL denyBottomMovement;
-@property (assign, nonatomic) BOOL denyLeftMovement;
-@property (assign, nonatomic) BOOL denyRightMovement;
-
 + (Class)xrossViewClass;
 - (void)reloadData;
 - (void)moveToDirection:(MLWXrossDirection)direction;

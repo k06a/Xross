@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		255D61351E3BD3D70071A8DD /* ItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 255D61341E3BD3D70071A8DD /* ItemViewController.m */; };
 		25CDD8B51E26B9C8001947DD /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 25CDD8B41E26B9C8001947DD /* Launch Screen.storyboard */; };
-		25ECEC2F1CE5E14500E55A46 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 25ECEC2C1CE5E14500E55A46 /* SecondViewController.m */; };
-		25ECEC301CE5E14500E55A46 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 25ECEC2E1CE5E14500E55A46 /* ViewController.m */; };
+		25ECEC2F1CE5E14500E55A46 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 25ECEC2C1CE5E14500E55A46 /* ViewController.m */; };
 		25ECEC321CE5E35F00E55A46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 25ECEC311CE5E35F00E55A46 /* Main.storyboard */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
@@ -42,11 +42,11 @@
 		0E5E0773FA77E2C4EA56B99F /* libPods-Xross_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Xross_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		18A191E895335288D55005F8 /* Pods-Xross_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Xross_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Xross_Example/Pods-Xross_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1C5BDC7A98BDDF4CEA5416C5 /* Pods-Xross_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Xross_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Xross_Tests/Pods-Xross_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		255D61331E3BD3D70071A8DD /* ItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemViewController.h; sourceTree = "<group>"; };
+		255D61341E3BD3D70071A8DD /* ItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemViewController.m; sourceTree = "<group>"; };
 		25CDD8B41E26B9C8001947DD /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		25ECEC2B1CE5E14500E55A46 /* SecondViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
-		25ECEC2C1CE5E14500E55A46 /* SecondViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
-		25ECEC2D1CE5E14500E55A46 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		25ECEC2E1CE5E14500E55A46 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		25ECEC2B1CE5E14500E55A46 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		25ECEC2C1CE5E14500E55A46 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		25ECEC311CE5E35F00E55A46 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		4C2FD5A67BCC92C4D39642E4 /* Pods-KYXrossViewController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KYXrossViewController_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KYXrossViewController_Tests/Pods-KYXrossViewController_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		4DFF025C49063C32C4550B62 /* Pods-KYXrossViewController_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KYXrossViewController_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KYXrossViewController_Example/Pods-KYXrossViewController_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -146,10 +146,10 @@
 				25ECEC311CE5E35F00E55A46 /* Main.storyboard */,
 				6003F59C195388D20070C39A /* AppDelegate.h */,
 				6003F59D195388D20070C39A /* AppDelegate.m */,
-				25ECEC2B1CE5E14500E55A46 /* SecondViewController.h */,
-				25ECEC2C1CE5E14500E55A46 /* SecondViewController.m */,
-				25ECEC2D1CE5E14500E55A46 /* ViewController.h */,
-				25ECEC2E1CE5E14500E55A46 /* ViewController.m */,
+				25ECEC2B1CE5E14500E55A46 /* ViewController.h */,
+				25ECEC2C1CE5E14500E55A46 /* ViewController.m */,
+				255D61331E3BD3D70071A8DD /* ItemViewController.h */,
+				255D61341E3BD3D70071A8DD /* ItemViewController.m */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
 				25CDD8B41E26B9C8001947DD /* Launch Screen.storyboard */,
@@ -411,9 +411,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				25ECEC2F1CE5E14500E55A46 /* SecondViewController.m in Sources */,
+				25ECEC2F1CE5E14500E55A46 /* ViewController.m in Sources */,
+				255D61351E3BD3D70071A8DD /* ItemViewController.m in Sources */,
 				6003F59E195388D20070C39A /* AppDelegate.m in Sources */,
-				25ECEC301CE5E14500E55A46 /* ViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
