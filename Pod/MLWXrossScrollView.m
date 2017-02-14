@@ -306,12 +306,14 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 }
 
 - (BOOL)askOtherGestureRecognizersDelegateToRecognizeSimultaneously:(UIGestureRecognizer *)otherGestureRecognizer {
-    if (!self.avoidOtherGestureRecognizeAksWhatWeWants) {
-        self.avoidOtherGestureRecognizeAksWhatWeWants = YES;
-        BOOL whatOtherGestureRecognizerWants = [otherGestureRecognizer.delegate gestureRecognizer:otherGestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:self.panGestureRecognizer];
-        self.avoidOtherGestureRecognizeAksWhatWeWants = NO;
-        return whatOtherGestureRecognizerWants;
+    if (self.avoidOtherGestureRecognizeAksWhatWeWants) {
+        return YES;
     }
+    
+    self.avoidOtherGestureRecognizeAksWhatWeWants = YES;
+    BOOL whatOtherGestureRecognizerWants = [otherGestureRecognizer.delegate gestureRecognizer:otherGestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:self.panGestureRecognizer];
+    self.avoidOtherGestureRecognizeAksWhatWeWants = NO;
+    return whatOtherGestureRecognizerWants;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
