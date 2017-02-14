@@ -541,12 +541,6 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         return self.view.contentOffset;
     }
     
-    if (self.view.panGestureRecognizer.state == UIGestureRecognizerStateEnded ||
-        self.view.panGestureRecognizer.state == UIGestureRecognizerStateFailed ||
-        self.view.panGestureRecognizer.state == UIGestureRecognizerStateCancelled) {
-        self.prevWantedDirection = MLWXrossDirectionNone;
-    }
-    
     CGPoint directionVector = CGPointMake(
         contentOffset.x - scrollView.originOffset.x,
         contentOffset.y - scrollView.originOffset.y);
@@ -581,6 +575,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         directionVector = CGPointMake(contentOffset.x - scrollView.originOffset.x,
                                       contentOffset.y - scrollView.originOffset.y);
         direction = MLWXrossDirectionMake(directionVector.x, directionVector.y);
+        self.prevWantedDirection = MLWXrossDirectionNone;
         
         skipUpdateTransitionCall = MLWXrossDirectionIsNone(direction);
     }
@@ -592,7 +587,12 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     // Add nextViewController
     if (!self.nextViewController &&
         !MLWXrossDirectionIsNone(direction) &&
-        !MLWXrossDirectionEquals(direction, self.prevDirection)) {
+        !MLWXrossDirectionEquals(direction, self.prevWantedDirection)) {
+        
+        if (self.view.isDecelerating && !self.view.isDragging) {
+            // Avoid overdeceleration
+            return self.view.originOffset;
+        }
         
         [self addNextViewControllerToDirection:direction];
     }
@@ -778,7 +778,8 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     if (((direction.x || direction.y) && progress) ||
         !CGPointEqualToPoint(self.view.contentOffset, self.view.originOffset)) {
         if ([self.delegate respondsToSelector:@selector(xross:didScrollToDirection:progress:)]) {
-            [self.delegate xross:self didScrollToDirection:direction progress:progress];
+            MLWXrossDirection notNoneDirection = (MLWXrossDirectionIsNone(direction) ? self.prevWantedDirection : direction);
+            [self.delegate xross:self didScrollToDirection:notNoneDirection progress:progress];
         }
     }
     
@@ -808,6 +809,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         [self.view setContentOffsetTo:point animated:NO];
     }
     self.view.bounces = NO;
+    self.prevWantedDirection = MLWXrossDirectionNone;
 }
 
 @end
