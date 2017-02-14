@@ -321,23 +321,15 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         return YES;
     }
     
-    // Allow simultaneous non-scroll pan gesture recognizers
-    if (self.panGestureRecognizer == gestureRecognizer &&
-        [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
+    // Deny simultaneous non-scroll pan gesture recognizers
+    if ([otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
         ![otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]) {
         
-        if ([otherGestureRecognizer.delegate respondsToSelector:_cmd]) {
-            if (![self askOtherGestureRecognizersDelegateToRecognizeSimultaneously:otherGestureRecognizer]) {
-                return NO;
-            }
-        }
-        
-        return YES;
+        return NO;
     }
     
     // Allow simultateous scrolling with inner scroll views
-    if (gestureRecognizer == self.panGestureRecognizer &&
-        otherGestureRecognizer.view != self &&
+    if (otherGestureRecognizer.view != self &&
         [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
         [otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]) {
         
