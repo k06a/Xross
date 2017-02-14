@@ -80,6 +80,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 @property (assign, nonatomic) BOOL delegateRespondsToScrollViewWillScrollToContentOffset;
 @property (assign, nonatomic) BOOL avoidInnerScrollViewRecursiveCall;
 @property (assign, nonatomic) BOOL skipSetContentOffsetCalls;
+@property (assign, nonatomic) BOOL avoidOtherGestureRecognizeAksWhatWeWants;
 
 @end
 
@@ -304,12 +305,31 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     return YES;
 }
 
+- (BOOL)askOtherGestureRecognizersDelegateToRecognizeSimultaneously:(UIGestureRecognizer *)otherGestureRecognizer {
+    if (!self.avoidOtherGestureRecognizeAksWhatWeWants) {
+        self.avoidOtherGestureRecognizeAksWhatWeWants = YES;
+        BOOL whatOtherGestureRecognizerWants = [otherGestureRecognizer.delegate gestureRecognizer:otherGestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:self.panGestureRecognizer];
+        self.avoidOtherGestureRecognizeAksWhatWeWants = NO;
+        return whatOtherGestureRecognizerWants;
+    }
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if (gestureRecognizer != self.panGestureRecognizer) {
+        return YES;
+    }
+    
     // Allow simultaneous non-scroll pan gesture recognizers
-    if ((self.panGestureRecognizer == otherGestureRecognizer) ||
-        (self.panGestureRecognizer == gestureRecognizer &&
-         [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
-         ![otherGestureRecognizer.view isKindOfClass:[UIScrollView class]])) {
+    if (self.panGestureRecognizer == gestureRecognizer &&
+        [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
+        ![otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]) {
+        
+        if ([otherGestureRecognizer.delegate respondsToSelector:_cmd]) {
+            if (![self askOtherGestureRecognizersDelegateToRecognizeSimultaneously:otherGestureRecognizer]) {
+                return NO;
+            }
+        }
+        
         return YES;
     }
     
@@ -318,6 +338,13 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         otherGestureRecognizer.view != self &&
         [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
         [otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]) {
+        
+        if ([otherGestureRecognizer.delegate respondsToSelector:_cmd]) {
+            if (![self askOtherGestureRecognizersDelegateToRecognizeSimultaneously:otherGestureRecognizer]) {
+                return NO;
+            }
+        }
+        
         [otherGestureRecognizer addTarget:self action:@selector(handleOtherPanGesture:)];
         otherGestureRecognizer.state = UIGestureRecognizerStateBegan;
         self.innerScrollView = (id)otherGestureRecognizer.view;
