@@ -562,7 +562,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         if (direction.y == 0) {
             translation.y = round(translation.y / CGRectGetHeight(self.view.bounds)) * CGRectGetHeight(self.view.bounds);
         }
-        //[self.view.panGestureRecognizer setTranslation:translation inView:self.view];
+        [self.view.panGestureRecognizer setTranslation:translation inView:self.view];
     }
     
     BOOL returnedBack = self.nextViewController &&
