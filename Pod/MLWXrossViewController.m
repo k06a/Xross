@@ -749,8 +749,8 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         }
     }
     else {
-        if(!self.view.bounces &&
-           !MLWXrossDirectionEquals(direction, self.prevWantedDirection)) {
+        if (!self.view.bounces &&
+            !MLWXrossDirectionEquals(direction, self.prevWantedDirection)) {
         
             BOOL bounces = self.bounces;
             if ([self.delegate respondsToSelector:@selector(xross:shouldBounceToDirection:)]) {
@@ -768,7 +768,8 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
             }
         }
         
-        if (!self.view.bounces) {
+        if (!self.view.bounces &&
+            !MLWXrossDirectionIsNone(direction)) {
             progress = 0.0;
             contentOffset = self.view.originOffset;
             [self.view.panGestureRecognizer setTranslation:CGPointMake(-self.prevWantedDirection.x, -self.prevWantedDirection.y) inView:self.view];
