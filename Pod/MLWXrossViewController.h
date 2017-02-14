@@ -37,7 +37,7 @@ extern MLWXrossDirection MLWXrossDirectionBottom;
 extern MLWXrossDirection MLWXrossDirectionLeft;
 extern MLWXrossDirection MLWXrossDirectionRight;
 
-MLWXrossDirection MLWXrossDirectionMake(NSInteger x, NSInteger y);
+MLWXrossDirection MLWXrossDirectionMake(CGFloat x, CGFloat y);
 MLWXrossDirection MLWXrossDirectionFromOffset(CGPoint offset);
 BOOL MLWXrossDirectionIsNone(MLWXrossDirection direction);
 BOOL MLWXrossDirectionIsHorizontal(MLWXrossDirection direction);

@@ -22,7 +22,7 @@ MLWXrossDirection MLWXrossDirectionBottom = (MLWXrossDirection){0, 1};
 MLWXrossDirection MLWXrossDirectionLeft = (MLWXrossDirection){-1, 0};
 MLWXrossDirection MLWXrossDirectionRight = (MLWXrossDirection){1, 0};
 
-MLWXrossDirection MLWXrossDirectionMake(NSInteger x, NSInteger y) {
+MLWXrossDirection MLWXrossDirectionMake(CGFloat x, CGFloat y) {
     return (!x && !y) ? MLWXrossDirectionNone : (MLWXrossDirection){
         ABS(y) <  ABS(x) ? (x > 0 ? 1 : -1) : 0,
         ABS(y) >= ABS(x) ? (y > 0 ? 1 : -1) : 0
@@ -280,6 +280,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 @property (assign, nonatomic) BOOL scrollViewWillSkipCalls;
 @property (assign, nonatomic) MLWXrossDirection prevDirection;
 @property (assign, nonatomic) MLWXrossDirection prevWantedDirection;
+@property (assign, nonatomic) MLWXrossDirection skipAddDirection;
 @property (assign, nonatomic) BOOL denyMovementWhileRotation;
 @property (copy, nonatomic) void (^moveToDirectionCompletionBlock)();
 
@@ -555,10 +556,13 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     // Update pan gesture recognizer with direction respect
     if (self.view.isDragging) {
         CGPoint translation = [self.view.panGestureRecognizer translationInView:self.view];
-        translation = CGPointMake(
-            translation.x * ABS(direction.x),
-            translation.y * ABS(direction.y));
-        [self.view.panGestureRecognizer setTranslation:translation inView:self.view];
+        if (direction.x == 0) {
+            translation.x = round(translation.x / CGRectGetWidth(self.view.bounds)) * CGRectGetWidth(self.view.bounds);
+        }
+        if (direction.y == 0) {
+            translation.y = round(translation.y / CGRectGetHeight(self.view.bounds)) * CGRectGetHeight(self.view.bounds);
+        }
+        //[self.view.panGestureRecognizer setTranslation:translation inView:self.view];
     }
     
     BOOL returnedBack = self.nextViewController &&
@@ -587,7 +591,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     // Add nextViewController
     if (!self.nextViewController &&
         !MLWXrossDirectionIsNone(direction) &&
-        !MLWXrossDirectionEquals(direction, self.prevWantedDirection)) {
+        !MLWXrossDirectionEquals(direction, self.skipAddDirection)) {
         
         if (self.view.isDecelerating && !self.view.isDragging) {
             // Avoid overdeceleration
@@ -687,8 +691,10 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     }
     
     if (!self.nextViewController) {
+        self.skipAddDirection = direction;
         return;
     }
+    self.skipAddDirection = MLWXrossDirectionNone;
     
     if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
         self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
@@ -769,10 +775,13 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         }
         
         if (!self.view.bounces &&
-            !MLWXrossDirectionIsNone(direction)) {
+            MLWXrossDirectionEquals(direction, self.skipAddDirection)) {
             progress = 0.0;
             contentOffset = self.view.originOffset;
-            [self.view.panGestureRecognizer setTranslation:CGPointMake(-self.prevWantedDirection.x, -self.prevWantedDirection.y) inView:self.view];
+            CGPoint translation = [self.view.panGestureRecognizer translationInView:self.view];
+            translation.x = round(translation.x / CGRectGetWidth(self.view.bounds)) * CGRectGetWidth(self.view.bounds);
+            translation.y = round(translation.y / CGRectGetHeight(self.view.bounds)) * CGRectGetHeight(self.view.bounds);
+            [self.view.panGestureRecognizer setTranslation:translation inView:self.view];
         }
     }
     
@@ -811,6 +820,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     }
     self.view.bounces = NO;
     self.prevWantedDirection = MLWXrossDirectionNone;
+    self.skipAddDirection = MLWXrossDirectionNone;
 }
 
 @end
