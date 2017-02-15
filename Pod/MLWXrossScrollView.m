@@ -76,7 +76,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 
 @interface MLWXrossScrollView ()
 
-@property (weak, nonatomic) UIScrollView *innerScrollView;
+@property (strong, nonatomic) NSHashTable<UIScrollView *> *innerScrollViews;
 @property (assign, nonatomic) BOOL delegateRespondsToScrollViewWillScrollToContentOffset;
 @property (assign, nonatomic) BOOL avoidInnerScrollViewRecursiveCall;
 @property (assign, nonatomic) BOOL skipSetContentOffsetCalls;
@@ -106,6 +106,8 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     if (self = [super initWithFrame:frame]) {
         self.mlw_stickyKeyboard = YES;
         self.mlw_notScrollableBySubviews = YES;
+        
+        _innerScrollViews = [NSHashTable weakObjectsHashTable];
         
         [self updateInsets];
     }
@@ -240,16 +242,22 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     }
     
     // Avoid simultaneous scrolling of both views
-    if (self.innerScrollView) {
-        UIEdgeInsets insets = MLWScrollViewBouncingInsetsForContentOffset(self, contentOffset);
-        UIEdgeInsets innerInset = MLWScrollViewBouncingInsetsForContentOffset(self.innerScrollView, self.innerScrollView.contentOffset);
-        if (self.innerScrollView.isZooming ||
+    UIEdgeInsets insets = MLWScrollViewBouncingInsetsForContentOffset(self, contentOffset);
+    for (UIScrollView *innerScrollView in [self.innerScrollViews copy]) {
+        if (!innerScrollView.isDragging) {
+            [self.innerScrollViews removeObject:innerScrollView];
+            continue;
+        }
+        
+        UIEdgeInsets innerInset = MLWScrollViewBouncingInsetsForContentOffset(innerScrollView, innerScrollView.contentOffset);
+        if (innerScrollView.isZooming ||
             (insets.top < 1 && round(innerInset.top) > 0) ||
             (insets.left < 1 && round(innerInset.left) > 0) ||
-            (insets.right < 1 && round(innerInset.right) > 0)||
+            (insets.right < 1 && round(innerInset.right) > 0) ||
             (insets.bottom < 1 && round(innerInset.bottom) > 0)) {
             contentOffset = self.contentOffset;
             [self.panGestureRecognizer setTranslation:CGPointZero inView:self];
+            break;
         }
     }
 
@@ -341,7 +349,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         
         [otherGestureRecognizer addTarget:self action:@selector(handleOtherPanGesture:)];
         otherGestureRecognizer.state = UIGestureRecognizerStateBegan;
-        self.innerScrollView = (id)otherGestureRecognizer.view;
+        [self.innerScrollViews addObject:(id)otherGestureRecognizer.view];
         return YES;
     }
     
@@ -351,15 +359,13 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 - (void)handleOtherPanGesture:(UIGestureRecognizer *)otherGestureRecognizer {
     if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan ||
         otherGestureRecognizer.state == UIGestureRecognizerStateChanged) {
-        self.innerScrollView = (id)otherGestureRecognizer.view;
+        [self.innerScrollViews addObject:(id)otherGestureRecognizer.view];
     }
     if (otherGestureRecognizer.state == UIGestureRecognizerStateEnded ||
         otherGestureRecognizer.state == UIGestureRecognizerStateCancelled ||
         otherGestureRecognizer.state == UIGestureRecognizerStateFailed) {
         [otherGestureRecognizer removeTarget:self action:_cmd];
-        if (otherGestureRecognizer.view == self.innerScrollView) {
-            self.innerScrollView = nil;
-        }
+        [self.innerScrollViews removeObject:(id)otherGestureRecognizer.view];
     }
 }
 
