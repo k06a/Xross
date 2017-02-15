@@ -190,10 +190,6 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     _centerView = centerView;
 }
 
-- (void)setNextView:(UIView *)nextView {
-    NSAssert(NO, @"Do not call this method directly, use -setNextView:toDirection:");
-}
-
 - (void)setNextView:(UIView *)nextView toDirection:(CGPoint)direction {
     if (nextView) {
         if (nextView.superview != self) {
@@ -333,6 +329,12 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     if ([otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] &&
         ![otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]) {
         
+        if ([otherGestureRecognizer.delegate respondsToSelector:_cmd]) {
+            if ([self askOtherGestureRecognizersDelegateToRecognizeSimultaneously:otherGestureRecognizer]) {
+                return YES;
+            }
+        }
+    
         return NO;
     }
     
@@ -353,7 +355,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         return YES;
     }
     
-    return NO;
+    return YES;
 }
 
 - (void)handleOtherPanGesture:(UIGestureRecognizer *)otherGestureRecognizer {

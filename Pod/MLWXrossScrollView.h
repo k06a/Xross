@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) CGPoint nextDirection;
 
 @property (nullable, strong, nonatomic) UIView *centerView;
-@property (nullable, strong, nonatomic) UIView *nextView;
+@property (nullable, readonly, strong, nonatomic) UIView *nextView;
 - (void)setNextView:(UIView *)nextView toDirection:(CGPoint)direction;
 
 - (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated;
