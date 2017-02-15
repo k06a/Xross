@@ -734,7 +734,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
                       contentOffset:(CGPoint)contentOffset {
     
     if (self.nextViewController) {
-        if (self.view.nextDirection.x == 0 && self.view.nextDirection.y == 0) {
+        if (CGPointEqualToPoint(self.view.nextDirection, CGPointZero)) {
             BOOL isAllowedToApplyInset = NO;
             if (self.view.isDragging || self.view.mlw_isInsideAttemptToDragParent.isDragging) {
                 if ([self.delegate respondsToSelector:@selector(xross:shouldApplyInsetToDirection:progress:)]) {
@@ -745,6 +745,16 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
                 }
                 
                 if (isAllowedToApplyInset) {
+                    CGPoint needOffset = CGPointMake(
+                        progress * CGRectGetWidth(self.view.bounds) * direction.x,
+                        progress * CGRectGetHeight(self.view.bounds) * direction.y);
+                    
+                    CGPoint translation = [self.view.panGestureRecognizer translationInView:self.view];
+                    translation.x = round(translation.x / CGRectGetWidth(self.view.bounds)) * CGRectGetWidth(self.view.bounds);
+                    translation.y = round(translation.y / CGRectGetHeight(self.view.bounds)) * CGRectGetHeight(self.view.bounds);
+                    translation.x -= needOffset.x;
+                    translation.y -= needOffset.y;
+                    [self.view.panGestureRecognizer setTranslation:translation inView:self.view];
                     self.view.nextDirection = CGPointMake(direction.x, direction.y);
                 }
             }
