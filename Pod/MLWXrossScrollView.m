@@ -240,7 +240,11 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     // Avoid simultaneous scrolling of both views
     UIEdgeInsets insets = MLWScrollViewBouncingInsetsForContentOffset(self, contentOffset);
     for (UIScrollView *innerScrollView in [self.innerScrollViews copy]) {
-        if (!innerScrollView.isDragging) {
+        if ((self.isDragging || self.isTracking) &&
+            !innerScrollView.isTracking &&
+            !innerScrollView.isDragging &&
+            !innerScrollView.isDecelerating) {
+            
             [self.innerScrollViews removeObject:innerScrollView];
             continue;
         }
@@ -349,26 +353,12 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
             }
         }
         
-        [otherGestureRecognizer addTarget:self action:@selector(handleOtherPanGesture:)];
         otherGestureRecognizer.state = UIGestureRecognizerStateBegan;
         [self.innerScrollViews addObject:(id)otherGestureRecognizer.view];
         return YES;
     }
     
     return YES;
-}
-
-- (void)handleOtherPanGesture:(UIGestureRecognizer *)otherGestureRecognizer {
-    if (otherGestureRecognizer.state == UIGestureRecognizerStateBegan ||
-        otherGestureRecognizer.state == UIGestureRecognizerStateChanged) {
-        [self.innerScrollViews addObject:(id)otherGestureRecognizer.view];
-    }
-    if (otherGestureRecognizer.state == UIGestureRecognizerStateEnded ||
-        otherGestureRecognizer.state == UIGestureRecognizerStateCancelled ||
-        otherGestureRecognizer.state == UIGestureRecognizerStateFailed) {
-        [otherGestureRecognizer removeTarget:self action:_cmd];
-        [self.innerScrollViews removeObject:(id)otherGestureRecognizer.view];
-    }
 }
 
 @end
