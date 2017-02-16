@@ -281,6 +281,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 @property (assign, nonatomic) MLWXrossDirection prevDirection;
 @property (assign, nonatomic) MLWXrossDirection prevWantedDirection;
 @property (assign, nonatomic) MLWXrossDirection skipAddDirection;
+@property (assign, nonatomic) BOOL inMoveToDirection;
 @property (assign, nonatomic) BOOL denyMovementWhileRotation;
 @property (copy, nonatomic) void (^moveToDirectionCompletionBlock)();
 
@@ -415,10 +416,12 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 }
 
 - (void)moveToDirection:(MLWXrossDirection)direction completion:(void (^)())completion {
+    self.inMoveToDirection = YES;
     self.view.contentOffset = CGPointMake(self.view.originOffset.x + direction.x,
                                           self.view.originOffset.y + direction.y);
     NSAssert(self.nextViewController, @"self.nextViewController should not be nil, check your xross:viewControllerForDirection: implementation");
     if (!self.nextViewController) {
+        self.inMoveToDirection = NO;
         if (completion) {
             completion();
         }
@@ -580,6 +583,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
                                       contentOffset.y - scrollView.originOffset.y);
         direction = MLWXrossDirectionMake(directionVector.x, directionVector.y);
         self.prevWantedDirection = MLWXrossDirectionNone;
+        self.inMoveToDirection = NO;
         
         skipUpdateTransitionCall = MLWXrossDirectionIsNone(direction);
     }
@@ -593,7 +597,9 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         !MLWXrossDirectionIsNone(direction) &&
         !MLWXrossDirectionEquals(direction, self.skipAddDirection)) {
         
-        if (self.view.isDecelerating && !self.view.isDragging) {
+        if (!self.inMoveToDirection &&
+            (self.view.panGestureRecognizer.state == UIGestureRecognizerStateEnded ||
+             self.view.panGestureRecognizer.state == UIGestureRecognizerStatePossible)) {
             // Avoid overdeceleration
             return self.view.originOffset;
         }
