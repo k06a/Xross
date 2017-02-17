@@ -597,9 +597,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         !MLWXrossDirectionIsNone(direction) &&
         !MLWXrossDirectionEquals(direction, self.skipAddDirection)) {
         
-        if (!self.inMoveToDirection &&
-            (self.view.panGestureRecognizer.state == UIGestureRecognizerStateEnded ||
-             self.view.panGestureRecognizer.state == UIGestureRecognizerStatePossible)) {
+        if (!self.inMoveToDirection && self.view.isDecelerating) {
             // Avoid overdeceleration
             return self.view.originOffset;
         }
