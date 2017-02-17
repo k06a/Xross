@@ -240,8 +240,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     // Avoid simultaneous scrolling of both views
     UIEdgeInsets insets = MLWScrollViewBouncingInsetsForContentOffset(self, contentOffset);
     for (UIScrollView *innerScrollView in [self.innerScrollViews copy]) {
-        if ((self.isDragging || self.isTracking) &&
-            !innerScrollView.isTracking &&
+        if (!innerScrollView.isTracking &&
             !innerScrollView.isDragging &&
             !innerScrollView.isDecelerating) {
             
