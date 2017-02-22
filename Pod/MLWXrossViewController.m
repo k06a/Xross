@@ -537,10 +537,6 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 }
 
 - (CGPoint)scrollView:(MLWXrossScrollView *)scrollView willScrollToContentOffset:(CGPoint)contentOffset {
-    if (self.view.window == nil) {
-        return self.view.contentOffset;
-    }
-    
     if (self.denyMovementWhileRotation) {
         return self.view.contentOffset;
     }
