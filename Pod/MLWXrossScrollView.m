@@ -178,10 +178,11 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     if (centerView) {
         if (centerView.superview != self) {
             [centerView removeFromSuperview];
+            
+            CGRect frame = (CGRect){self.originOffset, self.bounds.size};
+            ViewSetFrameWithoutRelayoutIfPossible(centerView, frame);
             [self addSubview:centerView];
         }
-        CGRect frame = (CGRect){self.originOffset, self.bounds.size};
-        ViewSetFrameWithoutRelayoutIfPossible(centerView, frame);
     }
     else {
         [_centerView removeFromSuperview];
@@ -194,13 +195,14 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     if (nextView) {
         if (nextView.superview != self) {
             [nextView removeFromSuperview];
+            
+            NSAssert(self.centerView, @"centerView should exist when setting nextView");
+            CGRect frame = (CGRect){self.originOffset, self.bounds.size};
+            frame.origin.x += direction.x * CGRectGetWidth(self.bounds);
+            frame.origin.y += direction.y * CGRectGetHeight(self.bounds);
+            ViewSetFrameWithoutRelayoutIfPossible(nextView, frame);
             [self addSubview:nextView];
         }
-        NSAssert(self.centerView, @"centerView should exist when setting nextView");
-        CGRect frame = (CGRect){self.originOffset, self.bounds.size};
-        frame.origin.x += direction.x * CGRectGetWidth(self.bounds);
-        frame.origin.y += direction.y * CGRectGetHeight(self.bounds);
-        ViewSetFrameWithoutRelayoutIfPossible(nextView, frame);
     }
     else {
         [_nextView removeFromSuperview];
