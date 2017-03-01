@@ -635,10 +635,10 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     else {
         [self updateTransitionProgress:0.0 toDirection:direction contentOffset:self.view.originOffset];
         
-        [self.viewController beginAppearanceTransition:YES animated:NO];
-        [self.viewController endAppearanceTransition];
         [self.nextViewController beginAppearanceTransition:NO animated:NO];
         [self.nextViewController endAppearanceTransition];
+        [self.viewController beginAppearanceTransition:YES animated:NO];
+        [self.viewController endAppearanceTransition];
     }
     
     // Remove VC
