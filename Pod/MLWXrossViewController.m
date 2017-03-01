@@ -430,10 +430,10 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     
     self.moveToDirectionCompletionBlock = completion;
     self.view.userInteractionEnabled = NO;
-    CGPoint point = CGPointMake(
-        self.view.originOffset.x + direction.x * CGRectGetWidth(self.view.bounds),
-        self.view.originOffset.y + direction.y * CGRectGetHeight(self.view.bounds));
-    [self.view setContentOffsetTo:point animated:YES];
+    CGPoint prePoint = CGPointMake(
+        self.view.originOffset.x + direction.x * (CGRectGetWidth(self.view.bounds) - 1),
+        self.view.originOffset.y + direction.y * (CGRectGetHeight(self.view.bounds) - 1));
+    [self.view setContentOffsetTo:prePoint animated:YES];
 }
 
 #pragma mark - View
