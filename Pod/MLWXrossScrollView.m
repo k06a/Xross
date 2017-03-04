@@ -321,7 +321,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
 }
 
 - (BOOL)askOtherGestureRecognizersDelegateToRecognizeSimultaneously:(UIGestureRecognizer *)otherGestureRecognizer {
-    id<MLWXrossGestureRecognizerDelegate> delegate = otherGestureRecognizer.delegate;
+    id<MLWXrossGestureRecognizerDelegate> delegate = (id)otherGestureRecognizer.delegate;
     BOOL whatOtherGestureRecognizerWants = [delegate gestureRecognizer:otherGestureRecognizer allowXrossPanGestureRecognizerToWorkSimultaneously:self.panGestureRecognizer];
     return whatOtherGestureRecognizerWants;
 }
