@@ -21,6 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 //
 
+@protocol MLWXrossGestureRecognizerDelegate <UIGestureRecognizerDelegate>
+
+@optional
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer allowXrossPanGestureRecognizerToWorkSimultaneously:(nonnull UIGestureRecognizer *)xrossGestureRecognizer; // Default is \c YES for non UIScrollView pan gesture recognizers and \c NO for UIScrollView gesture recognizers
+
+@end
+
+//
+
 @interface MLWXrossScrollView : UIScrollView <UIGestureRecognizerDelegate>
 
 @property (nullable, weak, nonatomic) id<MLWXrossScrollViewDelegate> delegate;

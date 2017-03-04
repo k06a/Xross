@@ -359,14 +359,8 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 
 - (void)loadView {
     self.view = [[[self.class xrossViewClass] alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.view.showsHorizontalScrollIndicator = NO;
-    self.view.showsVerticalScrollIndicator = NO;
-    self.view.directionalLockEnabled = YES;
-    self.view.bounces = NO;
-    self.view.pagingEnabled = YES;
     self.view.delegate = self;
-    self.view.scrollEnabled = YES;
-    self.view.scrollsToTop = NO;
+    self.view.bounces = NO;
 }
 
 - (void)viewDidLoad {
