@@ -96,6 +96,11 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     return self;
 }
 
+- (BOOL)touchesShouldCancelInContentView:(UIView *)view {
+    return [super touchesShouldCancelInContentView:view]
+        || [view isKindOfClass:[UITextField class]];
+}
+
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
     [super traitCollectionDidChange:previousTraitCollection];
     
@@ -278,22 +283,6 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     }
     
     return NO;
-}
-
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    CGPoint point = [gestureRecognizer locationInView:gestureRecognizer.view];
-    UIView *viewAtPoint = [gestureRecognizer.view hitTest:point withEvent:nil];
-
-    // Avoid xross movement by UISlider
-    if ([viewAtPoint isKindOfClass:[UISlider class]]) {
-        return NO;
-    }
-    
-    if ([[MLWXrossScrollView superclass] instancesRespondToSelector:_cmd]) {
-        return [super gestureRecognizerShouldBegin:gestureRecognizer];
-    }
-
-    return YES;
 }
 
 - (BOOL)askOtherGestureRecognizersDelegateToRecognizeSimultaneously:(UIGestureRecognizer *)otherGestureRecognizer {
