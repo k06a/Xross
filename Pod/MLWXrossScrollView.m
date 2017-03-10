@@ -96,6 +96,13 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     return self;
 }
 
+- (BOOL)isKindOfClass:(Class)aClass {
+    if (aClass == [UIScrollView class]) {
+        return NO;
+    }
+    return [super isKindOfClass:aClass];
+}
+
 - (BOOL)touchesShouldCancelInContentView:(UIView *)view {
     return [super touchesShouldCancelInContentView:view]
         || [view isKindOfClass:[UITextField class]];
