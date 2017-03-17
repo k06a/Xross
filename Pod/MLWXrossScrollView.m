@@ -327,12 +327,22 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
         
         if (result) {
             otherGestureRecognizer.state = UIGestureRecognizerStateBegan;
+            [otherGestureRecognizer addTarget:self action:@selector(otherGestureRecognizerStateChanged:)];
             [self.innerScrollViews addObject:(id)otherGestureRecognizer.view];
         }
         return result;
     }
     
     return YES;
+}
+
+- (void)otherGestureRecognizerStateChanged:(UIPanGestureRecognizer *)otherGestureRecognizer {
+    if (otherGestureRecognizer.state == UIGestureRecognizerStateEnded ||
+        otherGestureRecognizer.state == UIGestureRecognizerStateCancelled ||
+        otherGestureRecognizer.state == UIGestureRecognizerStateFailed) {
+        [self.innerScrollViews removeObject:otherGestureRecognizer.view];
+        [otherGestureRecognizer removeTarget:self action:_cmd];
+    }
 }
 
 @end
