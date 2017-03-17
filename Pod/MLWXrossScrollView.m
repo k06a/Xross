@@ -340,7 +340,7 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     if (otherGestureRecognizer.state == UIGestureRecognizerStateEnded ||
         otherGestureRecognizer.state == UIGestureRecognizerStateCancelled ||
         otherGestureRecognizer.state == UIGestureRecognizerStateFailed) {
-        [self.innerScrollViews removeObject:otherGestureRecognizer.view];
+        [self.innerScrollViews removeObject:(id)otherGestureRecognizer.view];
         [otherGestureRecognizer removeTarget:self action:_cmd];
     }
 }
