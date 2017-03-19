@@ -151,18 +151,18 @@
     
     NSArray<NSNumber *> *dict = @[
         @(MLWXrossTransitionTypeDefault),
-        @(MLWXrossTransitionType3DCube),
-        @(MLWXrossTransitionTypeStackNext),
-        @(MLWXrossTransitionTypeStackNextWithSwing),
+        @(MLWXrossTransitionTypeCube),
+        @(MLWXrossTransitionTypeStackPush),
+        @(MLWXrossTransitionTypeStackPushWithSwing),
     ];
     MLWXrossTransitionType type = dict[self.segmentedControl.selectedSegmentIndex].unsignedIntegerValue;
-    if (type == MLWXrossTransitionTypeStackNext &&
+    if (type == MLWXrossTransitionTypeStackPush &&
         direction.x + direction.y < 0) {
-        type = MLWXrossTransitionTypeStackPrev;
+        type = MLWXrossTransitionTypeStackPop;
     }
-    if (type == MLWXrossTransitionTypeStackNextWithSwing &&
+    if (type == MLWXrossTransitionTypeStackPushWithSwing &&
         direction.x + direction.y < 0) {
-        type = MLWXrossTransitionTypeStackPrevWithSwing;
+        type = MLWXrossTransitionTypeStackPopWithSwing;
     }
     return type;
 }

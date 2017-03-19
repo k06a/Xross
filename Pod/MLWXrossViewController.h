@@ -11,23 +11,25 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class MLWXrossViewController;
+@class MLWXrossTransition;
+
+typedef enum : NSUInteger {
+    MLWXrossTransitionTypeDefault,
+    MLWXrossTransitionTypeCube,
+    MLWXrossTransitionTypeCubeTo,
+    MLWXrossTransitionTypeCubeFrom,
+    MLWXrossTransitionTypeStackPop,
+    MLWXrossTransitionTypeStackPush,
+    MLWXrossTransitionTypeStackPopWithSwing,
+    MLWXrossTransitionTypeStackPushWithSwing,
+    MLWXrossTransitionTypeStackPopFlat,
+    MLWXrossTransitionTypeStackPushFlat,
+} MLWXrossTransitionType;
 
 typedef struct {
     NSInteger x;
     NSInteger y;
 } MLWXrossDirection;
-
-typedef enum : NSUInteger {
-    MLWXrossTransitionTypeDefault,
-    MLWXrossTransitionType3DCube,
-    MLWXrossTransitionType3DCubeTo,
-    MLWXrossTransitionType3DCubeFrom,
-    MLWXrossTransitionTypeStackNext,
-    MLWXrossTransitionTypeStackPrev,
-    MLWXrossTransitionTypeStackNextWithSwing,
-    MLWXrossTransitionTypeStackPrevWithSwing,
-    MLWXrossTransitionTypeCustom = 0x10000,
-} MLWXrossTransitionType;
 
 typedef MLWXrossDirection MLWXrossPosition;
 
@@ -43,8 +45,6 @@ BOOL MLWXrossDirectionIsNone(MLWXrossDirection direction);
 BOOL MLWXrossDirectionIsHorizontal(MLWXrossDirection direction);
 BOOL MLWXrossDirectionIsVertical(MLWXrossDirection direction);
 BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection direction2);
-
-typedef void (*MLWCustomTransitionTypeFunctor)(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress);
 
 // Data Source
 
@@ -64,6 +64,7 @@ typedef void (*MLWCustomTransitionTypeFunctor)(CALayer *currLayer, CALayer *next
 - (void)xross:(MLWXrossViewController *)xrossViewController removedViewController:(UIViewController *)viewController;
 - (void)xross:(MLWXrossViewController *)xrossViewController didScrollToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress;
 - (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldApplyInsetToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress;
+- (MLWXrossTransition *)xross:(MLWXrossViewController *)xrossViewController transitionToDirection:(MLWXrossDirection)direction;
 - (MLWXrossTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction;
 
 @end
@@ -80,7 +81,6 @@ typedef void (*MLWCustomTransitionTypeFunctor)(CALayer *currLayer, CALayer *next
 @property (assign, nonatomic) BOOL bounces;
 @property (assign, nonatomic, getter=isMovingDisabled) BOOL movingDisabled;
 @property (readonly, nonatomic, getter=isMoving) BOOL moving;
-@property (assign, nonatomic) MLWCustomTransitionTypeFunctor customTransitionTypeFunctor;
 
 + (Class)xrossViewClass;
 - (void)reloadData;

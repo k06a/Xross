@@ -12,6 +12,9 @@
 
 #import "MLWXrossScrollView.h"
 #import "MLWXrossViewController.h"
+#import "MLWXrossTransition.h"
+#import "MLWXrossTransitionCube.h"
+#import "MLWXrossTransitionStack.h"
 #import "UIScrollView+MLWNotScrollSuperview.h"
 
 //
@@ -51,221 +54,54 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 
 //
 
-@interface MLWXrossShadowLayer : CALayer
-
-@end
-
-@implementation MLWXrossShadowLayer
-
-@end
-
-//
-
-static MLWXrossShadowLayer *ShadowLayerForTransition(CALayer *currLayer, CALayer *nextLayer) {
-    for (MLWXrossShadowLayer *layer in currLayer.sublayers.reverseObjectEnumerator) {
-        if ([layer isKindOfClass:[MLWXrossShadowLayer class]]) {
-            return layer;
+static MLWXrossTransition *TransitionForTransitionType(MLWXrossTransitionType transitionType, UIView *currentView, UIView *nextView, MLWXrossDirection direction) {
+    switch (transitionType) {
+        case MLWXrossTransitionTypeDefault: {
+            return nil;
+        }
+        case MLWXrossTransitionTypeCube: {
+            return [[MLWXrossTransitionCube alloc] initWithCurrentView:currentView nextView:nextView direction:direction];
+        }
+        case MLWXrossTransitionTypeCubeFrom: {
+            MLWXrossTransitionCube *transition = [[MLWXrossTransitionCube alloc] initWithCurrentView:currentView nextView:nextView direction:direction];
+            transition.applyToNext = NO;
+            return transition;
+        }
+        case MLWXrossTransitionTypeCubeTo: {
+            MLWXrossTransitionCube *transition = [[MLWXrossTransitionCube alloc] initWithCurrentView:currentView nextView:nextView direction:direction];
+            transition.applyToCurrent = NO;
+            return transition;
+        }
+        case MLWXrossTransitionTypeStackPop: {
+            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack popStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+            transition.maxSwingAngle = 0;
+            return transition;
+        }
+        case MLWXrossTransitionTypeStackPush: {
+            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack pushStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+            transition.maxSwingAngle = 0;
+            return transition;
+        }
+        case MLWXrossTransitionTypeStackPopWithSwing: {
+            return [MLWXrossTransitionStack popStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+        }
+        case MLWXrossTransitionTypeStackPushWithSwing: {
+            return [MLWXrossTransitionStack pushStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+        }
+        case MLWXrossTransitionTypeStackPopFlat: {
+            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack popStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+            transition.maxSwingAngle = 0;
+            transition.minScaleAchievedByDistance = 1.0;
+            return transition;
+        }
+        case MLWXrossTransitionTypeStackPushFlat: {
+            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack pushStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+            transition.maxSwingAngle = 0;
+            transition.minScaleAchievedByDistance = 1.0;
+            return transition;
         }
     }
-    for (MLWXrossShadowLayer *layer in nextLayer.sublayers.reverseObjectEnumerator) {
-        if ([layer isKindOfClass:[MLWXrossShadowLayer class]]) {
-            return layer;
-        }
-    }
-    return nil;
 }
-
-static void ApplyTransitionDefault(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    MLWXrossShadowLayer *shadowLayer = ShadowLayerForTransition(currLayer, nextLayer);
-    
-    currLayer.transform = CATransform3DIdentity;
-    nextLayer.transform = CATransform3DIdentity;
-    currLayer.shouldRasterize = NO;
-    nextLayer.shouldRasterize = NO;
-    [shadowLayer removeFromSuperlayer];
-}
-
-static void ApplyTransition3DCubeFromTo(BOOL from, BOOL to, CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    MLWXrossShadowLayer *shadowLayer = ShadowLayerForTransition(currLayer, nextLayer);
-    CGFloat orientedProgress = progress * ((MLWXrossDirectionEquals(direction, MLWXrossDirectionLeft) || MLWXrossDirectionEquals(direction, MLWXrossDirectionTop)) ? -1 : 1);
-    BOOL rotationToNext = MLWXrossDirectionEquals(direction, MLWXrossDirectionRight) || MLWXrossDirectionEquals(direction, MLWXrossDirectionBottom);
-    BOOL isVertical = MLWXrossDirectionIsVertical(direction);
-    BOOL isHorizontal = MLWXrossDirectionIsHorizontal(direction);
-    CGFloat size = isHorizontal ? CGRectGetWidth(currLayer.bounds) : CGRectGetHeight(currLayer.bounds);
-    
-    if (ABS(progress) > DBL_EPSILON && ABS(1.0 - progress) > DBL_EPSILON) {
-        CALayer *shadowLayerParent = rotationToNext ? nextLayer : currLayer;
-        if (shadowLayer == nil) {
-            shadowLayer = [MLWXrossShadowLayer new];
-            shadowLayer.backgroundColor = [UIColor blackColor].CGColor;
-        }
-        if (shadowLayer.superlayer != shadowLayerParent) {
-            [shadowLayer removeFromSuperlayer];
-            shadowLayer.frame = (CGRect){CGPointZero, shadowLayerParent.frame.size};
-            [shadowLayerParent addSublayer:shadowLayer];
-        }
-        
-        CATransform3D currTransform = CATransform3DIdentity;
-        if (from) {
-            currTransform.m34 = -0.001;
-            currTransform = CATransform3DTranslate(currTransform, (rotationToNext ? 1 : -1) * size / 2 * isHorizontal, (rotationToNext ? 1 : -1) * size / 2 * isVertical, 0);
-            currTransform = CATransform3DRotate(currTransform, -orientedProgress * M_PI_2 * (isHorizontal ? 1 : -1), isVertical, isHorizontal, 0);
-            currTransform = CATransform3DTranslate(currTransform, (rotationToNext ? -1 : 1) * size / 2 * isHorizontal, (rotationToNext ? -1 : 1) * size / 2 * isVertical, 0);
-        }
-        
-        CATransform3D nextTransform = CATransform3DIdentity;
-        if (to) {
-            nextTransform.m34 = -0.001;
-            nextTransform = CATransform3DTranslate(nextTransform, (rotationToNext ? -1 : 1) * size / 2 * isHorizontal, (rotationToNext ? -1 : 1) * size / 2 * isVertical, 0);
-            nextTransform = CATransform3DRotate(nextTransform, (isHorizontal ? 1 : -1) * M_PI_2 + (rotationToNext ? 0 : M_PI) - orientedProgress * M_PI_2 * (isHorizontal ? 1 : -1), isVertical, isHorizontal, 0);
-            nextTransform = CATransform3DTranslate(nextTransform, (rotationToNext ? 1 : -1) * size / 2 * isHorizontal, (rotationToNext ? 1 : -1) * size / 2 * isVertical, 0);
-        }
-        
-        [CATransaction begin];
-        [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
-        shadowLayer.opacity = (rotationToNext ? (1 - progress) : progress) * 0.85;
-        currLayer.transform = currTransform;
-        nextLayer.transform = nextTransform;
-        [CATransaction commit];
-        
-        currLayer.rasterizationScale = [UIScreen mainScreen].scale;
-        nextLayer.rasterizationScale = [UIScreen mainScreen].scale;
-        currLayer.shouldRasterize = YES;
-        nextLayer.shouldRasterize = YES;
-    }
-    else {
-        currLayer.transform = CATransform3DIdentity;
-        nextLayer.transform = CATransform3DIdentity;
-        currLayer.shouldRasterize = NO;
-        nextLayer.shouldRasterize = NO;
-        [shadowLayer removeFromSuperlayer];
-    }
-}
-
-static void ApplyTransition3DCube(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    ApplyTransition3DCubeFromTo(YES, YES, currLayer, nextLayer, direction, progress);
-}
-
-static void ApplyTransition3DCubeFrom(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    ApplyTransition3DCubeFromTo(YES, NO, currLayer, nextLayer, direction, progress);
-}
-
-static void ApplyTransition3DCubeTo(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    ApplyTransition3DCubeFromTo(NO, YES, currLayer, nextLayer, direction, progress);
-}
-
-static void ApplyTransitionStack(BOOL rotationToNext, CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    MLWXrossShadowLayer *shadowLayer = ShadowLayerForTransition(currLayer, nextLayer);
-    CGFloat orientedProgress = progress * ((MLWXrossDirectionEquals(direction, MLWXrossDirectionLeft) || MLWXrossDirectionEquals(direction, MLWXrossDirectionTop)) ? -1 : 1);
-    CGFloat maxOrientedProgress = orientedProgress < 0 ? -1 : 1.0;
-    BOOL isVertical = MLWXrossDirectionIsVertical(direction);
-    BOOL isHorizontal = MLWXrossDirectionIsHorizontal(direction);
-    CGFloat size = isHorizontal ? CGRectGetWidth(currLayer.bounds) : CGRectGetHeight(currLayer.bounds);
-    CGFloat scale = rotationToNext ? (0.85 + progress * 0.15) : (1.0 - progress * 0.15);
-    CGFloat eyeDistance = size;
-    CGFloat distance = -eyeDistance*(1/scale - scale);
-    
-    NSUInteger currLayerIndex = [currLayer.superlayer.sublayers indexOfObject:currLayer];
-    NSUInteger nextLayerIndex = [nextLayer.superlayer.sublayers indexOfObject:nextLayer];
-    if (rotationToNext && currLayerIndex < nextLayerIndex) {
-        [currLayer.superlayer addSublayer:currLayer];
-    }
-    if (!rotationToNext && currLayerIndex > nextLayerIndex) {
-        [currLayer.superlayer addSublayer:nextLayer];
-    }
-    
-    if (ABS(progress) > DBL_EPSILON && ABS(1.0 - progress) > DBL_EPSILON) {
-        CALayer *shadowLayerParent = rotationToNext ? nextLayer : currLayer;
-        if (shadowLayer == nil) {
-            shadowLayer = [MLWXrossShadowLayer new];
-            shadowLayer.backgroundColor = [UIColor blackColor].CGColor;
-        }
-        if (shadowLayer.superlayer != shadowLayerParent) {
-            [shadowLayer removeFromSuperlayer];
-            shadowLayer.frame = (CGRect){CGPointZero, shadowLayerParent.frame.size};
-            [shadowLayerParent addSublayer:shadowLayer];
-        }
-        
-        CATransform3D currTransform = CATransform3DIdentity;
-        CATransform3D nextTransform = CATransform3DIdentity;
-        
-        // The amendment to the wind
-        size += (size - size*scale)/2;
-        
-        CATransform3D transform = CATransform3DIdentity;
-        transform.m34 = -1/eyeDistance;
-        if (rotationToNext) {
-            transform = CATransform3DTranslate(transform, -size * maxOrientedProgress * isHorizontal / scale, -size * maxOrientedProgress * isVertical / scale, 0);
-        }
-        transform = CATransform3DTranslate(transform, size * orientedProgress * isHorizontal / scale, size * orientedProgress * isVertical / scale, distance);
-        
-        if (rotationToNext) {
-            nextTransform = transform;
-        }
-        else {
-            currTransform = transform;
-        }
-        
-        [CATransaction begin];
-        [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
-        shadowLayer.opacity = (rotationToNext ? (1 - progress) : progress) * 0.85;
-        currLayer.transform = currTransform;
-        nextLayer.transform = nextTransform;
-        [CATransaction commit];
-        
-        currLayer.rasterizationScale = [UIScreen mainScreen].scale;
-        nextLayer.rasterizationScale = [UIScreen mainScreen].scale;
-        currLayer.shouldRasterize = YES;
-        nextLayer.shouldRasterize = YES;
-    }
-    else {
-        currLayer.transform = CATransform3DIdentity;
-        nextLayer.transform = CATransform3DIdentity;
-        currLayer.shouldRasterize = NO;
-        nextLayer.shouldRasterize = NO;
-        [shadowLayer removeFromSuperlayer];
-    }
-}
-
-static void ApplyTransitionStackNext(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    ApplyTransitionStack(YES, currLayer, nextLayer, direction, progress);
-}
-
-static void ApplyTransitionStackPrev(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    ApplyTransitionStack(NO, currLayer, nextLayer, direction, progress);
-}
-
-static void ApplyTransitionStackWithSwing(BOOL rotationToNext, CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    CGFloat orientation = ((MLWXrossDirectionEquals(direction, MLWXrossDirectionLeft) || MLWXrossDirectionEquals(direction, MLWXrossDirectionTop)) ? -1 : 1) * (rotationToNext ? 1 : -1);
-    BOOL isVertical = MLWXrossDirectionIsVertical(direction);
-    BOOL isHorizontal = MLWXrossDirectionIsHorizontal(direction);
-    
-    ApplyTransitionStack(rotationToNext, currLayer, nextLayer, direction, progress);
-    
-    CGFloat maxAngle = 15.0 / 180.0 * M_PI;
-    CGFloat angle = maxAngle * (1.0 - 2*ABS(0.5 - progress)) * (isHorizontal ? -1 : 1);
-    CATransform3D transform = (rotationToNext ? nextLayer : currLayer).transform;
-    transform = CATransform3DRotate(transform, angle*orientation, isVertical, isHorizontal, 0.0);
-    
-    [CATransaction begin];
-    [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
-    if (rotationToNext) {
-        nextLayer.transform = transform;
-    }
-    else {
-        currLayer.transform = transform;
-    }
-    [CATransaction commit];
-}
-
-static void ApplyTransitionStackNextWithSwing(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    ApplyTransitionStackWithSwing(YES, currLayer, nextLayer, direction, progress);
-}
-
-static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
-    ApplyTransitionStackWithSwing(NO, currLayer, nextLayer, direction, progress);
-}
-
 
 //
 
@@ -276,7 +112,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
 @property (strong, nonatomic) UIViewController *viewController;
 @property (strong, nonatomic) UIViewController *nextViewController;
 @property (assign, nonatomic) MLWXrossDirection nextViewControllerDirection;
-@property (assign, nonatomic) MLWXrossTransitionType transitionType;
+@property (strong, nonatomic) MLWXrossTransition *transition;
 @property (assign, nonatomic) BOOL scrollViewWillSkipCalls;
 @property (assign, nonatomic) MLWXrossDirection prevDirection;
 @property (assign, nonatomic) MLWXrossDirection prevWantedDirection;
@@ -523,11 +359,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     CGFloat unlimitedProgrees = MLWXrossDirectionIsHorizontal(direction) ? horizontalProgress : verticalProgress;
     CGFloat progress = MAX(0.0, MIN(unlimitedProgrees, 1.0));
     
-    MLWCustomTransitionTypeFunctor transitionFunctor = [self transitionFunctorForTransitionType:self.transitionType];
-    NSAssert(transitionFunctor, @"transitionFunctor must not be nil");
-    if (transitionFunctor) {
-        transitionFunctor(self.viewController.view.layer, self.nextViewController.view.layer, direction, progress);
-    }
+    [self.transition updateForProgress:progress];
 }
 
 - (CGPoint)scrollView:(MLWXrossScrollView *)scrollView willScrollToContentOffset:(CGPoint)contentOffset {
@@ -663,6 +495,9 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     self.nextViewController = nil;
     self.nextViewControllerDirection = MLWXrossDirectionNone;
     
+    [self.transition finishTransition];
+    self.transition = nil;
+    
     if (!self.view.userInteractionEnabled) {
         self.view.userInteractionEnabled = YES;
     }
@@ -692,11 +527,12 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     }
     self.skipAddDirection = MLWXrossDirectionNone;
     
-    if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
-        self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
+    self.transition = nil;
+    if ([self.delegate respondsToSelector:@selector(xross:transitionToDirection:)]) {
+        self.transition = [self.delegate xross:self transitionToDirection:direction];
     }
-    else {
-        self.transitionType = MLWXrossTransitionTypeDefault;
+    else if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
+        self.transition = TransitionForTransitionType([self.delegate xross:self transitionTypeToDirection:direction], self.viewController.view, self.nextViewController.view, direction);
     }
     
     [self.viewController beginAppearanceTransition:NO animated:YES];
@@ -708,21 +544,6 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     [self.view setNextView:self.nextViewController.view toDirection:CGPointMake(direction.x, direction.y)];
     [self.nextViewController didMoveToParentViewController:self];
     self.nextViewController.view.clipsToBounds = YES;
-}
-
-- (MLWCustomTransitionTypeFunctor)transitionFunctorForTransitionType:(MLWXrossTransitionType)transitionType {
-    switch (self.transitionType) {
-        case MLWXrossTransitionTypeDefault:            return ApplyTransitionDefault;
-        case MLWXrossTransitionType3DCube:             return ApplyTransition3DCube;
-        case MLWXrossTransitionType3DCubeFrom:         return ApplyTransition3DCubeFrom;
-        case MLWXrossTransitionType3DCubeTo:           return ApplyTransition3DCubeTo;
-        case MLWXrossTransitionTypeStackNext:          return ApplyTransitionStackNext;
-        case MLWXrossTransitionTypeStackPrev:          return ApplyTransitionStackPrev;
-        case MLWXrossTransitionTypeStackNextWithSwing: return ApplyTransitionStackNextWithSwing;
-        case MLWXrossTransitionTypeStackPrevWithSwing: return ApplyTransitionStackPrevWithSwing;
-        case MLWXrossTransitionTypeCustom:             return self.customTransitionTypeFunctor;
-        default:                                       return nil;
-    }
 }
 
 - (CGPoint)updateTransitionProgress:(CGFloat)progress
@@ -770,11 +591,12 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
             }
             
             if (bounces) {
-                if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
-                    self.transitionType = [self.delegate xross:self transitionTypeToDirection:direction];
+                self.transition = nil;
+                if ([self.delegate respondsToSelector:@selector(xross:transitionToDirection:)]) {
+                    self.transition = [self.delegate xross:self transitionToDirection:direction];
                 }
-                else {
-                    self.transitionType = MLWXrossTransitionTypeDefault;
+                else if ([self.delegate respondsToSelector:@selector(xross:transitionTypeToDirection:)]) {
+                    self.transition = TransitionForTransitionType([self.delegate xross:self transitionTypeToDirection:direction], self.viewController.view, self.nextViewController.view, direction);
                 }
                 self.view.bounces = YES;
             }
