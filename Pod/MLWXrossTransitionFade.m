@@ -12,7 +12,6 @@
 
 static void ApplyTransitionFade(BOOL rotationToNext, CALayer *currLayer, CALayer *nextLayer, MLWXrossDirection direction, CGFloat progress) {
     CGFloat orientedProgress = progress * ((MLWXrossDirectionEquals(direction, MLWXrossDirectionLeft) || MLWXrossDirectionEquals(direction, MLWXrossDirectionTop)) ? -1 : 1);
-    CGFloat maxOrientedProgress = orientedProgress < 0 ? -1 : 1;
     BOOL isVertical = MLWXrossDirectionIsVertical(direction);
     BOOL isHorizontal = MLWXrossDirectionIsHorizontal(direction);
     CGFloat size = isHorizontal ? CGRectGetWidth(currLayer.bounds) : CGRectGetHeight(currLayer.bounds);
@@ -64,7 +63,7 @@ static void ApplyTransitionFade(BOOL rotationToNext, CALayer *currLayer, CALayer
     return [[[self class] alloc] initWithCurrentView:currentView nextView:nextView direction:direction fadeType:MLWXrossTransitionTypeFadeIn];
 }
 
-+ (instancetype)popStackTransitionWithCurrentView:(UIView *)currentView
++ (instancetype)fadeOutTransitionWithCurrentView:(UIView *)currentView
                                          nextView:(UIView *)nextView
                                         direction:(MLWXrossDirection)direction {
     return [[[self class] alloc] initWithCurrentView:currentView nextView:nextView direction:direction fadeType:MLWXrossTransitionTypeFadeOut];
