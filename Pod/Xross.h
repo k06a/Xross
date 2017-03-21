@@ -7,3 +7,6 @@
 //
 
 #import "MLWXrossViewController.h"
+#import "MLWXrossTransitionCube.h"
+#import "MLWXrossTransitionStack.h"
+#import "MLWXrossTransitionFade.h"

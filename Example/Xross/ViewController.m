@@ -17,6 +17,7 @@
 @property (assign, nonatomic) CGPoint position;
 @property (strong, nonatomic) UISwitch *bounceSwitch;
 @property (strong, nonatomic) UISegmentedControl *segmentedControl;
+@property (strong, nonatomic) UISegmentedControl *segmentedControlStack;
 @property (strong, nonatomic) MLWXrossViewController *xross;
 @property (strong, nonatomic) UIViewController *topViewController;
 @property (strong, nonatomic) WKWebView *webView;
@@ -57,13 +58,23 @@
         [bounceLabel.centerYAnchor constraintEqualToAnchor:self.bounceSwitch.centerYAnchor].active = YES;
         [bounceLabel.trailingAnchor constraintEqualToAnchor:self.bounceSwitch.leadingAnchor constant:-10.0].active = YES;
         
-        self.segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Default", @"3D Cube", @"Stack", @"Stack(swing)"]];
+        self.segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Default", @"Cube", @"Fade", @"Stack"]];
+        [self.segmentedControl addTarget:self action:@selector(segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
         self.segmentedControl.selectedSegmentIndex = 0;
         [_topViewController.view addSubview:self.segmentedControl];
         self.segmentedControl.translatesAutoresizingMaskIntoConstraints = NO;
         [self.segmentedControl.centerXAnchor constraintEqualToAnchor:_topViewController.view.centerXAnchor].active = YES;
         [self.segmentedControl.topAnchor constraintEqualToAnchor:self.bounceSwitch.bottomAnchor constant:20.0].active = YES;
         [self.segmentedControl.widthAnchor constraintLessThanOrEqualToAnchor:self.segmentedControl.superview.widthAnchor multiplier:0.9].active = YES;
+        
+        self.segmentedControlStack = [[UISegmentedControl alloc] initWithItems:@[@"Default", @"Swing", @"Flat"]];
+        self.segmentedControlStack.selectedSegmentIndex = 0;
+        self.segmentedControlStack.hidden = YES;
+        [_topViewController.view addSubview:self.segmentedControlStack];
+        self.segmentedControlStack.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.segmentedControlStack.centerXAnchor constraintEqualToAnchor:_topViewController.view.centerXAnchor].active = YES;
+        [self.segmentedControlStack.topAnchor constraintEqualToAnchor:self.segmentedControl.bottomAnchor constant:20.0].active = YES;
+        [self.segmentedControlStack.widthAnchor constraintLessThanOrEqualToAnchor:self.segmentedControlStack.superview.widthAnchor multiplier:0.9].active = YES;
     }
     return _topViewController;
 }
@@ -119,6 +130,10 @@
     return self.xross.supportedInterfaceOrientations;
 }
 
+- (void)segmentedControlChanged:(id)sender {
+    self.segmentedControlStack.hidden = (self.segmentedControl.selectedSegmentIndex != self.segmentedControl.numberOfSegments - 1);
+}
+
 #pragma mark - Xross
 
 - (nullable UIViewController *)xross:(MLWXrossViewController *)xrossViewController viewControllerForDirection:(MLWXrossDirection)direction {
@@ -146,24 +161,37 @@
     return nil;
 }
 
-- (MLWXrossTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction {
+- (MLWTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction {
     NSLog(@"%s (%@,%@)", __PRETTY_FUNCTION__, @(direction.x), @(direction.y));
     
     NSArray<NSNumber *> *dict = @[
-        @(MLWXrossTransitionTypeDefault),
-        @(MLWXrossTransitionTypeCube),
-        @(MLWXrossTransitionTypeStackPush),
-        @(MLWXrossTransitionTypeStackPushWithSwing),
+        @(MLWTransitionTypeDefault),
+        @(MLWTransitionTypeCube),
+        @(MLWTransitionTypeFadeIn),
+        @(MLWTransitionTypeStackPush),
     ];
-    MLWXrossTransitionType type = dict[self.segmentedControl.selectedSegmentIndex].unsignedIntegerValue;
+    MLWTransitionType type = dict[self.segmentedControl.selectedSegmentIndex].unsignedIntegerValue;
+    if (type == MLWTransitionTypeStackPush) {
+        type += 2*self.segmentedControlStack.selectedSegmentIndex;
+    }
+    
     if (type == MLWXrossTransitionTypeStackPush &&
         direction.x + direction.y < 0) {
-        type = MLWXrossTransitionTypeStackPop;
+        type = MLWTransitionTypeStackPop;
     }
-    if (type == MLWXrossTransitionTypeStackPushWithSwing &&
+    if (type == MLWTransitionTypeStackPushFlat &&
         direction.x + direction.y < 0) {
-        type = MLWXrossTransitionTypeStackPopWithSwing;
+        type = MLWTransitionTypeStackPopFlat;
     }
+    if (type == MLWTransitionTypeStackPushWithSwing &&
+        direction.x + direction.y < 0) {
+        type = MLWTransitionTypeStackPopWithSwing;
+    }
+    if (type == MLWTransitionTypeFadeIn &&
+        direction.x + direction.y < 0) {
+        type = MLWTransitionTypeFadeOut;
+    }
+    
     return type;
 }
 

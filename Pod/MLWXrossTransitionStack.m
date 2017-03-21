@@ -90,22 +90,22 @@ static void ApplyTransitionStack(BOOL rotationToNext, CGFloat minScaleAchievedBy
 
 @implementation MLWXrossTransitionStack
 
-+ (instancetype)pushStackTransitionWithCurrentView:(UIView *)currentView
++ (instancetype)stackPushTransitionWithCurrentView:(UIView *)currentView
                                           nextView:(UIView *)nextView
                                          direction:(MLWXrossDirection)direction {
-    return [[[self class] alloc] initWithCurrentView:currentView nextView:nextView direction:direction stackType:MLWXrossTransitionStackTypePush];
+    return [[[self class] alloc] initWithCurrentView:currentView nextView:nextView direction:direction stackType:MLWXrossTransitionTypeStackPush];
 }
 
-+ (instancetype)popStackTransitionWithCurrentView:(UIView *)currentView
++ (instancetype)stackPopTransitionWithCurrentView:(UIView *)currentView
                                          nextView:(UIView *)nextView
                                         direction:(MLWXrossDirection)direction {
-    return [[[self class] alloc] initWithCurrentView:currentView nextView:nextView direction:direction stackType:MLWXrossTransitionStackTypePop];
+    return [[[self class] alloc] initWithCurrentView:currentView nextView:nextView direction:direction stackType:MLWXrossTransitionTypeStackPop];
 }
 
 - (instancetype)initWithCurrentView:(UIView *)currentView
                            nextView:(UIView *)nextView
                           direction:(MLWXrossDirection)direction
-                          stackType:(MLWXrossTransitionStackType)stackType {
+                          stackType:(MLWXrossTransitionTypeStack)stackType {
     self = [super initWithCurrentView:currentView nextView:nextView direction:direction];
     if (self) {
         _shadowLayer = [[CALayer alloc] init];
@@ -128,7 +128,7 @@ static void ApplyTransitionStack(BOOL rotationToNext, CGFloat minScaleAchievedBy
 }
 
 - (void)updateForProgress:(CGFloat)progress {
-    ApplyTransitionStack(self.stackType == MLWXrossTransitionStackTypePop, self.minScaleAchievedByDistance, self.maxSwingAngle, self.minShadowAlpha, self.currentView.layer, self.nextView.layer, self.shadowLayer, self.direction, progress);
+    ApplyTransitionStack(self.stackType == MLWXrossTransitionTypeStackPop, self.minScaleAchievedByDistance, self.maxSwingAngle, self.minShadowAlpha, self.currentView.layer, self.nextView.layer, self.shadowLayer, self.direction, progress);
 }
 
 @end

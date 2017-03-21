@@ -11,47 +11,47 @@
 		034DC10F5E754A45028AD6CDE43F2095 /* JRSwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = 26DD086B0BE27828D0AB78A6024B5707 /* JRSwizzle.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		096701D5CCF79AB6D8EEA53CE521AAC0 /* KVOController-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD82FA40F72326E93D9C97B2613BEF3 /* KVOController-dummy.m */; };
 		0B1F7CD7E08B55400F73235C4FD9AFC5 /* JRSwizzle-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = FD63F6BCF2A3D99E1B742E7F93B0D05C /* JRSwizzle-dummy.m */; };
+		0D20DCD017B7AFAA34BECDC2255246F0 /* MLWXrossTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 546FB6C7CDBFB5B22173DF25AC603026 /* MLWXrossTransition.m */; };
 		0E1D6F82BA938F6BF4D19CBEAE81FB1C /* NSObject+MLWNCController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BF0DFF34713287C2186F95FB886DBF1 /* NSObject+MLWNCController.m */; };
-		137B2A2C0B88FCF955203607D6200E51 /* MLWXrossScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1C1AD524B6936C32CEA96F74C8A903 /* MLWXrossScrollView.m */; };
+		100C98ACE9852654690F7ECC6F52B82A /* MLWXrossTransitionStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 42A7FC4F7957B905EBDC90E713B619F5 /* MLWXrossTransitionStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		155354816CB91BD076BC5D1ED9133DE1 /* UIResponder+MLWCurrentFirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 6796493A19A81F56F11E58B629046FED /* UIResponder+MLWCurrentFirstResponder.m */; };
 		15C06A903EF79D58615ECC2D860D99B8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */; };
-		17907ED069803325B68663932063D780 /* MLWXrossViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE0FE6F8ADEBC044114698EF5E96D0E7 /* MLWXrossViewController.m */; };
+		1CF12A661838810C3E365860EAC43EC7 /* MLWXrossTransitionCube.h in Headers */ = {isa = PBXBuildFile; fileRef = 255C9BC9114414177DBC78E57EDBBA39 /* MLWXrossTransitionCube.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		23176066D788A4E27D4A0677FC0A161F /* MLWXrossScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = F13F7E4F16AF5487054EB46CEE7B8AFA /* MLWXrossScrollView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		27D947DD952C2E28CCD28BB0521589AE /* EXTSelectorChecking.h in Headers */ = {isa = PBXBuildFile; fileRef = BDB340D46EE6B29A84ECD1C724C052E2 /* EXTSelectorChecking.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28A6E9149EBECF012171747DC8483CEC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */; };
-		2CBC5CDFF59D0FD7EA7AB7A82B0C5CA6 /* UIScrollView+MLWStickyKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = C3A4C0D123644B577A53B920292F60DC /* UIScrollView+MLWStickyKeyboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2DFB19F3CE390CB916332292CD3F7491 /* UIScrollView+MLWNotScrollSuperview.m in Sources */ = {isa = PBXBuildFile; fileRef = A75746B70BC47E7820EB4AB901DE46A9 /* UIScrollView+MLWNotScrollSuperview.m */; };
-		35FF0DE4DAE9D9291E50CF3F8B5D945B /* UIScrollView+MLWNotScrollSuperview.h in Headers */ = {isa = PBXBuildFile; fileRef = E3D9A73E25B49EF1776A6144A96655BD /* UIScrollView+MLWNotScrollSuperview.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3714569055207762A8A06E0168DE6917 /* MLWXrossScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = F4B85979A6D831360909304692B3D39F /* MLWXrossScrollView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2F0DFFEB37CF66BB2B16E9834D56DEB4 /* MLWXrossTransitionCube.m in Sources */ = {isa = PBXBuildFile; fileRef = 559233A29550DF9B51B535E1E6AD5734 /* MLWXrossTransitionCube.m */; };
+		36CC30096B571C7761D1E34FBBF2B53C /* UIScrollView+MLWNotScrollSuperview.h in Headers */ = {isa = PBXBuildFile; fileRef = DC62E036F0BACDD646CE565361B72B9F /* UIScrollView+MLWNotScrollSuperview.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3B6D94894BA70F194950ECA4086BB51A /* NSObject+FBKVOController.m in Sources */ = {isa = PBXBuildFile; fileRef = C806E3EE0EC7443246CEFAACF53960FA /* NSObject+FBKVOController.m */; };
-		3E9BE0B49316078209DCD6C88845F2FC /* MLWXrossTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A3142FA178AAFF06D0549DC242B6BC1 /* MLWXrossTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3EE96AE5B474DC334012A77B19DB0A3A /* UAObfuscatedString.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D77328EFDC71200D42B19FAA8525EA6 /* UAObfuscatedString.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		404E5725FE0CAD66EAA35A263D429681 /* metamacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C45B83B13E86560CBCB2FFDBAB8B75D /* metamacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		40962496ECB8178BA88E499E61627507 /* extobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EE2F6A841DABED80A7839B2A0C6E118 /* extobjc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		40DED13730B1C3FA8CDF77A85EC116FC /* EXTADT.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2284D9F4903AE831F7F086707D14F /* EXTADT.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		42E193F1D91A1CA66360D8F2FE84B412 /* Xross-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A537F606DF1AB420776D7AB1194A6A80 /* Xross-dummy.m */; };
 		4E8F94E1DE1988B60E020B725E1268FE /* Pods-Xross_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B1552CB04C5C34240233E9BCD56A1BD /* Pods-Xross_Example-dummy.m */; };
-		4EA46552905DF817C0A9920B0DAD96A7 /* MLWXrossTransitionCube.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B2F1D69D49CE2988E518AFEE9091C28 /* MLWXrossTransitionCube.m */; };
 		53078939A4A2C60DE30F09C0EE77E714 /* EXTRuntimeExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = C3F6174E470327CBBBEA3C6FC615C2DE /* EXTRuntimeExtensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		541A1FF2BE6FDED04FC8174BDA96F005 /* NSObject+FBKVOController.h in Headers */ = {isa = PBXBuildFile; fileRef = F0D4D986D7D4D323DD9D442932A60E9B /* NSObject+FBKVOController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54B7F949F3277CE891BA73CFDB381ADB /* MLWXrossTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 947177D059F05DD90E679D71A1040EED /* MLWXrossTransition.m */; };
 		555AED44B0FDAF298B3957924A200573 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */; };
 		5EB36BEBD9FF422948DE10B824871E91 /* NCController-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF5FC47C5E8F6B62D1AD8D4AFD18257 /* NCController-dummy.m */; };
 		5F69A61210F385AE28C6DFD5523646FC /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DCFF6D47F985B5EC74D54C262EB3172 /* EXTScope.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		6208601E3C670E5273E18C86349A1271 /* NSObject+MLWNCController.h in Headers */ = {isa = PBXBuildFile; fileRef = EB1D71D59F484388879BC2FFBFF906C3 /* NSObject+MLWNCController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		621D2C1BA7CB45FA9B66EF637CF7ADE5 /* FBKVOController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7DC6B3FE214F32A43348C5285AE9EF9 /* FBKVOController.m */; };
-		644BDA8C98310D3935955E7EF46564AC /* MLWXrossTransitionStack.h in Headers */ = {isa = PBXBuildFile; fileRef = CA8954B21B82F867AB7CFDD290DA457A /* MLWXrossTransitionStack.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		634BE834558B242456AA9A489306C5A9 /* MLWXrossViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 52B32487D5CEE55D89BEED2719356D21 /* MLWXrossViewController.m */; };
 		64F868946A7312E98B26D4FEA4A589DE /* MLWNCController.h in Headers */ = {isa = PBXBuildFile; fileRef = F2B97CC222B5766AFA7B81DEA47ACC5A /* MLWNCController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6D3A0D55E49588DF9B9DC76B6C673CAF /* JRSwizzle.h in Headers */ = {isa = PBXBuildFile; fileRef = CAB5404BEB7199499CF800960FBB9758 /* JRSwizzle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7105B94540F161ED30B4E1E4E666CDA4 /* MLWXrossViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FEE1ACE2CD3EB030994B9CF844331B4 /* MLWXrossViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7503CB4DF50F450B6C8F53B8D4984B49 /* UIResponder+MLWCurrentFirstResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = F6049E8C147E3E4C40168CD7FF0FCE77 /* UIResponder+MLWCurrentFirstResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		76BDBF0C667648FAED7A7647CCA0C04D /* libextobjc-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 942278742EAE09324F774FB0EE46BD1D /* libextobjc-dummy.m */; };
-		76E4BFDECF0F14AC93A216B1051249CF /* UIScrollView+MLWStickyKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 27AD2BCE48CA16E48881F6B70D50802E /* UIScrollView+MLWStickyKeyboard.m */; };
+		7746C00D6737C716B20507AFB767C3CE /* MLWXrossTransition.h in Headers */ = {isa = PBXBuildFile; fileRef = E860193CC8DF0FFF4843190E72F6FC46 /* MLWXrossTransition.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7EE176945F6941446B509D564064BE60 /* EXTADT.h in Headers */ = {isa = PBXBuildFile; fileRef = 92C4B9F11F2AE0DBEB261FDD7A784F82 /* EXTADT.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		84DC6612ACE3E48BD190187CB2F94232 /* Pods-Xross_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E8D730C79E91F700954E16494041DFC8 /* Pods-Xross_Tests-dummy.m */; };
 		8817A0FB282EB5B455BD1E7448FA38B7 /* EXTKeyPathCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD85F085E82AE87E687F62CE973576F /* EXTKeyPathCoding.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A2C5CF2D28776EBB3B9EFF562CCCFC2 /* KVOController.h in Headers */ = {isa = PBXBuildFile; fileRef = 201DA8B73663516BE65DB55F9B6482C6 /* KVOController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8C44E2ADF8E881270FDA9D30660FC693 /* EXTSelectorChecking.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA7AAA5F8A26C431B009B3394FB9FF1 /* EXTSelectorChecking.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
-		8E132F623827346BEF9EF5C59052E55B /* MLWXrossTransitionStack.m in Sources */ = {isa = PBXBuildFile; fileRef = FADEDA0B7092A9E08EE8487C82225B5B /* MLWXrossTransitionStack.m */; };
 		93C1603BCC8AD9D27E738AB8BE30E600 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */; };
-		98834A1E0A942C54F68084777772CA17 /* UIResponder+MLWCurrentFirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = E36BEA3F9030CC11A1AF3236A451BE67 /* UIResponder+MLWCurrentFirstResponder.m */; };
+		9757B2510600CAE4E5D1442294009FE8 /* MLWXrossTransitionFade.m in Sources */ = {isa = PBXBuildFile; fileRef = 6285667E2CC5080E4C71A172766D2EBA /* MLWXrossTransitionFade.m */; };
 		9DB0789D1E6D02A6FAA4E1CC048F9773 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */; };
+		9DBD890D15D5E24134C597A290E20D1E /* MLWXrossScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = B67A52C86C60161A9C11DB78EE7F8728 /* MLWXrossScrollView.m */; };
+		A483DA8E4E1D5359ED8E1C46ED0585A5 /* Xross.h in Headers */ = {isa = PBXBuildFile; fileRef = C6093A082291E353EF1315475A99FA47 /* Xross.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5296208F6E1DD33ABA2706789E5091E /* EXTRuntimeExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = ECE9F900D7E65907D3F74FE2463FC608 /* EXTRuntimeExtensions.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		A5984EA9BDF82073DE5525B611F4EC50 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC994CDC2D681BA26389F78A7E4B325 /* UIKit.framework */; };
 		A5F8E72C4710201B489EB07A851310C6 /* EXTSafeCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F697D237F058E6B95F47A0C2922F4B2 /* EXTSafeCategory.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
@@ -60,21 +60,23 @@
 		B32E83D8A0781F07AEE209E216696602 /* EXTNil.h in Headers */ = {isa = PBXBuildFile; fileRef = B158CF7D03BFC7FE85880CF569E2409B /* EXTNil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF8A919E229BB5A3EDF5E4D27997E8F5 /* EXTSafeCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC0632FA6DFE697080CADAE4FFADACF /* EXTSafeCategory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C799109A588755DD340BB24536B05A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */; };
+		C25D5738ACDB472F4FB35802B750C520 /* UIScrollView+MLWStickyKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A1BAB427919E69B9A2D822CB110A538 /* UIScrollView+MLWStickyKeyboard.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C649DF81557417B3B99940C5D890D2F5 /* EXTConcreteProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D220677853579CDF5A7DE22105E311C3 /* EXTConcreteProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C856B40999B5FC9F6932BDCE876F25C7 /* MLWXrossViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C63EF5A1C664937A924A245C4E1BEA1 /* MLWXrossViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C988F6B2CA8D85617BB2C79CDA9B7280 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */; };
 		CC6CA9514E521F367C2C1E8C56D96E0E /* MLWNCController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53778776FB0C637180AF0E831F1C2446 /* MLWNCController.m */; };
 		D63AF2EA37981CE826F98A591A4FD0B3 /* UAObfuscatedString-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 849E2408A8EAB9260062EFDE0843424C /* UAObfuscatedString-dummy.m */; };
+		D8237560FAEBDD368BCB552A01FF96B0 /* UIScrollView+MLWNotScrollSuperview.m in Sources */ = {isa = PBXBuildFile; fileRef = EBD1CDB77B325E5654FC8AA1C42B927F /* UIScrollView+MLWNotScrollSuperview.m */; };
 		D87F81DC11A627101816FC2D6C74293C /* NSMethodSignature+EXT.m in Sources */ = {isa = PBXBuildFile; fileRef = E76E195F11BF15E8CA3489ADCB05FDB0 /* NSMethodSignature+EXT.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		D90730B2C3FB40A043B6C68A14443D75 /* MLWXrossTransitionFade.h in Headers */ = {isa = PBXBuildFile; fileRef = 6538792B382658214519C8C851A67C14 /* MLWXrossTransitionFade.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DA0AAC3A380F4C985F28F077321F0F5D /* EXTScope.h in Headers */ = {isa = PBXBuildFile; fileRef = F8AC5ACA6819773CE78FA414680BCEE0 /* EXTScope.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE68278CDF409FA4430FB72E3F42EE15 /* EXTConcreteProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EB87E5226C578E34512304329A323FF /* EXTConcreteProtocol.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		E6FD3FF7B57D4D8AF3259CBFF16CAF2F /* NSInvocation+EXT.m in Sources */ = {isa = PBXBuildFile; fileRef = DDC4CAE459BDA00E1BF41E79BF34E024 /* NSInvocation+EXT.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
 		E77964665172769F89A7308776A47CB1 /* NSInvocation+EXT.h in Headers */ = {isa = PBXBuildFile; fileRef = A0BD3AED19F524D1DB31F2C9ADA3DABA /* NSInvocation+EXT.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E8B687A7F34D8C61101CE4C84D7C14DC /* Xross.h in Headers */ = {isa = PBXBuildFile; fileRef = F093F02C51945E0F768F9DA130874FAB /* Xross.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EBD8BD6A4FFC9E7A30E85603FF0118D6 /* FBKVOController.h in Headers */ = {isa = PBXBuildFile; fileRef = E54C5C84E9BDF022D56BEA0F1CF41B0D /* FBKVOController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EC0006677B8E2F92559977B7B4B7925B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */; };
-		F28A57AAD8A1C62DE0B210775843991C /* UIResponder+MLWCurrentFirstResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = 80A44331E1E29DBD92FEA6AB0FC05801 /* UIResponder+MLWCurrentFirstResponder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F7040BCBEE2030AA82B567396FAF31DF /* MLWXrossTransitionCube.h in Headers */ = {isa = PBXBuildFile; fileRef = CAD33A24AC050B46480FCBB6BEC44B53 /* MLWXrossTransitionCube.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F39845EC44A1FBD1C6F56D1D33236304 /* MLWXrossTransitionStack.m in Sources */ = {isa = PBXBuildFile; fileRef = DBE92FC1396C7A801EA19A968E8AD647 /* MLWXrossTransitionStack.m */; };
+		F6BE32810669BBD6B6C88105FD33A2B0 /* Xross-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E441D8ABEEB3A398FF418052C3EC1890 /* Xross-dummy.m */; };
+		F9DBF534DE4FE5A35EC5C4CC964BCDA9 /* UIScrollView+MLWStickyKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 53132A8C7C7741747C19DCC842DA0D67 /* UIScrollView+MLWStickyKeyboard.m */; };
 		FA7B004428F82595D8FA47AA8431A5BC /* NCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 145D6B9AE48D549E437628108D91BEB5 /* NCController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FCEEECF5EC34D76A04C270C5D2C5897D /* NSMethodSignature+EXT.h in Headers */ = {isa = PBXBuildFile; fileRef = E7D95450687588B5239E27D842E22E29 /* NSMethodSignature+EXT.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -168,37 +170,42 @@
 		0DCFF6D47F985B5EC74D54C262EB3172 /* EXTScope.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTScope.m; path = extobjc/EXTScope.m; sourceTree = "<group>"; };
 		145D6B9AE48D549E437628108D91BEB5 /* NCController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NCController.h; path = Pod/Classes/NCController.h; sourceTree = "<group>"; };
 		19CB76441B64CCB33DDDB050814DCB96 /* Pods-Xross_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Xross_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
-		1B2F1D69D49CE2988E518AFEE9091C28 /* MLWXrossTransitionCube.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossTransitionCube.m; sourceTree = "<group>"; };
 		1C45B83B13E86560CBCB2FFDBAB8B75D /* metamacros.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = metamacros.h; path = extobjc/metamacros.h; sourceTree = "<group>"; };
 		201DA8B73663516BE65DB55F9B6482C6 /* KVOController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = KVOController.h; path = FBKVOController/KVOController.h; sourceTree = "<group>"; };
 		24C72AF4A81E5A76161EA0EDAAF1B4CA /* Pods-Xross_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Xross_Example.release.xcconfig"; sourceTree = "<group>"; };
+		255C9BC9114414177DBC78E57EDBBA39 /* MLWXrossTransitionCube.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossTransitionCube.h; sourceTree = "<group>"; };
 		26DD086B0BE27828D0AB78A6024B5707 /* JRSwizzle.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = JRSwizzle.m; sourceTree = "<group>"; };
-		27AD2BCE48CA16E48881F6B70D50802E /* UIScrollView+MLWStickyKeyboard.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MLWStickyKeyboard.m"; sourceTree = "<group>"; };
+		27DB64AB9AA892FF7A194C193EBB7594 /* Xross-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Xross-prefix.pch"; sourceTree = "<group>"; };
 		297EB5756FF8C4B9B7BB687E5C3B33F3 /* Pods-Xross_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Xross_Example-resources.sh"; sourceTree = "<group>"; };
+		2A1BAB427919E69B9A2D822CB110A538 /* UIScrollView+MLWStickyKeyboard.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MLWStickyKeyboard.h"; sourceTree = "<group>"; };
 		2B2BDFC9C52BCF9D4DF2C2424351E60D /* JRSwizzle.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JRSwizzle.xcconfig; sourceTree = "<group>"; };
-		2C63EF5A1C664937A924A245C4E1BEA1 /* MLWXrossViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossViewController.h; sourceTree = "<group>"; };
 		2D46985EC8621637396B9E474379E259 /* libJRSwizzle.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libJRSwizzle.a; path = libJRSwizzle.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DA7AAA5F8A26C431B009B3394FB9FF1 /* EXTSelectorChecking.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTSelectorChecking.m; path = extobjc/EXTSelectorChecking.m; sourceTree = "<group>"; };
 		2EE2F6A841DABED80A7839B2A0C6E118 /* extobjc.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = extobjc.h; path = extobjc/extobjc.h; sourceTree = "<group>"; };
-		35E965EA9E3C706000CB2A7301A8E73F /* Xross-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Xross-prefix.pch"; sourceTree = "<group>"; };
+		2FEE1ACE2CD3EB030994B9CF844331B4 /* MLWXrossViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossViewController.h; sourceTree = "<group>"; };
 		3625B350C5E8BAD6B0FBD3AF4A0D34EB /* EXTNil.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTNil.m; path = extobjc/EXTNil.m; sourceTree = "<group>"; };
 		3AD674D76FD0DFEF51C21008F4B9302C /* UAObfuscatedString-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UAObfuscatedString-prefix.pch"; sourceTree = "<group>"; };
 		3B1552CB04C5C34240233E9BCD56A1BD /* Pods-Xross_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Xross_Example-dummy.m"; sourceTree = "<group>"; };
-		3C1C1AD524B6936C32CEA96F74C8A903 /* MLWXrossScrollView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossScrollView.m; sourceTree = "<group>"; };
+		42A7FC4F7957B905EBDC90E713B619F5 /* MLWXrossTransitionStack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossTransitionStack.h; sourceTree = "<group>"; };
 		48086DFE919DE11F481AEA67AB95C1A6 /* Pods-Xross_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Xross_Example-frameworks.sh"; sourceTree = "<group>"; };
 		4BF0DFF34713287C2186F95FB886DBF1 /* NSObject+MLWNCController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSObject+MLWNCController.m"; path = "Pod/Classes/NSObject+MLWNCController.m"; sourceTree = "<group>"; };
 		4D77328EFDC71200D42B19FAA8525EA6 /* UAObfuscatedString.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = UAObfuscatedString.m; sourceTree = "<group>"; };
 		4FD2284D9F4903AE831F7F086707D14F /* EXTADT.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTADT.m; path = extobjc/EXTADT.m; sourceTree = "<group>"; };
+		52B32487D5CEE55D89BEED2719356D21 /* MLWXrossViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossViewController.m; sourceTree = "<group>"; };
+		53132A8C7C7741747C19DCC842DA0D67 /* UIScrollView+MLWStickyKeyboard.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MLWStickyKeyboard.m"; sourceTree = "<group>"; };
 		53778776FB0C637180AF0E831F1C2446 /* MLWNCController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MLWNCController.m; path = Pod/Classes/MLWNCController.m; sourceTree = "<group>"; };
+		546FB6C7CDBFB5B22173DF25AC603026 /* MLWXrossTransition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossTransition.m; sourceTree = "<group>"; };
+		559233A29550DF9B51B535E1E6AD5734 /* MLWXrossTransitionCube.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossTransitionCube.m; sourceTree = "<group>"; };
 		6019ABB3B71E1995D468B2AEA0F7E2AF /* Pods-Xross_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Xross_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		616BEB51ECCAD129BDBCB7A956B56CC6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		6285667E2CC5080E4C71A172766D2EBA /* MLWXrossTransitionFade.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossTransitionFade.m; sourceTree = "<group>"; };
+		6538792B382658214519C8C851A67C14 /* MLWXrossTransitionFade.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossTransitionFade.h; sourceTree = "<group>"; };
+		6796493A19A81F56F11E58B629046FED /* UIResponder+MLWCurrentFirstResponder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+MLWCurrentFirstResponder.m"; sourceTree = "<group>"; };
 		6CB47177F603EC64BC8A153DF196DD82 /* Pods-Xross_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Xross_Tests-resources.sh"; sourceTree = "<group>"; };
 		74A72199090E61B29F0D7C8600D3046E /* Pods-Xross_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Xross_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		7A3142FA178AAFF06D0549DC242B6BC1 /* MLWXrossTransition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossTransition.h; sourceTree = "<group>"; };
 		7EB87E5226C578E34512304329A323FF /* EXTConcreteProtocol.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTConcreteProtocol.m; path = extobjc/EXTConcreteProtocol.m; sourceTree = "<group>"; };
 		7EC994CDC2D681BA26389F78A7E4B325 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		7F9346ECAB97744D41CA340CCBC40731 /* KVOController-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KVOController-prefix.pch"; sourceTree = "<group>"; };
-		80A44331E1E29DBD92FEA6AB0FC05801 /* UIResponder+MLWCurrentFirstResponder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIResponder+MLWCurrentFirstResponder.h"; sourceTree = "<group>"; };
 		8162B5FBC4FBE24FB617F8CA9D6E17E0 /* libUAObfuscatedString.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libUAObfuscatedString.a; path = libUAObfuscatedString.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		848A29877214AB933527BD1A299BF719 /* NCController.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = NCController.xcconfig; sourceTree = "<group>"; };
 		849E2408A8EAB9260062EFDE0843424C /* UAObfuscatedString-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UAObfuscatedString-dummy.m"; sourceTree = "<group>"; };
@@ -207,53 +214,50 @@
 		92C4B9F11F2AE0DBEB261FDD7A784F82 /* EXTADT.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTADT.h; path = extobjc/EXTADT.h; sourceTree = "<group>"; };
 		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		942278742EAE09324F774FB0EE46BD1D /* libextobjc-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "libextobjc-dummy.m"; sourceTree = "<group>"; };
-		947177D059F05DD90E679D71A1040EED /* MLWXrossTransition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossTransition.m; sourceTree = "<group>"; };
 		9BD85F085E82AE87E687F62CE973576F /* EXTKeyPathCoding.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTKeyPathCoding.h; path = extobjc/EXTKeyPathCoding.h; sourceTree = "<group>"; };
 		9F697D237F058E6B95F47A0C2922F4B2 /* EXTSafeCategory.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTSafeCategory.m; path = extobjc/EXTSafeCategory.m; sourceTree = "<group>"; };
 		A0BD3AED19F524D1DB31F2C9ADA3DABA /* NSInvocation+EXT.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSInvocation+EXT.h"; path = "extobjc/NSInvocation+EXT.h"; sourceTree = "<group>"; };
-		A537F606DF1AB420776D7AB1194A6A80 /* Xross-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Xross-dummy.m"; sourceTree = "<group>"; };
-		A75746B70BC47E7820EB4AB901DE46A9 /* UIScrollView+MLWNotScrollSuperview.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MLWNotScrollSuperview.m"; sourceTree = "<group>"; };
 		B158CF7D03BFC7FE85880CF569E2409B /* EXTNil.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTNil.h; path = extobjc/EXTNil.h; sourceTree = "<group>"; };
 		B2C9D62DCC762356DE9663D3E22574FA /* EXTSynthesize.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTSynthesize.h; path = extobjc/EXTSynthesize.h; sourceTree = "<group>"; };
-		B3DAAC1948796252A0512B459CE6CEA2 /* Xross.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Xross.xcconfig; sourceTree = "<group>"; };
+		B67A52C86C60161A9C11DB78EE7F8728 /* MLWXrossScrollView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossScrollView.m; sourceTree = "<group>"; };
 		B99FF928AFB09A672C881344DDCE262B /* UAObfuscatedString.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = UAObfuscatedString.h; sourceTree = "<group>"; };
 		BBD82FA40F72326E93D9C97B2613BEF3 /* KVOController-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "KVOController-dummy.m"; sourceTree = "<group>"; };
 		BD03E15A429200FF0567EBD1FC038A57 /* libPods-Xross_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-Xross_Tests.a"; path = "libPods-Xross_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDB340D46EE6B29A84ECD1C724C052E2 /* EXTSelectorChecking.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTSelectorChecking.h; path = extobjc/EXTSelectorChecking.h; sourceTree = "<group>"; };
 		BFD833694C68B5C1A67C37A20E380B3B /* Pods-Xross_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Xross_Tests-frameworks.sh"; sourceTree = "<group>"; };
-		C3A4C0D123644B577A53B920292F60DC /* UIScrollView+MLWStickyKeyboard.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MLWStickyKeyboard.h"; sourceTree = "<group>"; };
 		C3F6174E470327CBBBEA3C6FC615C2DE /* EXTRuntimeExtensions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTRuntimeExtensions.h; path = extobjc/EXTRuntimeExtensions.h; sourceTree = "<group>"; };
 		C5DEF00B1FDFBE5EAECFC76BA0BB7DB1 /* libXross.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libXross.a; path = libXross.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6093A082291E353EF1315475A99FA47 /* Xross.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Xross.h; sourceTree = "<group>"; };
 		C806E3EE0EC7443246CEFAACF53960FA /* NSObject+FBKVOController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSObject+FBKVOController.m"; path = "FBKVOController/NSObject+FBKVOController.m"; sourceTree = "<group>"; };
-		CA8954B21B82F867AB7CFDD290DA457A /* MLWXrossTransitionStack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossTransitionStack.h; sourceTree = "<group>"; };
 		CAB5404BEB7199499CF800960FBB9758 /* JRSwizzle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = JRSwizzle.h; sourceTree = "<group>"; };
-		CAD33A24AC050B46480FCBB6BEC44B53 /* MLWXrossTransitionCube.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossTransitionCube.h; sourceTree = "<group>"; };
 		CB2C58FDF5F02DBB7F4067A259915472 /* libPods-Xross_Example.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-Xross_Example.a"; path = "libPods-Xross_Example.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC4F1AC66FC1759809D2CB301A4DCEB1 /* Pods-Xross_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Xross_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		CC8B441198AE997560A47FE2EEE679AA /* Pods-Xross_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Xross_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		CCC0632FA6DFE697080CADAE4FFADACF /* EXTSafeCategory.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTSafeCategory.h; path = extobjc/EXTSafeCategory.h; sourceTree = "<group>"; };
 		D12850A3FDC22664C93F94FD16F4C3ED /* Pods-Xross_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Xross_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		D220677853579CDF5A7DE22105E311C3 /* EXTConcreteProtocol.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTConcreteProtocol.h; path = extobjc/EXTConcreteProtocol.h; sourceTree = "<group>"; };
+		D53EF5C503A3B6BC745CC6AB4F2C7D39 /* Xross.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Xross.xcconfig; sourceTree = "<group>"; };
+		DBE92FC1396C7A801EA19A968E8AD647 /* MLWXrossTransitionStack.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossTransitionStack.m; sourceTree = "<group>"; };
+		DC62E036F0BACDD646CE565361B72B9F /* UIScrollView+MLWNotScrollSuperview.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MLWNotScrollSuperview.h"; sourceTree = "<group>"; };
 		DCD8CF50438C4685356C44AC1341B4BE /* KVOController.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = KVOController.xcconfig; sourceTree = "<group>"; };
 		DD3E62FC6A84A07E23BFE1E77B1B89F7 /* Pods-Xross_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Xross_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		DDC4CAE459BDA00E1BF41E79BF34E024 /* NSInvocation+EXT.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSInvocation+EXT.m"; path = "extobjc/NSInvocation+EXT.m"; sourceTree = "<group>"; };
-		E36BEA3F9030CC11A1AF3236A451BE67 /* UIResponder+MLWCurrentFirstResponder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIResponder+MLWCurrentFirstResponder.m"; sourceTree = "<group>"; };
-		E3D9A73E25B49EF1776A6144A96655BD /* UIScrollView+MLWNotScrollSuperview.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MLWNotScrollSuperview.h"; sourceTree = "<group>"; };
+		E441D8ABEEB3A398FF418052C3EC1890 /* Xross-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Xross-dummy.m"; sourceTree = "<group>"; };
 		E54C5C84E9BDF022D56BEA0F1CF41B0D /* FBKVOController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBKVOController.h; path = FBKVOController/FBKVOController.h; sourceTree = "<group>"; };
 		E76E195F11BF15E8CA3489ADCB05FDB0 /* NSMethodSignature+EXT.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSMethodSignature+EXT.m"; path = "extobjc/NSMethodSignature+EXT.m"; sourceTree = "<group>"; };
 		E7D95450687588B5239E27D842E22E29 /* NSMethodSignature+EXT.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSMethodSignature+EXT.h"; path = "extobjc/NSMethodSignature+EXT.h"; sourceTree = "<group>"; };
 		E7DC6B3FE214F32A43348C5285AE9EF9 /* FBKVOController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FBKVOController.m; path = FBKVOController/FBKVOController.m; sourceTree = "<group>"; };
+		E860193CC8DF0FFF4843190E72F6FC46 /* MLWXrossTransition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossTransition.h; sourceTree = "<group>"; };
 		E8D730C79E91F700954E16494041DFC8 /* Pods-Xross_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Xross_Tests-dummy.m"; sourceTree = "<group>"; };
 		EB1D71D59F484388879BC2FFBFF906C3 /* NSObject+MLWNCController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSObject+MLWNCController.h"; path = "Pod/Classes/NSObject+MLWNCController.h"; sourceTree = "<group>"; };
+		EBD1CDB77B325E5654FC8AA1C42B927F /* UIScrollView+MLWNotScrollSuperview.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MLWNotScrollSuperview.m"; sourceTree = "<group>"; };
 		ECE9F900D7E65907D3F74FE2463FC608 /* EXTRuntimeExtensions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = EXTRuntimeExtensions.m; path = extobjc/EXTRuntimeExtensions.m; sourceTree = "<group>"; };
-		EE0FE6F8ADEBC044114698EF5E96D0E7 /* MLWXrossViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossViewController.m; sourceTree = "<group>"; };
-		F093F02C51945E0F768F9DA130874FAB /* Xross.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = Xross.h; sourceTree = "<group>"; };
 		F0D4D986D7D4D323DD9D442932A60E9B /* NSObject+FBKVOController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSObject+FBKVOController.h"; path = "FBKVOController/NSObject+FBKVOController.h"; sourceTree = "<group>"; };
+		F13F7E4F16AF5487054EB46CEE7B8AFA /* MLWXrossScrollView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossScrollView.h; sourceTree = "<group>"; };
 		F2B97CC222B5766AFA7B81DEA47ACC5A /* MLWNCController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MLWNCController.h; path = Pod/Classes/MLWNCController.h; sourceTree = "<group>"; };
-		F4B85979A6D831360909304692B3D39F /* MLWXrossScrollView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLWXrossScrollView.h; sourceTree = "<group>"; };
 		F599BA3BBACE8D6BF65BCD21C9676973 /* UAObfuscatedString.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = UAObfuscatedString.xcconfig; sourceTree = "<group>"; };
+		F6049E8C147E3E4C40168CD7FF0FCE77 /* UIResponder+MLWCurrentFirstResponder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UIResponder+MLWCurrentFirstResponder.h"; sourceTree = "<group>"; };
 		F8AC5ACA6819773CE78FA414680BCEE0 /* EXTScope.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = EXTScope.h; path = extobjc/EXTScope.h; sourceTree = "<group>"; };
-		FADEDA0B7092A9E08EE8487C82225B5B /* MLWXrossTransitionStack.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLWXrossTransitionStack.m; sourceTree = "<group>"; };
 		FCF5FC47C5E8F6B62D1AD8D4AFD18257 /* NCController-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NCController-dummy.m"; sourceTree = "<group>"; };
 		FD63F6BCF2A3D99E1B742E7F93B0D05C /* JRSwizzle-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "JRSwizzle-dummy.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -448,16 +452,6 @@
 			path = "../Target Support Files/JRSwizzle";
 			sourceTree = "<group>";
 		};
-		3CFEEC0BCED7042553F0E64856D4D691 /* Xross */ = {
-			isa = PBXGroup;
-			children = (
-				FB2153930229AF191DCB8AEAB3DC479E /* Pod */,
-				CC79FE1D8ACA0EFF5B5C631690ECCD8D /* Support Files */,
-			);
-			name = Xross;
-			path = ../..;
-			sourceTree = "<group>";
-		};
 		433CD3331B6C3787F473C941B61FC68F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -466,10 +460,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		45CEB253BC24A7442B66457FF6946B4A /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				D53EF5C503A3B6BC745CC6AB4F2C7D39 /* Xross.xcconfig */,
+				E441D8ABEEB3A398FF418052C3EC1890 /* Xross-dummy.m */,
+				27DB64AB9AA892FF7A194C193EBB7594 /* Xross-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/Xross";
+			sourceTree = "<group>";
+		};
 		47D6512C041C5697FF8EA03137D61B0F /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3CFEEC0BCED7042553F0E64856D4D691 /* Xross */,
+				A03F34801EB3EF00274E746826ED6823 /* Xross */,
 			);
 			name = "Development Pods";
 			sourceTree = "<group>";
@@ -519,6 +524,33 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/NCController";
+			sourceTree = "<group>";
+		};
+		5AA8DCF15E60683735EBE9D13DC05852 /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				F13F7E4F16AF5487054EB46CEE7B8AFA /* MLWXrossScrollView.h */,
+				B67A52C86C60161A9C11DB78EE7F8728 /* MLWXrossScrollView.m */,
+				E860193CC8DF0FFF4843190E72F6FC46 /* MLWXrossTransition.h */,
+				546FB6C7CDBFB5B22173DF25AC603026 /* MLWXrossTransition.m */,
+				255C9BC9114414177DBC78E57EDBBA39 /* MLWXrossTransitionCube.h */,
+				559233A29550DF9B51B535E1E6AD5734 /* MLWXrossTransitionCube.m */,
+				6538792B382658214519C8C851A67C14 /* MLWXrossTransitionFade.h */,
+				6285667E2CC5080E4C71A172766D2EBA /* MLWXrossTransitionFade.m */,
+				42A7FC4F7957B905EBDC90E713B619F5 /* MLWXrossTransitionStack.h */,
+				DBE92FC1396C7A801EA19A968E8AD647 /* MLWXrossTransitionStack.m */,
+				2FEE1ACE2CD3EB030994B9CF844331B4 /* MLWXrossViewController.h */,
+				52B32487D5CEE55D89BEED2719356D21 /* MLWXrossViewController.m */,
+				F6049E8C147E3E4C40168CD7FF0FCE77 /* UIResponder+MLWCurrentFirstResponder.h */,
+				6796493A19A81F56F11E58B629046FED /* UIResponder+MLWCurrentFirstResponder.m */,
+				DC62E036F0BACDD646CE565361B72B9F /* UIScrollView+MLWNotScrollSuperview.h */,
+				EBD1CDB77B325E5654FC8AA1C42B927F /* UIScrollView+MLWNotScrollSuperview.m */,
+				2A1BAB427919E69B9A2D822CB110A538 /* UIScrollView+MLWStickyKeyboard.h */,
+				53132A8C7C7741747C19DCC842DA0D67 /* UIScrollView+MLWStickyKeyboard.m */,
+				C6093A082291E353EF1315475A99FA47 /* Xross.h */,
+			);
+			name = Pod;
+			path = Pod;
 			sourceTree = "<group>";
 		};
 		671FE51990209538AC90EECE2A121749 /* EXTConcreteProtocol */ = {
@@ -600,6 +632,16 @@
 			path = KVOController;
 			sourceTree = "<group>";
 		};
+		A03F34801EB3EF00274E746826ED6823 /* Xross */ = {
+			isa = PBXGroup;
+			children = (
+				5AA8DCF15E60683735EBE9D13DC05852 /* Pod */,
+				45CEB253BC24A7442B66457FF6946B4A /* Support Files */,
+			);
+			name = Xross;
+			path = ../..;
+			sourceTree = "<group>";
+		};
 		A401961FA8B279F42D2EC3D29D3A6120 /* EXTScope */ = {
 			isa = PBXGroup;
 			children = (
@@ -644,17 +686,6 @@
 			path = JRSwizzle;
 			sourceTree = "<group>";
 		};
-		CC79FE1D8ACA0EFF5B5C631690ECCD8D /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				B3DAAC1948796252A0512B459CE6CEA2 /* Xross.xcconfig */,
-				A537F606DF1AB420776D7AB1194A6A80 /* Xross-dummy.m */,
-				35E965EA9E3C706000CB2A7301A8E73F /* Xross-prefix.pch */,
-			);
-			name = "Support Files";
-			path = "Example/Pods/Target Support Files/Xross";
-			sourceTree = "<group>";
-		};
 		D364C55B91A86C444C29C90CBBC06C28 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -683,50 +714,9 @@
 			name = EXTKeyPathCoding;
 			sourceTree = "<group>";
 		};
-		FB2153930229AF191DCB8AEAB3DC479E /* Pod */ = {
-			isa = PBXGroup;
-			children = (
-				F4B85979A6D831360909304692B3D39F /* MLWXrossScrollView.h */,
-				3C1C1AD524B6936C32CEA96F74C8A903 /* MLWXrossScrollView.m */,
-				7A3142FA178AAFF06D0549DC242B6BC1 /* MLWXrossTransition.h */,
-				947177D059F05DD90E679D71A1040EED /* MLWXrossTransition.m */,
-				CAD33A24AC050B46480FCBB6BEC44B53 /* MLWXrossTransitionCube.h */,
-				1B2F1D69D49CE2988E518AFEE9091C28 /* MLWXrossTransitionCube.m */,
-				CA8954B21B82F867AB7CFDD290DA457A /* MLWXrossTransitionStack.h */,
-				FADEDA0B7092A9E08EE8487C82225B5B /* MLWXrossTransitionStack.m */,
-				2C63EF5A1C664937A924A245C4E1BEA1 /* MLWXrossViewController.h */,
-				EE0FE6F8ADEBC044114698EF5E96D0E7 /* MLWXrossViewController.m */,
-				80A44331E1E29DBD92FEA6AB0FC05801 /* UIResponder+MLWCurrentFirstResponder.h */,
-				E36BEA3F9030CC11A1AF3236A451BE67 /* UIResponder+MLWCurrentFirstResponder.m */,
-				E3D9A73E25B49EF1776A6144A96655BD /* UIScrollView+MLWNotScrollSuperview.h */,
-				A75746B70BC47E7820EB4AB901DE46A9 /* UIScrollView+MLWNotScrollSuperview.m */,
-				C3A4C0D123644B577A53B920292F60DC /* UIScrollView+MLWStickyKeyboard.h */,
-				27AD2BCE48CA16E48881F6B70D50802E /* UIScrollView+MLWStickyKeyboard.m */,
-				F093F02C51945E0F768F9DA130874FAB /* Xross.h */,
-			);
-			name = Pod;
-			path = Pod;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		05E868DA0BF989C3AC09935D00EEAE02 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3714569055207762A8A06E0168DE6917 /* MLWXrossScrollView.h in Headers */,
-				3E9BE0B49316078209DCD6C88845F2FC /* MLWXrossTransition.h in Headers */,
-				F7040BCBEE2030AA82B567396FAF31DF /* MLWXrossTransitionCube.h in Headers */,
-				644BDA8C98310D3935955E7EF46564AC /* MLWXrossTransitionStack.h in Headers */,
-				C856B40999B5FC9F6932BDCE876F25C7 /* MLWXrossViewController.h in Headers */,
-				F28A57AAD8A1C62DE0B210775843991C /* UIResponder+MLWCurrentFirstResponder.h in Headers */,
-				35FF0DE4DAE9D9291E50CF3F8B5D945B /* UIScrollView+MLWNotScrollSuperview.h in Headers */,
-				2CBC5CDFF59D0FD7EA7AB7A82B0C5CA6 /* UIScrollView+MLWStickyKeyboard.h in Headers */,
-				E8B687A7F34D8C61101CE4C84D7C14DC /* Xross.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		483C6B966E1D25EF72008340A89B5CDD /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -734,6 +724,23 @@
 				64F868946A7312E98B26D4FEA4A589DE /* MLWNCController.h in Headers */,
 				FA7B004428F82595D8FA47AA8431A5BC /* NCController.h in Headers */,
 				6208601E3C670E5273E18C86349A1271 /* NSObject+MLWNCController.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6067A5968B06782F01E98FCAABB36DC3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				23176066D788A4E27D4A0677FC0A161F /* MLWXrossScrollView.h in Headers */,
+				7746C00D6737C716B20507AFB767C3CE /* MLWXrossTransition.h in Headers */,
+				1CF12A661838810C3E365860EAC43EC7 /* MLWXrossTransitionCube.h in Headers */,
+				D90730B2C3FB40A043B6C68A14443D75 /* MLWXrossTransitionFade.h in Headers */,
+				100C98ACE9852654690F7ECC6F52B82A /* MLWXrossTransitionStack.h in Headers */,
+				7105B94540F161ED30B4E1E4E666CDA4 /* MLWXrossViewController.h in Headers */,
+				7503CB4DF50F450B6C8F53B8D4984B49 /* UIResponder+MLWCurrentFirstResponder.h in Headers */,
+				36CC30096B571C7761D1E34FBBF2B53C /* UIScrollView+MLWNotScrollSuperview.h in Headers */,
+				C25D5738ACDB472F4FB35802B750C520 /* UIScrollView+MLWStickyKeyboard.h in Headers */,
+				A483DA8E4E1D5359ED8E1C46ED0585A5 /* Xross.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -879,9 +886,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8C844CBA0202F4D0E98575BBA9631636 /* Build configuration list for PBXNativeTarget "Xross" */;
 			buildPhases = (
-				83D056A6F8FE55FB3179DAE2A577A0BC /* Sources */,
+				D833034352E4A087BE763666FE29C424 /* Sources */,
 				122E6552C7CD4B0893908A5C244CC938 /* Frameworks */,
-				05E868DA0BF989C3AC09935D00EEAE02 /* Headers */,
+				6067A5968B06782F01E98FCAABB36DC3 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -999,22 +1006,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		83D056A6F8FE55FB3179DAE2A577A0BC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				137B2A2C0B88FCF955203607D6200E51 /* MLWXrossScrollView.m in Sources */,
-				54B7F949F3277CE891BA73CFDB381ADB /* MLWXrossTransition.m in Sources */,
-				4EA46552905DF817C0A9920B0DAD96A7 /* MLWXrossTransitionCube.m in Sources */,
-				8E132F623827346BEF9EF5C59052E55B /* MLWXrossTransitionStack.m in Sources */,
-				17907ED069803325B68663932063D780 /* MLWXrossViewController.m in Sources */,
-				98834A1E0A942C54F68084777772CA17 /* UIResponder+MLWCurrentFirstResponder.m in Sources */,
-				2DFB19F3CE390CB916332292CD3F7491 /* UIScrollView+MLWNotScrollSuperview.m in Sources */,
-				76E4BFDECF0F14AC93A216B1051249CF /* UIScrollView+MLWStickyKeyboard.m in Sources */,
-				42E193F1D91A1CA66360D8F2FE84B412 /* Xross-dummy.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A081AF506F37A0737266311BD46FCA11 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1040,6 +1031,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E8F94E1DE1988B60E020B725E1268FE /* Pods-Xross_Example-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D833034352E4A087BE763666FE29C424 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9DBD890D15D5E24134C597A290E20D1E /* MLWXrossScrollView.m in Sources */,
+				0D20DCD017B7AFAA34BECDC2255246F0 /* MLWXrossTransition.m in Sources */,
+				2F0DFFEB37CF66BB2B16E9834D56DEB4 /* MLWXrossTransitionCube.m in Sources */,
+				9757B2510600CAE4E5D1442294009FE8 /* MLWXrossTransitionFade.m in Sources */,
+				F39845EC44A1FBD1C6F56D1D33236304 /* MLWXrossTransitionStack.m in Sources */,
+				634BE834558B242456AA9A489306C5A9 /* MLWXrossViewController.m in Sources */,
+				155354816CB91BD076BC5D1ED9133DE1 /* UIResponder+MLWCurrentFirstResponder.m in Sources */,
+				D8237560FAEBDD368BCB552A01FF96B0 /* UIScrollView+MLWNotScrollSuperview.m in Sources */,
+				F9DBF534DE4FE5A35EC5C4CC964BCDA9 /* UIScrollView+MLWStickyKeyboard.m in Sources */,
+				F6BE32810669BBD6B6C88105FD33A2B0 /* Xross-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1170,7 +1178,7 @@
 		};
 		22A5C7AEB477AC15E398F1C8AEFDA784 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3DAAC1948796252A0512B459CE6CEA2 /* Xross.xcconfig */;
+			baseConfigurationReference = D53EF5C503A3B6BC745CC6AB4F2C7D39 /* Xross.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1394,7 +1402,7 @@
 		};
 		9623B9CCA1BBCC799DDF19ECC8A19AD0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3DAAC1948796252A0512B459CE6CEA2 /* Xross.xcconfig */;
+			baseConfigurationReference = D53EF5C503A3B6BC745CC6AB4F2C7D39 /* Xross.xcconfig */;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";

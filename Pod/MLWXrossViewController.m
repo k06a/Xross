@@ -15,6 +15,7 @@
 #import "MLWXrossTransition.h"
 #import "MLWXrossTransitionCube.h"
 #import "MLWXrossTransitionStack.h"
+#import "MLWXrossTransitionFade.h"
 #import "UIScrollView+MLWNotScrollSuperview.h"
 
 //
@@ -54,51 +55,57 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 
 //
 
-static MLWXrossTransition *TransitionForTransitionType(MLWXrossTransitionType transitionType, UIView *currentView, UIView *nextView, MLWXrossDirection direction) {
+static MLWXrossTransition *TransitionForTransitionType(MLWTransitionType transitionType, UIView *currentView, UIView *nextView, MLWXrossDirection direction) {
     switch (transitionType) {
-        case MLWXrossTransitionTypeDefault: {
+        case MLWTransitionTypeDefault: {
             return nil;
         }
-        case MLWXrossTransitionTypeCube: {
+        case MLWTransitionTypeCube: {
             return [[MLWXrossTransitionCube alloc] initWithCurrentView:currentView nextView:nextView direction:direction];
         }
-        case MLWXrossTransitionTypeCubeFrom: {
+        case MLWTransitionTypeCubeFrom: {
             MLWXrossTransitionCube *transition = [[MLWXrossTransitionCube alloc] initWithCurrentView:currentView nextView:nextView direction:direction];
             transition.applyToNext = NO;
             return transition;
         }
-        case MLWXrossTransitionTypeCubeTo: {
+        case MLWTransitionTypeCubeTo: {
             MLWXrossTransitionCube *transition = [[MLWXrossTransitionCube alloc] initWithCurrentView:currentView nextView:nextView direction:direction];
             transition.applyToCurrent = NO;
             return transition;
         }
-        case MLWXrossTransitionTypeStackPop: {
-            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack popStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+        case MLWTransitionTypeStackPop: {
+            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack stackPopTransitionWithCurrentView:currentView nextView:nextView direction:direction];
             transition.maxSwingAngle = 0;
             return transition;
         }
-        case MLWXrossTransitionTypeStackPush: {
-            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack pushStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+        case MLWTransitionTypeStackPush: {
+            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack stackPushTransitionWithCurrentView:currentView nextView:nextView direction:direction];
             transition.maxSwingAngle = 0;
             return transition;
         }
-        case MLWXrossTransitionTypeStackPopWithSwing: {
-            return [MLWXrossTransitionStack popStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+        case MLWTransitionTypeStackPopWithSwing: {
+            return [MLWXrossTransitionStack stackPopTransitionWithCurrentView:currentView nextView:nextView direction:direction];
         }
-        case MLWXrossTransitionTypeStackPushWithSwing: {
-            return [MLWXrossTransitionStack pushStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+        case MLWTransitionTypeStackPushWithSwing: {
+            return [MLWXrossTransitionStack stackPushTransitionWithCurrentView:currentView nextView:nextView direction:direction];
         }
-        case MLWXrossTransitionTypeStackPopFlat: {
-            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack popStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+        case MLWTransitionTypeStackPopFlat: {
+            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack stackPopTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+            transition.maxSwingAngle = 0;
+            transition.minScaleAchievedByDistance = 1.0;
+            return transition;
+        }
+        case MLWTransitionTypeStackPushFlat: {
+            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack stackPushTransitionWithCurrentView:currentView nextView:nextView direction:direction];
             transition.maxSwingAngle = 0;
             transition.minScaleAchievedByDistance = 1.0;
             return transition;
         }
-        case MLWXrossTransitionTypeStackPushFlat: {
-            MLWXrossTransitionStack *transition = [MLWXrossTransitionStack pushStackTransitionWithCurrentView:currentView nextView:nextView direction:direction];
-            transition.maxSwingAngle = 0;
-            transition.minScaleAchievedByDistance = 1.0;
-            return transition;
+        case MLWTransitionTypeFadeIn: {
+            return [MLWXrossTransitionFade fadeInTransitionWithCurrentView:currentView nextView:nextView direction:direction];
+        }
+        case MLWTransitionTypeFadeOut: {
+            return [MLWXrossTransitionFade fadeInTransitionWithCurrentView:currentView nextView:nextView direction:direction];
         }
     }
 }

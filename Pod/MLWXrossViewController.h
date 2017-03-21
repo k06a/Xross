@@ -13,18 +13,20 @@ NS_ASSUME_NONNULL_BEGIN
 @class MLWXrossViewController;
 @class MLWXrossTransition;
 
-typedef enum : NSUInteger {
-    MLWXrossTransitionTypeDefault,
-    MLWXrossTransitionTypeCube,
-    MLWXrossTransitionTypeCubeTo,
-    MLWXrossTransitionTypeCubeFrom,
-    MLWXrossTransitionTypeStackPop,
-    MLWXrossTransitionTypeStackPush,
-    MLWXrossTransitionTypeStackPopWithSwing,
-    MLWXrossTransitionTypeStackPushWithSwing,
-    MLWXrossTransitionTypeStackPopFlat,
-    MLWXrossTransitionTypeStackPushFlat,
-} MLWXrossTransitionType;
+typedef NS_ENUM(NSUInteger, MLWTransitionType) {
+    MLWTransitionTypeDefault,
+    MLWTransitionTypeCube,
+    MLWTransitionTypeCubeTo,
+    MLWTransitionTypeCubeFrom,
+    MLWTransitionTypeStackPop,
+    MLWTransitionTypeStackPush,
+    MLWTransitionTypeStackPopWithSwing,
+    MLWTransitionTypeStackPushWithSwing,
+    MLWTransitionTypeStackPopFlat,
+    MLWTransitionTypeStackPushFlat,
+    MLWTransitionTypeFadeIn,
+    MLWTransitionTypeFadeOut,
+};
 
 typedef struct {
     NSInteger x;
@@ -65,7 +67,7 @@ BOOL MLWXrossDirectionEquals(MLWXrossDirection direction, MLWXrossDirection dire
 - (void)xross:(MLWXrossViewController *)xrossViewController didScrollToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress;
 - (BOOL)xross:(MLWXrossViewController *)xrossViewController shouldApplyInsetToDirection:(MLWXrossDirection)direction progress:(CGFloat)progress;
 - (MLWXrossTransition *)xross:(MLWXrossViewController *)xrossViewController transitionToDirection:(MLWXrossDirection)direction;
-- (MLWXrossTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction;
+- (MLWTransitionType)xross:(MLWXrossViewController *)xrossViewController transitionTypeToDirection:(MLWXrossDirection)direction;
 
 @end
 
