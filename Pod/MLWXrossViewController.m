@@ -630,6 +630,17 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
     
     // Remove viewController or nextViewController not visible by current scrolling
     if (willRemoveVC) {
+        for (CALayer *layer in [self.viewController.view.layer.sublayers copy]) {
+            if ([layer isKindOfClass:[MLWXrossShadowLayer class]]) {
+                [layer removeFromSuperlayer];
+            }
+        }
+        for (CALayer *layer in [self.nextViewController.view.layer.sublayers copy]) {
+            if ([layer isKindOfClass:[MLWXrossShadowLayer class]]) {
+                [layer removeFromSuperlayer];
+            }
+        }
+        
         if (!returnedBack) {
             [self updateTransitionProgress:1.0 toDirection:self.prevDirection];
             
