@@ -34,7 +34,6 @@ static void ViewSetFrameWithoutRelayoutIfPossible(UIView *view, CGRect frame) {
     CGRect bounds = (CGRect){view.bounds.origin, frame.size};
     if (!CGSizeEqualToSize(view.bounds.size, bounds.size)) {
         view.bounds = bounds;
-        [view layoutIfNeeded];
     }
     CGPoint center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
     if (!CGPointEqualToPoint(view.center, center)) {

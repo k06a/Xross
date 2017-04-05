@@ -241,6 +241,7 @@ static MLWXrossTransition *TransitionForTransitionType(MLWTransitionType transit
         self.view.centerView = self.viewController.view;
         [self.viewController didMoveToParentViewController:self];
         self.viewController.view.clipsToBounds = YES;
+        [self.view.centerView layoutIfNeeded];
         
         if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
             [self.delegate xross:self didMoveToDirection:MLWXrossDirectionNone];
@@ -551,6 +552,7 @@ static MLWXrossTransition *TransitionForTransitionType(MLWTransitionType transit
     [self.view setNextView:self.nextViewController.view toDirection:CGPointMake(direction.x, direction.y)];
     [self.nextViewController didMoveToParentViewController:self];
     self.nextViewController.view.clipsToBounds = YES;
+    [self.nextViewController.view layoutIfNeeded];
 }
 
 - (CGPoint)updateTransitionProgress:(CGFloat)progress
