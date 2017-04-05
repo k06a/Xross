@@ -21,6 +21,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 //
 
+@protocol MLWXrossGestureRecognizerDelegate <UIGestureRecognizerDelegate>
+
+@optional
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer allowXrossPanGestureRecognizerToWorkSimultaneously:(nonnull UIGestureRecognizer *)xrossGestureRecognizer; // Default is \c YES for non UIScrollView pan gesture recognizers and \c NO for UIScrollView gesture recognizers
+
+@end
+
+//
+
 @interface MLWXrossScrollView : UIScrollView <UIGestureRecognizerDelegate>
 
 @property (nullable, weak, nonatomic) id<MLWXrossScrollViewDelegate> delegate;
@@ -31,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) CGPoint nextDirection;
 
 @property (nullable, strong, nonatomic) UIView *centerView;
-@property (nullable, strong, nonatomic) UIView *nextView;
+@property (nullable, readonly, strong, nonatomic) UIView *nextView;
 - (void)setNextView:(UIView *)nextView toDirection:(CGPoint)direction;
 
 - (void)setContentOffsetTo:(CGPoint)contentOffset animated:(BOOL)animated;
