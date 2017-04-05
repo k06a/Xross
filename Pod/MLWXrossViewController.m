@@ -472,6 +472,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         self.viewController.view.clipsToBounds = YES;
         ViewSetFrameWithoutRelayoutIfPossible(self.viewController.view, (CGRect){CGPointZero, self.scrollView.bounds.size});
         [self.viewController didMoveToParentViewController:self];
+        [self.viewController.view layoutIfNeeded];
         if ([self.delegate respondsToSelector:@selector(xross:didMoveToDirection:)]) {
             [self.delegate xross:self didMoveToDirection:MLWXrossDirectionNone];
         }
@@ -674,6 +675,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
         if (!MLWXrossDirectionIsNone(direction)) {
             [self.viewController endAppearanceTransition];
         }
+        [self.viewController.view layoutIfNeeded];
 
         UIViewController *prevNextViewController = self.nextViewController;
         self.nextViewController = nil;
@@ -743,6 +745,7 @@ static void ApplyTransitionStackPrevWithSwing(CALayer *currLayer, CALayer *nextL
                 self.nextViewControllerDirection.x * CGRectGetWidth(self.scrollView.bounds),
                 self.nextViewControllerDirection.y * CGRectGetHeight(self.scrollView.bounds));
             ViewSetFrameWithoutRelayoutIfPossible(self.nextViewController.view, nextFrame);
+            [self.viewController.view layoutIfNeeded];
         }];
 
         if (self.viewController == nil && MLWXrossDirectionIsNone(direction)) {
