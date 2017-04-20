@@ -502,6 +502,7 @@ static MLWXrossTransition *TransitionForTransitionType(MLWTransitionType transit
     UIViewController *prevNextViewController = self.nextViewController;
     self.nextViewController = nil;
     self.nextViewControllerDirection = MLWXrossDirectionNone;
+    self.view.bounces = NO;
     
     [self.transition finishTransition];
     self.transition = nil;

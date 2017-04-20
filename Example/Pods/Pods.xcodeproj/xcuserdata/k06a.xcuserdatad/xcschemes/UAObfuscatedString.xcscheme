@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'DF3A2E75A8C2C4A26100409CFE8A6E68'
+               BlueprintIdentifier = '3B1F3C918078CBDC87B92B0035B99B68'
                BlueprintName = 'UAObfuscatedString'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libUAObfuscatedString.a'>
+               BuildableName = 'UAObfuscatedString.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

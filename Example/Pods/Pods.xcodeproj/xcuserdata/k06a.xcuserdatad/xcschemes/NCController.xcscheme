@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '41BFEF96D99ACCCCC0537B9D24D903FB'
+               BlueprintIdentifier = 'EC988BEA5C83215D1E4F4E85263D2CE6'
                BlueprintName = 'NCController'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libNCController.a'>
+               BuildableName = 'NCController.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

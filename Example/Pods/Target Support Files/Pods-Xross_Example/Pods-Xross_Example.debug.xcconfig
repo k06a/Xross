@@ -1,8 +1,9 @@
+FRAMEWORK_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/JRSwizzle" "$PODS_CONFIGURATION_BUILD_DIR/KVOController" "$PODS_CONFIGURATION_BUILD_DIR/NCController" "$PODS_CONFIGURATION_BUILD_DIR/UAObfuscatedString" "$PODS_CONFIGURATION_BUILD_DIR/Xross" "$PODS_CONFIGURATION_BUILD_DIR/libextobjc"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/JRSwizzle" "${PODS_ROOT}/Headers/Public/KVOController" "${PODS_ROOT}/Headers/Public/NCController" "${PODS_ROOT}/Headers/Public/UAObfuscatedString" "${PODS_ROOT}/Headers/Public/Xross" "${PODS_ROOT}/Headers/Public/libextobjc"
-LIBRARY_SEARCH_PATHS = $(inherited) "$PODS_CONFIGURATION_BUILD_DIR/JRSwizzle" "$PODS_CONFIGURATION_BUILD_DIR/KVOController" "$PODS_CONFIGURATION_BUILD_DIR/NCController" "$PODS_CONFIGURATION_BUILD_DIR/UAObfuscatedString" "$PODS_CONFIGURATION_BUILD_DIR/Xross" "$PODS_CONFIGURATION_BUILD_DIR/libextobjc"
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/JRSwizzle" -isystem "${PODS_ROOT}/Headers/Public/KVOController" -isystem "${PODS_ROOT}/Headers/Public/NCController" -isystem "${PODS_ROOT}/Headers/Public/UAObfuscatedString" -isystem "${PODS_ROOT}/Headers/Public/Xross" -isystem "${PODS_ROOT}/Headers/Public/libextobjc"
-OTHER_LDFLAGS = $(inherited) -ObjC -l"JRSwizzle" -l"KVOController" -l"NCController" -l"UAObfuscatedString" -l"Xross" -l"libextobjc" -framework "Foundation" -framework "UIKit"
+LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
+OTHER_CFLAGS = $(inherited) -iquote "$PODS_CONFIGURATION_BUILD_DIR/JRSwizzle/JRSwizzle.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/KVOController/KVOController.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/NCController/NCController.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/UAObfuscatedString/UAObfuscatedString.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/Xross/Xross.framework/Headers" -iquote "$PODS_CONFIGURATION_BUILD_DIR/libextobjc/libextobjc.framework/Headers"
+OTHER_LDFLAGS = $(inherited) -framework "JRSwizzle" -framework "KVOController" -framework "NCController" -framework "UAObfuscatedString" -framework "Xross" -framework "libextobjc"
 PODS_BUILD_DIR = $BUILD_DIR
 PODS_CONFIGURATION_BUILD_DIR = $PODS_BUILD_DIR/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
+PODS_PODFILE_DIR_PATH = ${SRCROOT}/.
 PODS_ROOT = ${SRCROOT}/Pods

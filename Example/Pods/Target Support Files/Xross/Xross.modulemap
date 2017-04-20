@@ -1,0 +1,6 @@
+framework module Xross {
+  umbrella header "Xross-umbrella.h"
+
+  export *
+  module * { export * }
+}

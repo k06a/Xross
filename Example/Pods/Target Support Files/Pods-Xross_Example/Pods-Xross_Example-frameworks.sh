@@ -87,6 +87,23 @@ strip_invalid_archs() {
   fi
 }
 
+
+if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "$BUILT_PRODUCTS_DIR/JRSwizzle/JRSwizzle.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/KVOController/KVOController.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/NCController/NCController.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/UAObfuscatedString/UAObfuscatedString.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/Xross/Xross.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/libextobjc/libextobjc.framework"
+fi
+if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "$BUILT_PRODUCTS_DIR/JRSwizzle/JRSwizzle.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/KVOController/KVOController.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/NCController/NCController.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/UAObfuscatedString/UAObfuscatedString.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/Xross/Xross.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/libextobjc/libextobjc.framework"
+fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait
 fi
