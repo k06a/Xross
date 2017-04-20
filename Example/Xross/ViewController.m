@@ -175,7 +175,7 @@
         type += 2*self.segmentedControlStack.selectedSegmentIndex;
     }
     
-    if (type == MLWXrossTransitionTypeStackPush &&
+    if (type == MLWTransitionTypeStackPush &&
         direction.x + direction.y < 0) {
         type = MLWTransitionTypeStackPop;
     }
