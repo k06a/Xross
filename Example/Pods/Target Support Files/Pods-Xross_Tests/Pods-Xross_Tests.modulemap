@@ -1,0 +1,6 @@
+framework module Pods_Xross_Tests {
+  umbrella header "Pods-Xross_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}
